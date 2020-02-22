@@ -61,3 +61,14 @@ TEST_F(ADelayLine, GetDelayedValue)
 
     ASSERT_THAT(dline.get(delay_in_sample), FloatEq(target_size - delay_in_sample - 1));
 }
+
+TEST_F(ADelayLine, SetAllValueToZeroAfterClear)
+{
+    int target_size = 10;
+    dline.resize(target_size);
+    dline.push(1.0);
+
+    dline.clear();
+
+    ASSERT_THAT(dline.back(), FloatEq(0.0f));
+}

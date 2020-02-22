@@ -12,6 +12,10 @@ template <typename T>
 class DelayLine
 {
 public:
+    void clear() noexcept
+    {
+        std::fill(raw_data_.begin(), raw_data_.end(), T(0));
+    }
     /**
      * return the size of delay line
      */
@@ -29,6 +33,8 @@ public:
     {
         raw_data_.resize(size);
         least_recent_index_ = 0;
+
+        clear();
     }
 
     /**
@@ -65,7 +71,6 @@ public:
     }
 
 private:
-    size_t size_{0};
     size_t least_recent_index_{0};
     std::vector<T> raw_data_;
 };
