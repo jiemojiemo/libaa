@@ -42,7 +42,10 @@ set(DSP_SRC
         src/dsp/aa_dtw.cpp
         )
 
-add_library(libaa ${FILEIO_SRC} ${DSP_SRC})
+set(AUDIO_EFFECT_DIR
+        src/audio_effect/aa_delay_effect.cpp)
+
+add_library(libaa ${FILEIO_SRC} ${DSP_SRC} ${AUDIO_EFFECT_DIR})
 
 add_subdirectory(example)
 
