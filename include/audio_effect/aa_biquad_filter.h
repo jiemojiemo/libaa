@@ -44,8 +44,8 @@ class BiquadFilter : public AudioEffectProcessor
         enum filter_coeff {a0, a1, a2, b1, b2, num_coeffs};
         enum state_registers {z0, z1, z2, z3, num_states};
 
-        std::array<T, num_coeffs> coeff_array_{0.0f};
-        std::array<T, num_states> state_array_{0.0f};
+        std::array<T, num_coeffs> coeff_array_{0.0f,};
+        std::array<T, num_states> state_array_{0.0f,};
     };
 public:
 
