@@ -15,8 +15,11 @@ class BiquadFilter : public AudioEffectProcessor
     class Biquad
     {
     public:
-        T processSample(T in)
-        {
+        T processSample(T in){
+            return processSampleWithDirectForm(in);
+        }
+
+        T processSampleWithDirectForm(T in){
             T out = coeff_array_[a0] * in +
                 coeff_array_[a1] * state_array_[z0] +
                 coeff_array_[a2] * state_array_[z1] -
@@ -32,8 +35,36 @@ class BiquadFilter : public AudioEffectProcessor
             return out;
         }
 
+        T processSampleWithCanonicalForm(T in){
+            T wn = in - coeff_array_[b1]*state_array_[z0] - coeff_array_[b2]*state_array_[z1];
+            T out = coeff_array_[a0]*wn + coeff_array_[a1]*state_array_[z0] + coeff_array_[a2]*state_array_[z1];
+
+            state_array_[z1] = state_array_[z0];
+            state_array_[z0] = wn;
+
+            return out;
+        }
+
+        T processSampleWithTransposedDirectForm(T in){
+            T wn = in + state_array_[z0];
+            T out = coeff_array_[a0]*wn + state_array_[z2];
+
+            state_array_[z0] = -coeff_array_[b1] + state_array_[z1];
+            state_array_[z1] = -coeff_array_[b2]*wn;
+
+            state_array_[z2] = coeff_array_[a1]*wn + state_array_[z3];
+            state_array_[z3] = coeff_array_[a2]*wn;
+        }
+
+        T processSampleWithTransposedCanonicalForm(T in){
+            T out = coeff_array_[a0]*in + state_array_[z0];
+
+            state_array_[z0] = coeff_array_[a1]*in - coeff_array_[b1]*out + state_array_[z1];
+            state_array_[z1] = coeff_array_[a2]*in - coeff_array_[b2]*out;
+        }
+
         T operator()(T in){
-            return processSample(in);
+            return processSampleWithTransposedCanonicalForm(in);
         }
 
         void reset(){
