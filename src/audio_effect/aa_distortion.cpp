@@ -119,7 +119,7 @@ void Distortion::processBlock(AudioBuffer<float> &buffer)
     {
         auto* channel = buffer.getWritePointer(c);
 
-        for(auto i = 0u; i < buffer.getNumSamples(); ++i)
+        for(auto i = 0u; i < buffer.getNumFrames(); ++i)
         {
             const float in = channel[i] * gain_scale;
             channel[i] = impl_->clip(in, distortion_type);

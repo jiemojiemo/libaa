@@ -44,7 +44,7 @@ void Flanger::releaseResources()
 void Flanger::processBlock(AudioBuffer<float> &buffer)
 {
     const int num_channels = buffer.getNumChannels();
-    const int num_samples = buffer.getNumSamples();
+    const int num_samples = buffer.getNumFrames();
     float phase = 0.0f;
     float channel0EndPhase = impl_->phase_;
 

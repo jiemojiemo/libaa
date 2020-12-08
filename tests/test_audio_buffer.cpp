@@ -37,7 +37,7 @@ TEST_F(AAudioBuffer, CreatAnEmptyBuffer)
 {
     AudioBuffer<float> empty_buffer;
 
-    int samples = empty_buffer.getNumSamples();
+    int samples = empty_buffer.getNumFrames();
     int channels = empty_buffer.getNumChannels();
     EXPECT_THAT(samples, Eq(0));
     EXPECT_THAT(channels, Eq(0));
@@ -47,7 +47,7 @@ TEST_F(AAudioBuffer, CreatAnEmptyBufferWithSizeAndNumChannels)
 {
     AudioBuffer<float> buffer(num_channels, num_samples);
 
-    int samples = buffer.getNumSamples();
+    int samples = buffer.getNumFrames();
     int channels = buffer.getNumChannels();
 
     EXPECT_THAT(samples, Eq(num_samples));
@@ -64,7 +64,7 @@ TEST_F(AAudioBuffer, SetSizeChangesNumChannelsAndNumSamples)
     buffer.setSize(new_num_channels, new_num_samples);
 
     ASSERT_THAT(buffer.getNumChannels(), Eq(new_num_channels));
-    ASSERT_THAT(buffer.getNumSamples(), Eq(new_num_samples));
+    ASSERT_THAT(buffer.getNumFrames(), Eq(new_num_samples));
 }
 
 TEST_F(AAudioBuffer, SetSizeWillClearTheKeepExistingContent)
@@ -95,7 +95,7 @@ TEST_F(AAudioBuffer, CreateWithDataReferTo)
 {
     AudioBuffer<float> buffer(external_data.data(), num_channel_to_use, start_sample, num_samples);
 
-    EXPECT_THAT(buffer.getNumSamples(), num_samples);
+    EXPECT_THAT(buffer.getNumFrames(), num_samples);
     EXPECT_THAT(buffer.getNumChannels(), num_channel_to_use);
     EXPECT_THAT(buffer.getWritePointer(0), Not(nullptr));
     EXPECT_THAT(buffer.getWritePointer(1), Not(nullptr));

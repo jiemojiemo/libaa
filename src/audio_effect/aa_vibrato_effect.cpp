@@ -31,7 +31,7 @@ void VibratoEffect::prepareToPlay(double sample_rate, int max_block_size)
 
 void VibratoEffect::processBlock(AudioBuffer<float> &buffer) {
     const int num_channels = buffer.getNumChannels();
-    const int num_samples = buffer.getNumSamples();
+    const int num_samples = buffer.getNumFrames();
     float phase = 0.0f;
 
     assert(static_cast<size_t>(num_channels) <= impl_->dlines_.getNumLines());

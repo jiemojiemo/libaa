@@ -41,7 +41,7 @@ void Tremolo::releaseResources()
 void Tremolo::processBlock(AudioBuffer<float> &buffer)
 {
     const auto num_channels {buffer.getNumChannels()};
-    const auto num_samples  {buffer.getNumSamples()};
+    const auto num_samples  {buffer.getNumFrames()};
     float phase{0.0f};
 
     for(size_t c = 0; c < num_channels; ++c)

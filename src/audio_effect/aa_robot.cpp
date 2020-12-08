@@ -37,15 +37,15 @@ public:
     void processBlock(AudioBuffer<float> &buffer)
     {
         const auto num_channels = buffer.getNumChannels();
-        const auto num_samples = buffer.getNumSamples();
+        const auto num_samples = buffer.getNumFrames();
 
         auto samplesincefft = 0u;
         auto inwritepos = 0u;
         auto outwritepos = 0u;
         auto outreadpos = 0u;
 
-        const auto input_buffer_length = input_buffer_.getNumSamples();
-        const auto output_buffer_length = output_buffer_.getNumSamples();
+        const auto input_buffer_length = input_buffer_.getNumFrames();
+        const auto output_buffer_length = output_buffer_.getNumFrames();
 
         for(auto c = 0u; c < num_channels; ++c)
         {
@@ -63,7 +63,7 @@ public:
                 // get result from output buffer
                 channel_data[i] = output_buffer_data[outreadpos];
                 output_buffer_data[outreadpos] = 0.0f;
-                if(++outreadpos >= output_buffer_.getNumSamples())
+                if(++outreadpos >= output_buffer_.getNumFrames())
                 {
                     outreadpos = 0;
                 }

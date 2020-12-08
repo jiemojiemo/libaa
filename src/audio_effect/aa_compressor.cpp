@@ -29,7 +29,7 @@ public:
 
     void processBlock(AudioBuffer<float> &buffer, size_t block_size, double sample_rate) {
         const auto num_channels = buffer.getNumChannels();
-        const auto num_samples = buffer.getNumSamples();
+        const auto num_samples = buffer.getNumFrames();
         assert(num_channels == 2);
         assert(num_samples <= static_cast<size_t>(block_size));
 

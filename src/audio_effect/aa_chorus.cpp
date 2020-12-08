@@ -43,7 +43,7 @@ void Chorus::releaseResources()
 void Chorus::processBlock(AudioBuffer<float> &buffer)
 {
     const auto num_channels = buffer.getNumChannels();
-    const auto num_samples = buffer.getNumSamples();
+    const auto num_samples = buffer.getNumFrames();
 
     float ph = 0.0f;
 

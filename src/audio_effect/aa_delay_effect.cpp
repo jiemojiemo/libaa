@@ -39,7 +39,7 @@ void DelayEffect::releaseResources()
 void DelayEffect::processBlock(AudioBuffer<float> &buffer)
 {
     const int num_channels = buffer.getNumChannels();
-    const int num_samples = buffer.getNumSamples();
+    const int num_samples = buffer.getNumFrames();
 
     for(int c = 0; c < num_channels; ++c)
     {
