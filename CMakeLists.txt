@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 
 project(libaa LANGUAGES CXX C)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++ -lc++abi")
 
 
@@ -60,6 +60,7 @@ set(AUDIO_EFFECT_DIR
         src/audio_effect/aa_compressor.cpp
         src/audio_effect/aa_distortion.cpp
         src/audio_effect/aa_robot.cpp
+        src/audio_effect/aa_biquad_filter.cpp
         )
 
 add_library(libaa ${FILEIO_SRC} ${DSP_SRC} ${AUDIO_EFFECT_DIR})
