@@ -11,15 +11,6 @@ before_script:
   - export PATH=$HOME/Library/Python/2.7/bin:$PATH
   - pip install --user cpp-coveralls
 
-addons:
-  homebrew:
-    packages:
-      - cmake
-      - gcc@9
-      - llvm@9
-      - ninja
-    update: true
-
 script:
   - mkdir -p build
   - cd build
