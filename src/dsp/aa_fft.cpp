@@ -2,6 +2,7 @@
 // Created by william on 2019/12/6.
 //
 
+#include "kiss_fftr.h"
 #include "dsp/aa_fft.h"
 
 namespace libaa

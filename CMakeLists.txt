@@ -10,18 +10,9 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++ -lc++abi")
 add_compile_options(-Werror=return-type)
 
 # warning as error
-if(MSVC)
-    add_compile_options(/W4 /WX)
-else()
-    add_compile_options(-Wall -Wextra -pedantic -Werror -Wno-unused-function -Wno-unused-parameter)
-endif()
+add_compile_options(-Wall -Wextra -pedantic -Werror -Wno-unused-function -Wno-unused-parameter)
 
 add_subdirectory(third_party)
-
-include_directories(include)
-include_directories(third_party/dr_libs)
-include_directories(third_party/kissfft)
-include_directories(third_party/Eigen3.3.7)
 
 include(GNUInstallDirs)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
@@ -64,6 +55,15 @@ set(AUDIO_EFFECT_DIR
         )
 
 add_library(libaa ${FILEIO_SRC} ${DSP_SRC} ${AUDIO_EFFECT_DIR})
+target_include_directories(libaa
+        PUBLIC
+        $<INSTALL_INTERFACE:include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        ${CMAKE_CURRENT_SOURCE_DIR}/third_party/Eigen3.3.7
+        PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/third_party/dr_libs
+        ${CMAKE_CURRENT_SOURCE_DIR}/third_party/kissfft
+        )
 
 add_subdirectory(examples)
 
