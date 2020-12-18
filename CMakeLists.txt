@@ -10,7 +10,7 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++ -lc++abi")
 add_compile_options(-Werror=return-type)
 
 # warning as error
-add_compile_options(-Wall -Wextra -pedantic -Werror -Wno-unused-function -Wno-unused-parameter)
+add_compile_options(-Wall -Wextra -pedantic -Werror -Wno-unused-function -Wno-unused-parameter -Wno-missing-braces )
 
 add_subdirectory(third_party)
 
