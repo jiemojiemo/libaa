@@ -40,11 +40,11 @@ int main(int argc, char* argv[])
     BiquadFilter processor;
     processor.setRateAndBufferSizeDetails(audio_file.getSampleRate(), predefine_block_size);
     processor.prepareToPlay(audio_file.getSampleRate(), predefine_block_size);
-    processor.setCoefficients({1.0,
-                               0.73,
-                               1.0,
-                               -0.78,
-                               0.88});
+    processor.setCoefficients({{1.0,
+                                0.73,
+                                1.0,
+                                -0.78,
+                                0.88}});
 //    processor.coeff_array_[BiquadFilter::a0] = 1.0f;
 //    processor.coeff_array_[BiquadFilter::a1] = 0.73f;
 //    processor.coeff_array_[BiquadFilter::a2] = 0.0f;
