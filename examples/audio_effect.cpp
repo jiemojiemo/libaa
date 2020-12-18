@@ -11,6 +11,7 @@
 #include "audio_effect/aa_chorus.h"
 #include "audio_effect/aa_distortion.h"
 #include "audio_effect/aa_robot.h"
+#include "audio_effect/aa_biquad_filter.h"
 #include <iostream>
 using namespace std;
 using namespace libaa;
@@ -36,9 +37,20 @@ int main(int argc, char* argv[])
     int acctual_block_size = 0;
 
 
-    Robotisation processor;
+    BiquadFilter processor;
     processor.setRateAndBufferSizeDetails(audio_file.getSampleRate(), predefine_block_size);
     processor.prepareToPlay(audio_file.getSampleRate(), predefine_block_size);
+    processor.setCoefficients({1.0,
+                               0.73,
+                               1.0,
+                               -0.78,
+                               0.88});
+//    processor.coeff_array_[BiquadFilter::a0] = 1.0f;
+//    processor.coeff_array_[BiquadFilter::a1] = 0.73f;
+//    processor.coeff_array_[BiquadFilter::a2] = 0.0f;
+//    processor.coeff_array_[BiquadFilter::b1] = -0.71f;
+//    processor.coeff_array_[BiquadFilter::b2] = 0.0f;
+
 //    processor.hop_size = 256;
 //    processor.fft_size = 1024;
 

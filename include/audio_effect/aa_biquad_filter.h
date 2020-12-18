@@ -54,6 +54,8 @@ class BiquadFilter : public AudioEffectProcessor
 
             state_array_[z2] = coeff_array_[a1]*wn + state_array_[z3];
             state_array_[z3] = coeff_array_[a2]*wn;
+
+            return out;
         }
 
         T processSampleWithTransposedCanonicalForm(T in){
@@ -61,6 +63,8 @@ class BiquadFilter : public AudioEffectProcessor
 
             state_array_[z0] = coeff_array_[a1]*in - coeff_array_[b1]*out + state_array_[z1];
             state_array_[z1] = coeff_array_[a2]*in - coeff_array_[b2]*out;
+
+            return out;
         }
 
         T operator()(T in){
