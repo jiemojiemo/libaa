@@ -285,7 +285,7 @@ void IIRFilter::releaseResources() {
     impl_->biquad_filter_.releaseResources();
 }
 void IIRFilter::processBlock(AudioBuffer<float> &buffer) {
-
+    impl_->biquad_filter_.processBlock(buffer);
 }
 int IIRFilter::setParameter(IIRFilterParameter param) {
     if(param != impl_->param_){
