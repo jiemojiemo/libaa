@@ -11,6 +11,7 @@
 #include "audio_effect/aa_compressor.h"
 #include "audio_effect/aa_distortion.h"
 #include "audio_effect/aa_robot.h"
+#include "audio_effect/aa_biquad_filter.h"
 #include <gmock/gmock.h>
 
 using namespace std;
@@ -130,55 +131,6 @@ TEST_F(AudioEffectTest, Robotisation)
     processor.reset();
     processor.releaseResources();
 }
-#include <array>
-class BiquadFilter : public AudioEffectProcessor
-{
-public:
-    string getName() const override {
-        return std::string();
-    }
-    void prepareToPlay(double sample_rate, int max_block_size) override {
-
-    }
-    void reset() override {
-        std::fill(coeff_array_.begin(), coeff_array_.end(), 0.0f);
-        std::fill(state_array_.begin(), state_array_.end(), 0.0f);
-    }
-    void releaseResources() override {
-
-    }
-    void processBlock(AudioBuffer<float> &buffer) override {
-        const auto num_channels = buffer.getNumChannels();
-        const auto num_frames = buffer.getNumFrames();
-
-        for(auto c = 0u; c < num_channels; ++c){
-            auto* channel = buffer.getWritePointer(c);
-            for(auto i = 0u; i < num_frames; ++i){
-                float in = channel[i];
-                float out = coeff_array_[a0] * in +
-                             coeff_array_[a1] * state_array_[z0] +
-                             coeff_array_[a2] * state_array_[z1] -
-                             coeff_array_[b1] * state_array_[z2] -
-                             coeff_array_[b2] * state_array_[z3];
-
-                state_array_[z1] = state_array_[z0];
-                state_array_[z0] = in;
-
-                state_array_[z3] = state_array_[z2];
-                state_array_[z2] = out;
-
-                channel[i] = out;
-            }
-        }
-    }
-
-private:
-    enum filter_coeff {a0, a1, a2, b1, b2, num_coeffs};
-    enum state_registers {z0, z1, z2, z3, num_states};
-
-    std::array<float, num_coeffs> coeff_array_{0.0f};
-    std::array<float, num_states> state_array_{0.0f};
-};
 
 TEST_F(AudioEffectTest, BiquadFilter)
 {

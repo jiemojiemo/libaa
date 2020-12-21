@@ -1,9 +1,3 @@
-include_directories(${gmock_SOURCE_DIR}/include)
-include_directories(${gtest_SOURCE_DIR}/include)
-include_directories(${CMAKE_SOURCE_DIR}/third_party/kissfft)
-include_directories(${CMAKE_SOURCE_DIR}/third_party/Eigen3.3.7)
-include_directories(${CMAKE_SOURCE_DIR}/src/fileio)
-
 # test dsp
 add_executable(unit_test
         # dsp
@@ -24,6 +18,7 @@ add_executable(unit_test
 
         # audio effect
         test_audio_effect.cpp
+        test_IIR_filters.cpp
         )
 target_link_libraries(unit_test
         gmock_main
