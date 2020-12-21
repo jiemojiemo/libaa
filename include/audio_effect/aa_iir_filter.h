@@ -4,6 +4,7 @@
 //
 
 #pragma once
+#include "audio_effect/aa_audio_effect_processor.h"
 #include "audio_effect/aa_biquad_impl.h"
 #include <cmath>
 namespace libaa
@@ -35,15 +36,34 @@ class IIRFilterParameter
 {
 public:
     FilterType type         {FilterType::kLPF1};
-    float sample_rate       {0.0f};
     float fc                {0.0f};
     float Q                 {0.0f};
     float boost_or_cut_db   {0.0f};
 };
 
-class IIRFilter
+class IIRFilter : public AudioEffectProcessor
 {
 public:
-    static FilterCoeffs calcFilterCoeffs(const IIRFilterParameter& iir_param);
+    static FilterCoeffs calcFilterCoeffs(const IIRFilterParameter& iir_param, float sample_rate);
+
+    IIRFilter();
+
+    std::string getName() const override{
+        return std::string("IIRFilter");
+    }
+
+    void prepareToPlay(double sample_rate, int max_block_size) override;
+    void reset() override;
+    void releaseResources() override;
+    void processBlock(AudioBuffer<float> &buffer) override;
+
+public:
+    FilterType type         {FilterType::kLPF1};
+    float fc                {0.0f};
+    float Q                 {0.0f};
+    float boost_or_cut_db   {0.0f};
+private:
+    class Impl;
+    std::shared_ptr<Impl> impl_;
 };
 }

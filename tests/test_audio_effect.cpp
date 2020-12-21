@@ -12,6 +12,7 @@
 #include "audio_effect/aa_distortion.h"
 #include "audio_effect/aa_robot.h"
 #include "audio_effect/aa_biquad_filter.h"
+#include "audio_effect/aa_iir_filter.h"
 #include <gmock/gmock.h>
 
 using namespace std;
@@ -135,6 +136,17 @@ TEST_F(AudioEffectTest, Robotisation)
 TEST_F(AudioEffectTest, BiquadFilter)
 {
     BiquadFilter processor;
+    processor.setRateAndBufferSizeDetails(sample_rate, block_size);
+    processor.prepareToPlay(sample_rate, block_size);
+
+    processor.processBlock(block);
+    processor.reset();
+    processor.releaseResources();
+}
+
+TEST_F(AudioEffectTest, IIRFilter)
+{
+    IIRFilter processor;
     processor.setRateAndBufferSizeDetails(sample_rate, block_size);
     processor.prepareToPlay(sample_rate, block_size);
 

@@ -4,10 +4,11 @@
 //
 
 #include "audio_effect/aa_iir_filter.h"
+#include "audio_effect/aa_biquad_filter.h"
 
 namespace libaa
 {
-FilterCoeffs IIRFilter::calcFilterCoeffs(const IIRFilterParameter& iir_param)
+FilterCoeffs IIRFilter::calcFilterCoeffs(const IIRFilterParameter& iir_param, float sample_rate)
 {
     FilterCoeffs coeffs{0.0f, };
 
@@ -16,7 +17,6 @@ FilterCoeffs IIRFilter::calcFilterCoeffs(const IIRFilterParameter& iir_param)
 
     const auto type = iir_param.type;
     const auto fc = iir_param.fc;
-    const auto sample_rate = iir_param.sample_rate;
     const auto Q = iir_param.Q;
     const auto boost_cut_db = iir_param.boost_or_cut_db;
 
@@ -252,5 +252,36 @@ FilterCoeffs IIRFilter::calcFilterCoeffs(const IIRFilterParameter& iir_param)
     }
     return coeffs;
 }
+
+class IIRFilter::Impl
+{
+public:
+    BiquadFilter biquad_filter_;
+};
+
+IIRFilter::IIRFilter():
+    impl_(std::make_shared<Impl>())
+{
+
+}
+
+void IIRFilter::prepareToPlay(double sample_rate, int max_block_size) {
+
+}
+void IIRFilter::reset() {
+    type            = FilterType::kLPF1;
+    fc              = 0.0f;
+    Q               = 0.0f;
+    boost_or_cut_db = 0.0;
+
+    impl_->biquad_filter_.reset();
+}
+void IIRFilter::releaseResources() {
+    impl_->biquad_filter_.reset();
+}
+void IIRFilter::processBlock(AudioBuffer<float> &buffer) {
+
+}
+
 
 }
