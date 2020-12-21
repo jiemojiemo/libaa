@@ -39,6 +39,17 @@ public:
     float fc                {0.0f};
     float Q                 {0.0f};
     float boost_or_cut_db   {0.0f};
+
+    bool operator==(const IIRFilterParameter& p) const{
+        return p.type == type &&
+            p.fc == fc &&
+            p.Q == Q &&
+            p.boost_or_cut_db == boost_or_cut_db;
+    }
+
+    bool operator!=(const IIRFilterParameter& p) const{
+        return !operator==(p);
+    }
 };
 
 class IIRFilter : public AudioEffectProcessor
@@ -57,11 +68,7 @@ public:
     void releaseResources() override;
     void processBlock(AudioBuffer<float> &buffer) override;
 
-public:
-    FilterType type         {FilterType::kLPF1};
-    float fc                {0.0f};
-    float Q                 {0.0f};
-    float boost_or_cut_db   {0.0f};
+    int setParameter(IIRFilterParameter param);
 private:
     class Impl;
     std::shared_ptr<Impl> impl_;

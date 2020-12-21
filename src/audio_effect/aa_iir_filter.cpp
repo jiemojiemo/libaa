@@ -256,6 +256,16 @@ FilterCoeffs IIRFilter::calcFilterCoeffs(const IIRFilterParameter& iir_param, fl
 class IIRFilter::Impl
 {
 public:
+    void reset(){
+        biquad_filter_.reset();
+
+        param_.type             = FilterType::kLPF1;
+        param_.fc               = 0.0f;
+        param_.Q                = 0.707;
+        param_.boost_or_cut_db  = 0.0f;
+    }
+
+    IIRFilterParameter param_;
     BiquadFilter biquad_filter_;
 };
 
@@ -266,22 +276,30 @@ IIRFilter::IIRFilter():
 }
 
 void IIRFilter::prepareToPlay(double sample_rate, int max_block_size) {
-
+    impl_->biquad_filter_.prepareToPlay(sample_rate, max_block_size);
 }
 void IIRFilter::reset() {
-    type            = FilterType::kLPF1;
-    fc              = 0.0f;
-    Q               = 0.0f;
-    boost_or_cut_db = 0.0;
-
-    impl_->biquad_filter_.reset();
+    impl_->reset();
 }
 void IIRFilter::releaseResources() {
-    impl_->biquad_filter_.reset();
+    impl_->biquad_filter_.releaseResources();
 }
 void IIRFilter::processBlock(AudioBuffer<float> &buffer) {
 
 }
+int IIRFilter::setParameter(IIRFilterParameter param) {
+    if(param != impl_->param_){
+        impl_->param_ = param;
+    }
 
+    if(impl_->param_.Q <= 0){
+        impl_->param_.Q = .707f;
+    }
+
+    auto new_coeffs = calcFilterCoeffs(impl_->param_, getSampleRate());
+    impl_->biquad_filter_.setCoefficients(new_coeffs);
+
+    return 0;
+}
 
 }
