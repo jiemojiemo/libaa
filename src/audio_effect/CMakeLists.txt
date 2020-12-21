@@ -9,6 +9,7 @@ set(AUDIO_EFFECT_DIR
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_distortion.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_robot.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_biquad_filter.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/aa_iir_filter.cpp
         )
 
 set(AUDIO_EFFECT_DIR ${AUDIO_EFFECT_DIR} PARENT_SCOPE)
