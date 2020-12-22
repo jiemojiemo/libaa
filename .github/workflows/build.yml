@@ -51,6 +51,6 @@ jobs:
       shell: bash
       run: |
         python -m pip install --upgrade pip
-        pip install --user cpp-coveralls
+        pip install cpp-coveralls
         coveralls --root .. -e third_party -e examples -E ".*external.*" -E ".*CMakeFiles.*" -E ".*tests/.*.cpp.*" --verbose
 
