@@ -45,11 +45,12 @@ jobs:
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest -C $BUILD_TYPE --output-on-failure
 
-    - name: Upload coverage to Codecov
+    - name: Install cpp-coveralls
+      uses: actions/setup-python@v2
       working-directory: ${{runner.workspace}}/build
-      env:
-        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      shell: bash
       run: |
-        wget https://codecov.io/bash -O codecov
-        chmod +x codecov
-        ./codecov -t $CODECOV_TOKEN -B $GITHUB_REF -s .
+        python -m pip install --upgrade pip
+        pip install --user cpp-coveralls
+        coveralls --root .. -e third_party -e examples -E ".*external.*" -E ".*CMakeFiles.*" -E ".*tests/.*.cpp.*" --verbose
+
