@@ -4,7 +4,7 @@
 
 #include "dsp/aa_window.h"
 #include "dsp/aa_stft.h"
-#include "aa_dsp_help_func.h"
+#include "dsp/aa_dsp_utilities.h"
 
 namespace libaa
 {
@@ -12,7 +12,7 @@ namespace libaa
 
 Eigen::ArrayXXcf STFT::stft(const float* data, size_t data_len, const Options& opts)
 {
-    if(!isPowerOf2(opts.win_size))
+    if(!DSPUtilities::isPowerOf2(opts.win_size))
     {
         std::cerr << "stft only support window size of 2^n\n";
         return Eigen::ArrayXXcf();

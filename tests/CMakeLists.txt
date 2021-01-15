@@ -19,6 +19,9 @@ add_executable(unit_test
         # audio effect
         test_audio_effect.cpp
         test_IIR_filters_coeffs.cpp
+
+        # signal generator
+        test_lfo_generator.cpp
         )
 target_link_libraries(unit_test
         gmock_main
