@@ -4,8 +4,7 @@
 //
 
 #include "fileio/aa_audio_file.h"
-#include <iostream>
-
+#include <cmath>
 using namespace std;
 using namespace libaa;
 
