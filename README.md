@@ -1,4 +1,4 @@
-[![Build Status](https://github.com/jiemojiemo/libaa/workflows/build/badge.svg)](https://travis-ci.com/jiemojiemo/libaa)
+[![Build Status](https://github.com/jiemojiemo/libaa/workflows/build/badge.svg)](https://github.com/jiemojiemo/libaa/actions)
 [![Coverage Status](https://coveralls.io/repos/github/jiemojiemo/libaa/badge.svg?branch=master)](https://coveralls.io/github/jiemojiemo/libaa?branch=master)
 
 # LibAA

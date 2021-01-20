@@ -39,21 +39,21 @@ jobs:
       # Execute the build.  You can specify a specific target with "--target <NAME>"
       run: cmake --build . --config $BUILD_TYPE -j 8
 
-    - name: Test
-      working-directory: ${{runner.workspace}}/build
-      shell: bash
-      # Execute tests defined by the CMake configuration.  
-      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
-      run: ctest -C $BUILD_TYPE --output-on-failure
-
-    - name: Install cpp-coveralls and Upload
-      working-directory: ${{runner.workspace}}/build
-      continue-on-error: true
-      env:
-        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-      shell: bash
-      run: |
-        python -m pip install --upgrade pip
-        pip install cpp-coveralls
-        coveralls --root .. -e third_party -e examples -E ".*external.*" -E ".*CMakeFiles.*" -E ".*tests/.*.cpp.*" --verbose
+#    - name: Test
+#      working-directory: ${{runner.workspace}}/build
+#      shell: bash
+#      # Execute tests defined by the CMake configuration.
+#      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
+#      run: ctest -C $BUILD_TYPE --output-on-failure
+#
+#    - name: Install cpp-coveralls and Upload
+#      working-directory: ${{runner.workspace}}/build
+#      continue-on-error: true
+#      env:
+#        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+#      shell: bash
+#      run: |
+#        python -m pip install --upgrade pip
+#        pip install cpp-coveralls
+#        coveralls --root .. -e third_party -e examples -E ".*external.*" -E ".*CMakeFiles.*" -E ".*tests/.*.cpp.*" --verbose
 
