@@ -1,2 +1,5 @@
-
-add_subdirectory(googletest)
+add_subdirectory(dr_libs)
+add_subdirectory(kissfft)
+if(BUILD_TESTING)
+    add_subdirectory(googletest)
+endif()

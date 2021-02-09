@@ -16,7 +16,6 @@ target_include_directories(libaa
         $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${LIBAA_INC_DRI}>
         ${LIBAA_3RD_DIR}/Eigen3.3.7
-        PRIVATE
-        ${LIBAA_3RD_DIR}/dr_libs
-        ${LIBAA_3RD_DIR}/kissfft
         )
+
+target_link_libraries(libaa PRIVATE dr_libs kissfft)
