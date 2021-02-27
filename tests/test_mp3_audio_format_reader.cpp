@@ -46,13 +46,13 @@ public:
 };
 
 
-TEST_F(AMp3AudioFormatReader, InitWithInputStream)
+TEST_F(AMp3AudioFormatReader, DISABLED_InitWithInputStream)
 {
     ifstream in_stream(test_file_name);
     Mp3AudioFormatReader reader(in_stream);
 }
 
-TEST_F(AMp3AudioFormatReader, ReturnsFalseIfOpenFailed)
+TEST_F(AMp3AudioFormatReader, DISABLED_ReturnsFalseIfOpenFailed)
 {
     stringstream fake_stream;
     fake_stream << "";
@@ -62,7 +62,7 @@ TEST_F(AMp3AudioFormatReader, ReturnsFalseIfOpenFailed)
     ASSERT_FALSE(reader.isOpenOk());
 }
 
-TEST_F(AMp3AudioFormatReader, ReturnTrueIfOpenSuccessfully)
+TEST_F(AMp3AudioFormatReader, DISABLED_ReturnTrueIfOpenSuccessfully)
 {
     fstream in_stream(test_file_name, std::ios::in);
     ASSERT_TRUE(in_stream.is_open());
@@ -72,7 +72,7 @@ TEST_F(AMp3AudioFormatReader, ReturnTrueIfOpenSuccessfully)
     ASSERT_TRUE(reader.isOpenOk());
 }
 
-TEST_F(AMp3AudioFormatReader, ReadReturnFalseIfOpenFailed)
+TEST_F(AMp3AudioFormatReader, DISABLED_ReadReturnFalseIfOpenFailed)
 {
     stringstream fake_stream;
     fake_stream << "";
@@ -83,7 +83,7 @@ TEST_F(AMp3AudioFormatReader, ReadReturnFalseIfOpenFailed)
 
     ASSERT_FALSE(ret);
 }
-TEST_F(AMp3AudioFormatReader, CanReadSamples)
+TEST_F(AMp3AudioFormatReader, DISABLED_CanReadSamples)
 {
     ifstream in_stream(test_file_name);
     Mp3AudioFormatReader reader(in_stream);
@@ -93,7 +93,7 @@ TEST_F(AMp3AudioFormatReader, CanReadSamples)
     ASSERT_TRUE(ret);
 }
 
-TEST_F(AMp3AudioFormatReader, ReadWithStartOffsetOfFileWillChangePosition)
+TEST_F(AMp3AudioFormatReader, DISABLED_ReadWithStartOffsetOfFileWillChangePosition)
 {
     ifstream in_stream(test_file_name);
     Mp3AudioFormatReader reader(in_stream);
