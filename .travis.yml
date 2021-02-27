@@ -17,7 +17,7 @@ script:
   - cd build
   - cmake -DCOVERAGE=ON ..
   - cmake --build . -j 4
-  - ctest
+  - ctest --output-on-failure
 
 after_success:
   - coveralls --root .. -e third_party -e examples -E ".*external.*" -E ".*CMakeFiles.*" -E ".*tests/.*.cpp.*" --verbose
