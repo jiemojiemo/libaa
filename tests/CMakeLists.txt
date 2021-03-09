@@ -19,6 +19,7 @@ add_executable(unit_test
         test_audio_file.cpp
         test_wav_audio_format_reader.cpp
         test_mp3_audio_format_reader.cpp
+        test_wav_audio_format_writer.cpp
 
         # audio effect
         test_audio_effect.cpp
@@ -31,6 +32,7 @@ add_executable(unit_test
 target_link_libraries(unit_test
         gmock_main
         libaa
+        dr_libs
         )
 
 add_test(
