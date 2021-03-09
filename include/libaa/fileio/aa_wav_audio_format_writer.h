@@ -5,7 +5,6 @@
 
 #pragma once
 #include "libaa/fileio/aa_audio_format_writer.h"
-#include "dr_wav.h"
 #include <vector>
 namespace libaa
 {

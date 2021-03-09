@@ -4,6 +4,7 @@
 //
 
 #include "libaa/fileio/aa_wav_audio_format_writer.h"
+#include "dr_wav.h"
 
 namespace libaa
 {

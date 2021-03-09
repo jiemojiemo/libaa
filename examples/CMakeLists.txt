@@ -17,3 +17,7 @@ target_link_libraries(signal_generator libaa)
 add_executable(play_sound play_sound.cpp)
 target_link_libraries(play_sound libaa portaudio)
 
+add_executable(audio_writer audio_writer.cpp)
+target_link_libraries(audio_writer libaa)
+
+
