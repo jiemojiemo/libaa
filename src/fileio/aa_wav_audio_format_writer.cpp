@@ -70,7 +70,7 @@ public:
 
         auto num_written = drwav_write_pcm_frames(&wav_, num_samples, samples);
 
-        return num_written >= 0;
+        return num_written > 0;
     }
 
     bool isOpen() const
