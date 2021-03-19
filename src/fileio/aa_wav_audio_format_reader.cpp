@@ -62,13 +62,7 @@ public:
     static size_t readCallback(void* pUserData, void* pBufferOut, size_t bytesToRead)
     {
         auto* self = (WaveAudioFormatReader::Impl*)(pUserData);
-
-        if(!self->parent_->in_stream_.read((char*)pBufferOut, bytesToRead)){
-            // clear bits so that seekCallback can seek successfully
-            self->parent_->in_stream_.clear();
-            return 0;
-        }
-        return bytesToRead;
+        return self->parent_->in_stream_->read((uint8_t *)pBufferOut, bytesToRead);
     }
 
     static drwav_bool32 seekCallback(void* pUserData, int offset, drwav_seek_origin origin)
@@ -76,13 +70,13 @@ public:
         auto* self = (WaveAudioFormatReader::Impl*)(pUserData);
         if(origin == drwav_seek_origin_current)
         {
-            if(!self->parent_->in_stream_.seekg(offset, std::ios::cur)){
+            if(self->parent_->in_stream_->seekg(offset, SEEK_CUR) != 0){
                 return DRWAV_FALSE;
             }
 
         }else if(origin == drwav_seek_origin_start)
         {
-            if(!self->parent_->in_stream_.seekg(offset, std::ios::beg)){
+            if(self->parent_->in_stream_->seekg(offset, SEEK_SET) != 0){
                 return DRWAV_FALSE;
             }
         }
@@ -95,12 +89,13 @@ public:
     std::vector<float> interleave_buffer_;
 };
 
-WaveAudioFormatReader::WaveAudioFormatReader(std::istream& in_stream)
-    : AudioFormatReader(in_stream),
+WaveAudioFormatReader::WaveAudioFormatReader(std::unique_ptr<InputStream> in_stream)
+    : AudioFormatReader(std::move(in_stream)),
       impl_(std::make_shared<Impl>(this))
 {
 
 }
+
 
 bool WaveAudioFormatReader::readSamples(float **dest_channels,
                                         int num_dest_channels,

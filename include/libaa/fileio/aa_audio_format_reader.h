@@ -4,6 +4,7 @@
 //
 
 #pragma once
+#include "libaa/fileio/aa_input_stream.h"
 #include <istream>
 
 namespace libaa
@@ -11,8 +12,9 @@ namespace libaa
 class AudioFormatReader
 {
 public:
-    explicit AudioFormatReader(std::istream& in_stream)
-        : in_stream_(in_stream)
+
+    explicit AudioFormatReader(std::unique_ptr<InputStream> in_stream):
+        in_stream_(std::move(in_stream))
     {
 
     }
@@ -30,7 +32,7 @@ public:
     virtual int64_t getPosition() const;
 
 public:
-    std::istream& in_stream_;
+    std::unique_ptr<InputStream> in_stream_;
 
     double  sample_rate{-1.0};
     int64_t length_in_samples{0};

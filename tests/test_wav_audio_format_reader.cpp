@@ -3,7 +3,7 @@
 // Created by William.Hua on 2021/2/9.
 //
 #include "libaa/fileio/aa_wav_audio_format_reader.h"
-
+#include "libaa/fileio/aa_file_stream.h"
 #include "aa_test_helper.h"
 #include <gmock/gmock.h>
 #include <fstream>
@@ -30,6 +30,8 @@ public:
         dest[0] = left_buffer.data();
         dest[1] = right_buffer.data();
         dest[2] = third_buffer.data();
+
+        in_stream = std::unique_ptr<InputStream>(new FileStream(test_file_name));
     }
 
     void TearDown() override
@@ -51,39 +53,55 @@ public:
 
     const std::string test_file_name="wave_audio_format_reader_test.wav";
     std::unique_ptr<ScopeWaveFile> test_file;
+    std::unique_ptr<InputStream> in_stream;
 };
+
+class FakeStream : public InputStream
+{
+public:
+    ~FakeStream() override = default;
+    int64_t read(uint8_t *dst_buf, int64_t size) override {
+        return 0;
+    }
+    int64_t tellg() override {
+        return 0;
+    }
+    int seekg(int64_t pos, int mode) override {
+        return 0;
+    }
+    int64_t length() const override {
+        return 0;
+    }
+};
+
 
 
 TEST_F(AWaveAudioFormatReader, InitWithInputStream)
 {
-    ifstream in_stream(test_file_name);
-    WaveAudioFormatReader reader(in_stream);
+    WaveAudioFormatReader reader(std::move(in_stream));
 }
 
 TEST_F(AWaveAudioFormatReader, ReturnsFalseIfOpenFailed)
 {
-    stringstream fake_stream;
-    fake_stream << "";
+    auto fake_stream  =std::unique_ptr<InputStream>(new FakeStream);
 
-    WaveAudioFormatReader reader(fake_stream);
+    WaveAudioFormatReader reader(std::move(fake_stream));
 
     ASSERT_FALSE(reader.isOpenOk());
 }
 
 TEST_F(AWaveAudioFormatReader, ReturnTrueIfOpenSuccessfully)
 {
-    fstream in_stream(test_file_name, std::ios::in);
-
-    WaveAudioFormatReader reader(in_stream);
+    WaveAudioFormatReader reader(std::move(in_stream));
 
     ASSERT_TRUE(reader.isOpenOk());
 }
 
 TEST_F(AWaveAudioFormatReader, ReadReturnFalseIfOpenFailed)
 {
-    stringstream fake_stream;
-    fake_stream << "";
-    WaveAudioFormatReader reader(fake_stream);
+    auto fake_stream  =std::unique_ptr<InputStream>(new FakeStream);
+
+    WaveAudioFormatReader reader(std::move(fake_stream));
     ASSERT_FALSE(reader.isOpenOk());
 
     auto ret = reader.readSamples(dest, num_channels, 0, 0, n_read_samples);
@@ -93,8 +111,7 @@ TEST_F(AWaveAudioFormatReader, ReadReturnFalseIfOpenFailed)
 
 TEST_F(AWaveAudioFormatReader, CanReadSamples)
 {
-    ifstream in_stream(test_file_name);
-    WaveAudioFormatReader reader(in_stream);
+    WaveAudioFormatReader reader(std::move(in_stream));
 
     auto ret = reader.readSamples(dest, num_channels, 0, 0, n_read_samples);
 
@@ -105,8 +122,7 @@ TEST_F(AWaveAudioFormatReader, CanReadSamples)
 
 TEST_F(AWaveAudioFormatReader, ReadOnlyAvailableChannels)
 {
-    ifstream in_stream(test_file_name);
-    WaveAudioFormatReader reader(in_stream);
+    WaveAudioFormatReader reader(std::move(in_stream));
 
     const int num_dest_channels = 3;
     reader.readSamples(dest, num_dest_channels, 0, 0, n_read_samples);
@@ -120,8 +136,7 @@ TEST_F(AWaveAudioFormatReader, ReadOnlyAvailableChannels)
 
 TEST_F(AWaveAudioFormatReader, ReadWithStartOfDest)
 {
-    ifstream in_stream(test_file_name);
-    WaveAudioFormatReader reader(in_stream);
+    WaveAudioFormatReader reader(std::move(in_stream));
 
     const int offset = 5;
     reader.readSamples(dest, num_channels, offset, 0, n_read_samples);
@@ -136,8 +151,7 @@ TEST_F(AWaveAudioFormatReader, ReadWithStartOfDest)
 
 TEST_F(AWaveAudioFormatReader, ReadWithStartOffsetOfFileWillChangePosition)
 {
-    ifstream in_stream(test_file_name);
-    WaveAudioFormatReader reader(in_stream);
+    WaveAudioFormatReader reader(std::move(in_stream));
 
     const int offset = 5;
     reader.readSamples(dest, num_channels, 0, offset, n_read_samples);

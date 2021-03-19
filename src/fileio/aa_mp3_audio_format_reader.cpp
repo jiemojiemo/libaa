@@ -58,12 +58,7 @@ public:
     {
         auto* self = (Mp3AudioFormatReader::Impl*)(pUserData);
 
-        if(!self->parent_->in_stream_.read((char*)pBufferOut, bytesToRead)){
-            // clear bits so that seekCallback can seek successfully
-            self->parent_->in_stream_.clear();
-            return 0;
-        }
-        return bytesToRead;
+        return self->parent_->in_stream_->read((uint8_t *)pBufferOut, bytesToRead);
     }
 
     static drmp3_bool32 seekCallback(void* pUserData, int offset, drmp3_seek_origin origin)
@@ -71,13 +66,13 @@ public:
         auto* self = (Mp3AudioFormatReader::Impl*)(pUserData);
         if(origin == drmp3_seek_origin_current)
         {
-            if(!self->parent_->in_stream_.seekg(offset, std::ios::cur)){
+            if(self->parent_->in_stream_->seekg(offset, SEEK_CUR) != 0){
                 return DRMP3_FALSE;
             }
 
         }else if(origin == drmp3_seek_origin_start)
         {
-            if(!self->parent_->in_stream_.seekg(offset, std::ios::beg)){
+            if(self->parent_->in_stream_->seekg(offset, SEEK_SET) != 0){
                 return DRMP3_FALSE;
             }
         }
@@ -90,12 +85,14 @@ public:
     std::vector<float> interleave_buffer_;
 };
 
-Mp3AudioFormatReader::Mp3AudioFormatReader(std::istream &in_stream) :
-    AudioFormatReader(in_stream),
+
+Mp3AudioFormatReader::Mp3AudioFormatReader(std::unique_ptr<InputStream> in_stream):
+    AudioFormatReader(std::move(in_stream)),
     impl_(std::make_shared<Impl>(this))
 {
 
 }
+
 bool Mp3AudioFormatReader::isOpenOk()
 {
     return sample_rate > 0 && num_channels > 0 && length_in_samples > 0;
@@ -113,5 +110,6 @@ bool Mp3AudioFormatReader::readSamples(float **dest_channels,
 
     return impl_->readSamples(dest_channels, num_dest_channels, start_offset_of_dest, start_offset_of_file, num_samples);
 }
+
 }
 

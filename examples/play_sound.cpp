@@ -3,6 +3,7 @@
 //
 
 #include "libaa/fileio/aa_mp3_audio_format_reader.h"
+#include "libaa/fileio/aa_file_stream.h"
 #include "portaudio.h"
 #include <iostream>
 #include <fstream>
@@ -77,8 +78,9 @@ int main(int argc, char* argv[])
 
     const auto input_file_path = string(argv[1]);
 
-    ifstream in_stream(input_file_path);
-    Mp3AudioFormatReader reader(in_stream);
+    auto in_stream = std::unique_ptr<InputStream>(new FileStream(input_file_path));
+
+    Mp3AudioFormatReader reader(std::move(in_stream));
     if(!reader.isOpenOk()){
         cerr << "open file failed\n";
         return -1;

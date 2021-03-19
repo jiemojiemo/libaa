@@ -6,13 +6,14 @@
 #ifndef LIBAA_SRC_FILEIO_AA_MP3_AUDIO_FORMAT_READER_H
 #define LIBAA_SRC_FILEIO_AA_MP3_AUDIO_FORMAT_READER_H
 #include "libaa/fileio/aa_audio_format_reader.h"
+#include "libaa/fileio/aa_input_stream.h"
 
 namespace libaa
 {
 class Mp3AudioFormatReader : public AudioFormatReader
 {
 public:
-    explicit Mp3AudioFormatReader(std::istream& in_stream);
+    explicit Mp3AudioFormatReader(std::unique_ptr<InputStream> in);
 
     ~Mp3AudioFormatReader() = default;
 

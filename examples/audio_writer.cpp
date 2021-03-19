@@ -4,6 +4,8 @@
 //
 #include "libaa/fileio/aa_wav_audio_format_writer.h"
 #include "libaa/fileio/aa_wav_audio_format_reader.h"
+#include "libaa/fileio/aa_file_stream.h"
+#include <memory>
 #include <string>
 #include <fstream>
 #include <iostream>
@@ -15,13 +17,13 @@ int main()
     const string input_filename = "../../res/sound/es01_2ch_48k_i16.wav";
     string output_filename = "wav_writer_out.wav";
 
-    fstream in_file(input_filename);
-    if(!in_file.is_open()){
+    auto in_file = std::make_unique<FileStream>(input_filename);
+    if(!in_file->isOpen()){
         cerr << "cannot open input file\n";
         return -1;
     }
 
-    WaveAudioFormatReader reader(in_file);
+    WaveAudioFormatReader reader(std::move(in_file));
     const int sample_rate = reader.sample_rate;
     const int num_channels = reader.num_channels;
     const int num_frames = reader.length_in_samples;
