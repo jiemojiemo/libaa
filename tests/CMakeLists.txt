@@ -28,6 +28,8 @@ add_executable(unit_test
         # signal generator
         test_lfo_generator.cpp
 
+        test_file_stream.cpp
+
         )
 target_link_libraries(unit_test
         gmock_main

@@ -22,7 +22,16 @@ MATCHER_P2(ComplexNearEqual, ferr, rhs, "")
     return abs(arg - rhs) < ferr;
 }
 
-class ScopeWaveFile
+class ScopeFile
+{
+public:
+    explicit ScopeFile(std::string output_path);
+    virtual ~ScopeFile();
+protected:
+    std::string output_path_;
+};
+
+class ScopeWaveFile : public ScopeFile
 {
 public:
     ScopeWaveFile(std::string output_path,
@@ -32,9 +41,13 @@ public:
                   size_t num_bits,
                   float fill_val);
 
-    ~ScopeWaveFile();
+};
 
-    std::string output_path_;
+class ScopeTextFile : public ScopeFile
+{
+public:
+    ScopeTextFile(std::string output_path,
+                  const std::string& txt);
 };
 
 }
