@@ -35,7 +35,7 @@ public:
     virtual int seekg(int64_t pos, int mode) = 0;
 
     /**
-     * return the lenght of stream
+     * return the length of stream
      */
     virtual int64_t length() const = 0;
 };
