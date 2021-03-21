@@ -10,7 +10,6 @@ namespace libaa
 class WaveAudioFormatReader : public AudioFormatReader
 {
 public:
-    explicit WaveAudioFormatReader(std::istream& in_stream);
     explicit WaveAudioFormatReader(std::unique_ptr<InputStream> in_stream);
 
     ~WaveAudioFormatReader() = default;

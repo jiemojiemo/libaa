@@ -95,7 +95,7 @@ public:
     static size_t writeCallback(void* pUserData, const void* pData, size_t bytesToWrite)
     {
         auto* self = static_cast<WavFormatWriter::Impl*>(pUserData);
-        if(!self->parent_->out_stream_.write((char*)(pData), bytesToWrite)){
+        if(self->parent_->out_stream_->write((uint8_t*)(pData), bytesToWrite) == -1){
             return 0;
         }
 
@@ -107,13 +107,13 @@ public:
         auto* self = static_cast<WavFormatWriter::Impl*>(pUserData);
         if(origin == drwav_seek_origin_current)
         {
-            if(!self->parent_->out_stream_.seekp(offset, std::ios::cur)){
+            if(self->parent_->out_stream_->seekp(offset, SEEK_CUR) != 0){
                 return DRWAV_FALSE;
             }
 
         }else if(origin == drwav_seek_origin_start)
         {
-            if(!self->parent_->out_stream_.seekp(offset, std::ios::beg)){
+            if(self->parent_->out_stream_->seekp(offset, SEEK_SET) != 0){
                 return DRWAV_FALSE;
             }
         }
@@ -126,11 +126,11 @@ public:
     std::vector<float> buff_;
 };
 
-WavFormatWriter::WavFormatWriter(std::ostream& out_stream,
-                                 const int rate,
-                                 const int channels,
-                                 const int bits):
-    AudioFormatWriter(out_stream, rate, channels, bits),
+WavFormatWriter::WavFormatWriter(std::unique_ptr<OutputStream> out_stream,
+                                 int rate,
+                                 int channels,
+                                 int bits):
+    AudioFormatWriter(std::move(out_stream), rate, channels, bits),
     impl_(std::make_shared<Impl>(this, rate, channels, bits))
 {
 }

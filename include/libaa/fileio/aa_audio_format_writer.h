@@ -4,6 +4,7 @@
 //
 
 #pragma once
+#include "libaa/fileio/aa_output_stream.h"
 #include <ostream>
 
 namespace libaa
@@ -11,11 +12,11 @@ namespace libaa
 class AudioFormatWriter
 {
 public:
-    AudioFormatWriter(std::ostream& out_stream,
+    AudioFormatWriter(std::unique_ptr<OutputStream> out_stream,
                       int sample_rate,
                       int num_channels,
                       int num_bits):
-        out_stream_(out_stream)
+        out_stream_(std::move(out_stream))
     {
         (void)sample_rate;
         (void)num_channels;
@@ -35,7 +36,7 @@ public:
     virtual void close() = 0;
 
 public:
-    std::ostream& out_stream_;
+    std::unique_ptr<OutputStream> out_stream_;
 
     int sample_rate{-1};
     int num_channels{-1};

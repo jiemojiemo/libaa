@@ -11,7 +11,7 @@ namespace libaa
 class WavFormatWriter : public AudioFormatWriter
 {
 public:
-    WavFormatWriter(std::ostream& out_stream,
+    WavFormatWriter(std::unique_ptr<OutputStream> out_stream,
                     int rate,
                     int channels,
                     int bits);

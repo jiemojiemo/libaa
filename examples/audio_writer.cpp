@@ -5,6 +5,7 @@
 #include "libaa/fileio/aa_wav_audio_format_writer.h"
 #include "libaa/fileio/aa_wav_audio_format_reader.h"
 #include "libaa/fileio/aa_file_stream.h"
+#include "libaa/fileio/aa_out_file_stream.h"
 #include <memory>
 #include <string>
 #include <fstream>
@@ -37,12 +38,12 @@ int main()
     // read whole file
     reader.readSamples(data_refer_to.data(), num_channels, 0, 0,num_frames);
 
-    fstream out_file(output_filename, std::ios::out);
-    if(!out_file.is_open()){
+    auto out_file = std::make_unique<OFileStream>(output_filename);
+    if(!out_file->isOpen()){
         cerr << "cannot open output file\n";
         return -1;
     }
-    WavFormatWriter writer(out_file, sample_rate, num_channels, 32);
+    WavFormatWriter writer(std::move(out_file), sample_rate, num_channels, 32);
     writer.writePlanar((const float**)(data_refer_to.data()), num_frames);
     writer.close();
 }
