@@ -92,7 +92,7 @@ TEST_F(AFileStream, IsNotOpenIfInitWithInvalidFilePath)
     ASSERT_FALSE(file_stream.isOpen());
 }
 
-TEST_F(AFileStream, NotOpenAfterClose)
+TEST_F(AFileStream, NoLongerOpenAfterClose)
 {
     file_stream.open(file_path);
     ASSERT_TRUE(file_stream.isOpen());
