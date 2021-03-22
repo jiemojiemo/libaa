@@ -1,5 +1,6 @@
 add_subdirectory(dr_libs)
 add_subdirectory(kissfft)
+add_subdirectory(fdk-aac)
 add_subdirectory(portaudio EXCLUDE_FROM_ALL)
 if(BUILD_TESTING)
     add_subdirectory(googletest)

@@ -2,3 +2,6 @@
 [submodule "third_party/portaudio"]
 	path = third_party/portaudio
 	url = https://github.com/PortAudio/portaudio
+[submodule "third_party/fdk-aac"]
+	path = third_party/fdk-aac
+	url = https://github.com/mstorsjo/fdk-aac
