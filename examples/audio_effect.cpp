@@ -17,7 +17,7 @@ using namespace std;
 using namespace libaa;
 
 
-int main(int argc, char* argv[])
+int main()
 {
     const string input_filename = "../../res/wav/es01_2ch_48k_i16.wav";
     string output_filename = "audio_effect_result.wav";

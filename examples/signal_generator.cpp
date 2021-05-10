@@ -116,7 +116,7 @@ private:
     double mod_counter_qp_   = {0.0f};
 };
 
-int main(int argc, char* argv[]) {
+int main() {
     string output_filename = "audio_generator.wav";
     AudioFile audio_file;
 

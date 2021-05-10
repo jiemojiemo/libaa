@@ -3,6 +3,7 @@
 //
 
 #include "libaa/fileio/aa_mp3_audio_format_reader.h"
+#include "libaa/fileio/aa_aac_audio_format_reader.h"
 #include "libaa/fileio/aa_file_stream.h"
 #include "portaudio.h"
 #include <iostream>
@@ -15,7 +16,7 @@ using namespace libaa;
 class DecoderData
 {
 public:
-    DecoderData(Mp3AudioFormatReader& r, int frames_per_buffer):
+    DecoderData(AACAudioFormatReader& r, int frames_per_buffer):
         reader(r),
         left_buffer(frames_per_buffer, 0.0f),
         right_buffer(frames_per_buffer, 0.0f)
@@ -24,10 +25,11 @@ public:
         data_refer_to[1] = right_buffer.data();
     }
 
-    Mp3AudioFormatReader& reader;
+    AACAudioFormatReader& reader;
     vector<float> left_buffer;
     vector<float> right_buffer;
     float* data_refer_to[2]{};
+    int64_t pos = 0;
 };
 
 
@@ -39,19 +41,21 @@ static int patestCallback( const void *inputBuffer, void *outputBuffer,
 {
     auto *data = (DecoderData*)userData;
     float *out = (float*)outputBuffer;
-
+    int64_t pos = data->pos;
     (void) timeInfo; /* Prevent unused variable warnings. */
     (void) statusFlags;
     (void) inputBuffer;
 
-    auto read_ok = data->reader.readSamples(data->data_refer_to, 2, 0, 0, framesPerBuffer);
+    auto read_ok = data->reader.readSamples(data->data_refer_to, 2, 0, pos, framesPerBuffer);
 
 
-    for(auto i=0; i < framesPerBuffer; i++ )
+    for(auto i=0u; i < framesPerBuffer; i++ )
     {
         *out++ = data->data_refer_to[0][i];   /* left */
         *out++ = data->data_refer_to[1][i];  /* right */
     }
+
+    data->pos += framesPerBuffer;
 
     if(!read_ok){
         return paComplete;
@@ -66,6 +70,7 @@ static int patestCallback( const void *inputBuffer, void *outputBuffer,
  */
 static void StreamFinished( void* userData )
 {
+    (void)(userData);
     printf( "Stream Completed: %s\n", "data->message" );
 }
 
@@ -80,7 +85,7 @@ int main(int argc, char* argv[])
 
     auto in_stream = std::unique_ptr<InputStream>(new FileStream(input_file_path));
 
-    Mp3AudioFormatReader reader(std::move(in_stream));
+    AACAudioFormatReader reader(std::move(in_stream));
     if(!reader.isOpenOk()){
         cerr << "open file failed\n";
         return -1;
@@ -90,7 +95,7 @@ int main(int argc, char* argv[])
     const auto num_channels = reader.num_channels;
     const auto num_frames = reader.length_in_samples;
     const auto duration = double(num_frames) / sample_rate;
-    const int frames_per_buffer = 64;
+    const int frames_per_buffer = 512;
     assert(num_channels == 2);
 
     DecoderData data(reader, frames_per_buffer);

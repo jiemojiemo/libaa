@@ -18,8 +18,10 @@ target_include_directories(libaa
         ${LIBAA_3RD_DIR}/Eigen3.3.7
         )
 
-target_link_libraries(libaa PRIVATE dr_libs kissfft)
-target_compile_options(libaa PRIVATE
+target_link_libraries(libaa
+        PRIVATE dr_libs kissfft
+        PUBLIC  fdk-aac)
+target_compile_options(libaa PUBLIC
         -Wall -Wextra -pedantic -Werror)
 
 #add_compile_options( -Wno-unused-function -Wno-unused-parameter -Wno-missing-braces )

@@ -61,12 +61,16 @@ class FakeStream : public InputStream
 public:
     ~FakeStream() override = default;
     int64_t read(uint8_t *dst_buf, int64_t size) override {
+        (void)dst_buf;
+        (void)size;
         return 0;
     }
     int64_t tellg() override {
         return 0;
     }
     int seekg(int64_t pos, int mode) override {
+        (void)pos;
+        (void)mode;
         return 0;
     }
     int64_t length() const override {
