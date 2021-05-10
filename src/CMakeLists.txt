@@ -24,4 +24,7 @@ target_link_libraries(libaa
 target_compile_options(libaa PUBLIC
         -Wall -Wextra -pedantic -Werror)
 
+# ignore some error
+target_compile_options(libaa PUBLIC -Wno-missing-braces)
+
 #add_compile_options( -Wno-unused-function -Wno-unused-parameter -Wno-missing-braces )
