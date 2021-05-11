@@ -7,22 +7,22 @@
 
 namespace libaa
 {
-OFileStream::OFileStream(const std::string& path)
+FileOutputStream::FileOutputStream(const std::string& path)
 {
     open(path);
 }
 
-OFileStream::~OFileStream()
+FileOutputStream::~FileOutputStream()
 {
     close();
 }
 
-bool OFileStream::isOpen() const
+bool FileOutputStream::isOpen() const
 {
     return fp_ != nullptr;
 }
 
-int OFileStream::open(const std::string& path)
+int FileOutputStream::open(const std::string& path)
 {
     fp_ = fopen(path.c_str(), "wb");
     if(!fp_){
@@ -31,7 +31,7 @@ int OFileStream::open(const std::string& path)
     return 0;
 }
 
-void OFileStream::close()
+void FileOutputStream::close()
 {
     if(fp_)
     {
@@ -40,7 +40,7 @@ void OFileStream::close()
     }
 }
 
-int64_t OFileStream::write(const uint8_t* source_buf, int64_t size)
+int64_t FileOutputStream::write(const uint8_t* source_buf, int64_t size)
 {
     if(!isOpen()){
         return -1;
@@ -49,7 +49,7 @@ int64_t OFileStream::write(const uint8_t* source_buf, int64_t size)
     return fwrite(source_buf, sizeof(uint8_t), size, fp_);
 }
 
-int64_t OFileStream::tellp() const
+int64_t FileOutputStream::tellp() const
 {
     if(!isOpen()){
         return 0;
@@ -58,7 +58,7 @@ int64_t OFileStream::tellp() const
     return ftell(fp_);
 }
 
-int OFileStream::seekp(int64_t pos, int mode)
+int FileOutputStream::seekp(int64_t pos, int mode)
 {
     if(!isOpen()){
         return -1;
@@ -66,7 +66,7 @@ int OFileStream::seekp(int64_t pos, int mode)
     return fseek(fp_, pos, mode);
 }
 
-int64_t OFileStream::length()
+int64_t FileOutputStream::length()
 {
     if(!isOpen()){
         return 0;

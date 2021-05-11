@@ -9,13 +9,13 @@
 namespace libaa
 {
 
-class FileStream : public InputStream
+class FileInputStream : public InputStream
 {
 public:
-    FileStream() = default;
-    explicit FileStream(const std::string& path);
+    FileInputStream() = default;
+    explicit FileInputStream(const std::string& path);
 
-    ~FileStream();
+    ~FileInputStream();
 
     bool isOpen() const;
 

@@ -31,7 +31,7 @@ public:
         dest[1] = right_buffer.data();
         dest[2] = third_buffer.data();
 
-        in_stream = std::unique_ptr<InputStream>(new FileStream(test_file_name));
+        in_stream = std::unique_ptr<InputStream>(new FileInputStream(test_file_name));
     }
 
     void TearDown() override

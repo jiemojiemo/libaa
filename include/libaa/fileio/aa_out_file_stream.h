@@ -8,13 +8,13 @@
 #include "aa_output_stream.h"
 namespace libaa
 {
-class OFileStream : public OutputStream
+class FileOutputStream : public OutputStream
 {
 public:
-    OFileStream() = default;
-    explicit OFileStream(const std::string& path);
+    FileOutputStream() = default;
+    explicit FileOutputStream(const std::string& path);
 
-    ~OFileStream() override;
+    ~FileOutputStream() override;
 
     bool isOpen() const;
 

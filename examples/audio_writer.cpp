@@ -18,7 +18,7 @@ int main()
     const string input_filename = "../../res/sound/es01_2ch_48k_i16.wav";
     string output_filename = "wav_writer_out.wav";
 
-    auto in_file = std::make_unique<FileStream>(input_filename);
+    auto in_file = std::make_unique<FileInputStream>(input_filename);
     if(!in_file->isOpen()){
         cerr << "cannot open input file\n";
         return -1;
@@ -38,7 +38,7 @@ int main()
     // read whole file
     reader.readSamples(data_refer_to.data(), num_channels, 0, 0,num_frames);
 
-    auto out_file = std::make_unique<OFileStream>(output_filename);
+    auto out_file = std::make_unique<FileOutputStream>(output_filename);
     if(!out_file->isOpen()){
         cerr << "cannot open output file\n";
         return -1;

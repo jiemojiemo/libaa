@@ -8,20 +8,20 @@
 
 namespace libaa
 {
-FileStream::FileStream(const std::string& path)
+FileInputStream::FileInputStream(const std::string& path)
 {
     open(path);
 }
 
-FileStream::~FileStream(){
+FileInputStream::~FileInputStream(){
     close();
 }
 
-bool FileStream::isOpen() const{
+bool FileInputStream::isOpen() const{
     return fp_ != nullptr;
 }
 
-int FileStream::open(const std::string& path) {
+int FileInputStream::open(const std::string& path) {
     // close first if open a file already.
     if(fp_){
         close();
@@ -40,7 +40,7 @@ int FileStream::open(const std::string& path) {
     return 0;
 }
 
-void FileStream::close(){
+void FileInputStream::close(){
     if(fp_){
         fclose(fp_);
         fp_ = nullptr;
@@ -48,7 +48,7 @@ void FileStream::close(){
     }
 }
 
-int64_t FileStream::read(uint8_t *dst_buf, int64_t size)  {
+int64_t FileInputStream::read(uint8_t *dst_buf, int64_t size)  {
     if(!isOpen()){
         std::cerr <<"cannot read in close status\n";
         return -1;
@@ -56,21 +56,21 @@ int64_t FileStream::read(uint8_t *dst_buf, int64_t size)  {
 
     return fread(dst_buf, sizeof(uint8_t), size, fp_);
 }
-int64_t FileStream::tellg()  {
+int64_t FileInputStream::tellg()  {
     if(!isOpen()){
         return 0;
     }
 
     return ftell(fp_);
 }
-int FileStream::seekg(int64_t pos, int mode)  {
+int FileInputStream::seekg(int64_t pos, int mode)  {
     if(!isOpen()){
         return -1;
     }
 
     return fseek(fp_, pos, mode);
 }
-int64_t FileStream::length() const  {
+int64_t FileInputStream::length() const  {
     return length_;
 }
 }

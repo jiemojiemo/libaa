@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
 
     const auto input_file_path = string(argv[1]);
 
-    auto in_stream = std::unique_ptr<InputStream>(new FileStream(input_file_path));
+    auto in_stream = std::unique_ptr<InputStream>(new FileInputStream(input_file_path));
 
     AACAudioFormatReader reader(std::move(in_stream));
     if(!reader.isOpenOk()){

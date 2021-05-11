@@ -32,7 +32,7 @@ public:
     const string bad_path = "/abc/bad_path.txt";
 
     std::unique_ptr<ScopeFile> scope_file;
-    OFileStream out_stream;
+    FileOutputStream out_stream;
 };
 
 
@@ -58,14 +58,14 @@ TEST_F(AOutFileStream, Return0IfOpenSuccessfully)
 
 TEST_F(AOutFileStream, InitWithOutputPathWillOpenFile)
 {
-    OFileStream out_stream(test_out_path);
+    FileOutputStream out_stream(test_out_path);
 
     ASSERT_TRUE(out_stream.isOpen());
 }
 
 TEST_F(AOutFileStream, InitWithBadOutputPathWillOpenFileFailed)
 {
-    OFileStream out_stream(bad_path);
+    FileOutputStream out_stream(bad_path);
 
     ASSERT_FALSE(out_stream.isOpen());
 }
@@ -81,7 +81,7 @@ TEST_F(AOutFileStream, NoLongerOpenAfterClose)
 
 TEST_F(AOutFileStream, DestructorWillCloseFile)
 {
-    auto* out_stream = new OFileStream;
+    auto* out_stream = new FileOutputStream;
     delete out_stream;
 }
 
@@ -92,7 +92,7 @@ TEST_F(AOutFileStream, CanWriteSomething)
     out_stream.write((uint8_t*)(test_txt.data()), test_txt.size());
     out_stream.close();
 
-    auto in_stream = std::make_unique<FileStream>(test_out_path);
+    auto in_stream = std::make_unique<FileInputStream>(test_out_path);
     string dst_buffer(test_txt.size(),'\0');
     in_stream->read((uint8_t*)(dst_buffer.data()), dst_buffer.size());
 

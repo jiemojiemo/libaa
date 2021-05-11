@@ -37,7 +37,7 @@ public:
     std::unique_ptr<ScopeFile> scope_file;
     std::unique_ptr<ScopeFile> scope_file2;
 
-    FileStream file_stream;
+    FileInputStream file_stream;
 };
 
 TEST_F(AFileStream, InCloseStatusWhenInit)
@@ -75,19 +75,19 @@ TEST_F(AFileStream, ReturnsFalseIfOpenFailed)
 
 TEST_F(AFileStream, CanInitWithFilePath)
 {
-    FileStream file_stream(file_path);
+    FileInputStream file_stream(file_path);
 }
 
 TEST_F(AFileStream, InitWithFilePathWillOpenFile)
 {
-    FileStream file_stream(file_path);
+    FileInputStream file_stream(file_path);
 
     ASSERT_TRUE(file_stream.isOpen());
 }
 
 TEST_F(AFileStream, IsNotOpenIfInitWithInvalidFilePath)
 {
-    FileStream file_stream(bad_file_path);
+    FileInputStream file_stream(bad_file_path);
 
     ASSERT_FALSE(file_stream.isOpen());
 }
@@ -103,7 +103,7 @@ TEST_F(AFileStream, NoLongerOpenAfterClose)
 
 TEST_F(AFileStream, DestructorWillCloseFile)
 {
-    auto* file_stream = new FileStream();
+    auto* file_stream = new FileInputStream();
     delete file_stream;
 }
 

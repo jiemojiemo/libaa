@@ -16,7 +16,7 @@ class AWaveFormatWriter : public Test
 public:
     void SetUp() override
     {
-        out_stream = std::make_unique<OFileStream>();
+        out_stream = std::make_unique<FileOutputStream>();
         out_stream->open("test_wav.wav");
 
         left_data.resize(num_samples, 0.2);
@@ -27,7 +27,7 @@ public:
         interleave_data.resize(num_channels * num_samples, 0.2);
     }
 
-    std::unique_ptr<OFileStream> out_stream;
+    std::unique_ptr<FileOutputStream> out_stream;
     const int sample_rate = 44100;
     const int num_channels = 2;
     const int num_bits = 32;
@@ -77,7 +77,7 @@ TEST_F(AWaveFormatWriter, NumBisIs32IfOpenSucessfully)
 
 TEST_F(AWaveFormatWriter, IsOpenReturnFalseIfOutputStreamOpenFailed)
 {
-    auto bad_stream = std::make_unique<OFileStream>("/bad/path");
+    auto bad_stream = std::make_unique<FileOutputStream>("/bad/path");
     ASSERT_FALSE(bad_stream->isOpen());
 
     WavFormatWriter writer(std::move(bad_stream), sample_rate, num_channels, num_bits);
