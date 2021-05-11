@@ -3,7 +3,7 @@
 // Created by William.Hua on 2021/2/9.
 //
 #include "libaa/fileio/aa_wav_audio_format_reader.h"
-#include "libaa/fileio/aa_file_stream.h"
+#include "libaa/fileio/aa_file_input_stream.h"
 #include "aa_test_helper.h"
 #include <gmock/gmock.h>
 #include <fstream>

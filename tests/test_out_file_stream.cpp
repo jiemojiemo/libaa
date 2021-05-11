@@ -3,8 +3,8 @@
 // Created by William.Hua on 2021/3/21.
 //
 #include <string>
-#include "libaa/fileio/aa_out_file_stream.h"
-#include "libaa/fileio/aa_file_stream.h"
+#include "libaa/fileio/aa_file_output_stream.h"
+#include "libaa/fileio/aa_file_input_stream.h"
 #include "aa_test_helper.h"
 #include <vector>
 #include <gmock/gmock.h>

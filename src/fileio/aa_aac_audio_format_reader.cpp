@@ -4,7 +4,7 @@
 //
 
 #include "libaa/fileio/aa_aac_audio_format_reader.h"
-#include "libaa/fileio/aa_file_stream.h"
+#include "libaa/fileio/aa_file_input_stream.h"
 #include "aacdecoder_lib.h"
 #include <numeric>
 #include <iostream>

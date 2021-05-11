@@ -3,9 +3,11 @@
 // Created by William.Hua on 2021/2/9.
 //
 #include "libaa/fileio/aa_mp3_audio_format_reader.h"
-#include "libaa/fileio/aa_file_stream.h"
+#include "libaa/fileio/aa_file_input_stream.h"
 
 #include "aa_test_helper.h"
+#include "libaa/fileio/aa_mp3_audio_format_writer.h"
+#include "libaa/fileio/aa_file_output_stream.h"
 #include <gmock/gmock.h>
 #include <fstream>
 #include <sstream>
@@ -25,10 +27,20 @@ public:
         dest[0] = left_buffer.data();
         dest[1] = right_buffer.data();
         dest[2] = third_buffer.data();
+
+        auto out_stream = std::make_unique<FileOutputStream>();
+        out_stream->open(test_file_name);
+
+        MP3FormatWriter writer(std::move(out_stream), sample_rate, num_channels, num_bits);
+        writer.writePlanar((const float**)dest, n_read_samples);
+        writer.close();
+
+        test_file = std::make_unique<ScopeFile>(test_file_name);
     }
 
     void TearDown() override
     {
+        test_file = nullptr;
     }
 
     const size_t sample_rate = 44100;
@@ -43,7 +55,9 @@ public:
     vector<float> third_buffer;
     float* dest[3];
 
-    const std::string test_file_name="../../res/sound/file_example_MP3_700KB.mp3";
+    const std::string test_file_name="libaa_test.mp3";
+    std::unique_ptr<ScopeFile> test_file;
+
 };
 
 class FakeStream : public InputStream
@@ -71,7 +85,7 @@ public:
 
 TEST_F(AMp3AudioFormatReader, InitWithInputStream)
 {
-    auto in_stream = std::unique_ptr<InputStream>(new FileStream(test_file_name));
+    auto in_stream = std::unique_ptr<InputStream>(new FileInputStream(test_file_name));
     Mp3AudioFormatReader reader(std::move(in_stream));
 }
 
@@ -86,7 +100,7 @@ TEST_F(AMp3AudioFormatReader, ReturnsFalseIfOpenFailed)
 
 TEST_F(AMp3AudioFormatReader, ReturnTrueIfOpenSuccessfully)
 {
-    auto in_stream = std::unique_ptr<InputStream>(new FileStream(test_file_name));
+    auto in_stream = std::unique_ptr<InputStream>(new FileInputStream(test_file_name));
 
     Mp3AudioFormatReader reader(std::move(in_stream));
 
@@ -105,7 +119,7 @@ TEST_F(AMp3AudioFormatReader, ReadReturnFalseIfOpenFailed)
 }
 TEST_F(AMp3AudioFormatReader, CanReadSamples)
 {
-    auto in_stream = std::unique_ptr<InputStream>(new FileStream(test_file_name));
+    auto in_stream = std::unique_ptr<InputStream>(new FileInputStream(test_file_name));
     Mp3AudioFormatReader reader(std::move(in_stream));
 
     auto ret = reader.readSamples(dest, num_channels, 0, 0, n_read_samples);
@@ -115,7 +129,7 @@ TEST_F(AMp3AudioFormatReader, CanReadSamples)
 
 TEST_F(AMp3AudioFormatReader, ReadWithStartOffsetOfFileWillChangePosition)
 {
-    auto in_stream = std::unique_ptr<InputStream>(new FileStream(test_file_name));
+    auto in_stream = std::unique_ptr<InputStream>(new FileInputStream(test_file_name));
     Mp3AudioFormatReader reader(std::move(in_stream));
 
     const int offset = 5;

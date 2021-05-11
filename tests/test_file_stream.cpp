@@ -2,7 +2,7 @@
 //
 // Created by William.Hua on 2021/3/19.
 //
-#include "libaa/fileio/aa_file_stream.h"
+#include "libaa/fileio/aa_file_input_stream.h"
 #include <gmock/gmock.h>
 #include <memory>
 #include <iostream>

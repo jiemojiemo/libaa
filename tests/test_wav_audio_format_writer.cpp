@@ -3,7 +3,7 @@
 // Created by William.Hua on 2021/3/8.
 //
 #include "libaa/fileio/aa_wav_audio_format_writer.h"
-#include "libaa/fileio/aa_out_file_stream.h"
+#include "libaa/fileio/aa_file_output_stream.h"
 #include <gmock/gmock.h>
 #include <fstream>
 #include <vector>

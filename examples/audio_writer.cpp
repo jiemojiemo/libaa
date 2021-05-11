@@ -4,8 +4,8 @@
 //
 #include "libaa/fileio/aa_wav_audio_format_writer.h"
 #include "libaa/fileio/aa_wav_audio_format_reader.h"
-#include "libaa/fileio/aa_file_stream.h"
-#include "libaa/fileio/aa_out_file_stream.h"
+#include "libaa/fileio/aa_file_input_stream.h"
+#include "libaa/fileio/aa_file_output_stream.h"
 #include <memory>
 #include <string>
 #include <fstream>
