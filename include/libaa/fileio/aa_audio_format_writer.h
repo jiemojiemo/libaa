@@ -27,9 +27,7 @@ public:
 
     virtual bool writePlanar(const float** samples, int num_samples) = 0;
     virtual bool writeInterleave(const float* samples, int num_samples) = 0;
-    virtual bool isOpen() const {
-        return false;
-    }
+    virtual bool isOpen() const = 0;
 
     virtual void flush() = 0;
 

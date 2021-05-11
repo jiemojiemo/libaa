@@ -40,6 +40,8 @@ public:
             parent_->sample_rate = rate;
             parent_->num_channels = channels;
             parent_->num_bits = 32;
+        }else{
+            close();
         }
     }
 

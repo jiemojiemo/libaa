@@ -18,6 +18,7 @@ add_executable(unit_test
         # fileio
         test_audio_file.cpp
         test_wav_audio_format_reader.cpp
+        test_mp3_audio_format_writer.cpp
         # remove this test temporarily, since aac write is not finished
 #        test_mp3_audio_format_reader.cpp
         test_wav_audio_format_writer.cpp

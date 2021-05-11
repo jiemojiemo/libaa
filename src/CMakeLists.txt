@@ -20,7 +20,7 @@ target_include_directories(libaa
 
 target_link_libraries(libaa
         PRIVATE dr_libs kissfft
-        PUBLIC  fdk-aac)
+        PUBLIC  fdk-aac mp3lame)
 target_compile_options(libaa PUBLIC
         -Wall -Wextra -pedantic -Werror)
 

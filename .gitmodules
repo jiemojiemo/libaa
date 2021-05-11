@@ -5,3 +5,6 @@
 [submodule "third_party/fdk-aac"]
 	path = third_party/fdk-aac
 	url = https://github.com/mstorsjo/fdk-aac
+[submodule "third_party/libmp3lame"]
+	path = third_party/libmp3lame
+	url = https://github.com/Iunusov/libmp3lame-CMAKE
