@@ -35,6 +35,8 @@ add_executable(unit_test
         test_file_stream.cpp
         test_out_file_stream.cpp
 
+        test_audio_processor_parameter_float.cpp
+
         )
 target_link_libraries(unit_test
         gmock_main
