@@ -1,0 +1,11 @@
+add_libaa_test(aa_dsp_unit_test
+        test_delay_line.cpp
+        test_delay_line_array.cpp
+        test_dtw.cpp
+        test_features.cpp
+        test_fft.cpp
+        test_IIR_filters_coeffs.cpp
+        test_lfo.cpp
+        test_lfo_generator.cpp
+        test_window.cpp
+        test_yin.cpp)

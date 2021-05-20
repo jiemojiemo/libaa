@@ -3,7 +3,7 @@
 //
 
 #include "libaa/dsp/aa_fft.h"
-#include "aa_test_helper.h"
+#include "../aa_test_helper.h"
 #include <gmock/gmock.h>
 #include <vector>
 #include <complex>

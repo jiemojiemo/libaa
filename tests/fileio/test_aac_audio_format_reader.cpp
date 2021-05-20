@@ -38,7 +38,7 @@ class AAACAudioFormatReader : public Test
 public:
     void SetUp() override
     {
-        in_stream = std::make_unique<FileStream>(test_file_name);
+        in_stream = std::make_unique<FileInputStream>(test_file_name);
         left_buffer.resize(n_read_samples);
         right_buffer.resize(n_read_samples);
         third_buffer.resize(n_read_samples);
@@ -101,7 +101,7 @@ TEST_F(AAACAudioFormatReader, CanGetAudioInformationIfOpenSuccessfully)
 
 TEST_F(AAACAudioFormatReader, CanReadSamples)
 {
-    auto in_stream = std::unique_ptr<InputStream>(new FileStream(test_file_name));
+    auto in_stream = std::unique_ptr<InputStream>(new FileInputStream(test_file_name));
     AACAudioFormatReader reader(std::move(in_stream));
 
     auto ret = reader.readSamples(dest, num_channels, 0, 0, n_read_samples);
@@ -111,7 +111,7 @@ TEST_F(AAACAudioFormatReader, CanReadSamples)
 
 TEST_F(AAACAudioFormatReader, ReadWithStartOffsetOfFileWillChangePosition)
 {
-    auto in_stream = std::unique_ptr<InputStream>(new FileStream(test_file_name));
+    auto in_stream = std::unique_ptr<InputStream>(new FileInputStream(test_file_name));
     AACAudioFormatReader reader(std::move(in_stream));
 
     const int offset = 5;

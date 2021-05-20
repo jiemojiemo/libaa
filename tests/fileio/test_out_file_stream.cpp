@@ -5,7 +5,7 @@
 #include <string>
 #include "libaa/fileio/aa_file_output_stream.h"
 #include "libaa/fileio/aa_file_input_stream.h"
-#include "aa_test_helper.h"
+#include "../aa_test_helper.h"
 #include <vector>
 #include <gmock/gmock.h>
 using namespace testing;

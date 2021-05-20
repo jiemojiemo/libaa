@@ -1,50 +1,23 @@
-# test dsp
-add_executable(unit_test
-        aa_scope_wave_file.cpp
+add_library(aa_test_helper STATIC aa_scope_wave_file.cpp)
+target_include_directories(aa_test_helper PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(aa_test_helper PUBLIC libaa gmock)
 
-        # dsp
-        test_fft.cpp
-        test_window.cpp
-        test_yin.cpp
-        test_dtw.cpp
-        test_features.cpp
-        test_lfo.cpp
+function(add_libaa_test unit_test_name)
+    add_executable(${unit_test_name} ${ARGN})
+    target_link_libraries(${unit_test_name} PRIVATE
+            gmock_main
+            libaa
+            aa_test_helper
+            )
 
-        # audio basics
-        test_audio_buffer.cpp
-        test_delay_line.cpp
-        test_delay_line_array.cpp
+    add_test(
+            NAME ${unit_test_name}
+            WORKING_DIRECTORY ./
+            COMMAND ${unit_test_name}
+    )
+endfunction()
 
-        # fileio
-        test_audio_file.cpp
-        test_wav_audio_format_reader.cpp
-        test_mp3_audio_format_writer.cpp
-        # remove this test temporarily, since aac write is not finished
-        test_mp3_audio_format_reader.cpp
-        test_wav_audio_format_writer.cpp
-        # remove this test temporarily, since aac write is not finished
-#        test_aac_audio_format_reader.cpp
-
-        # audio effect
-        test_audio_effect.cpp
-        test_IIR_filters_coeffs.cpp
-
-        # signal generator
-        test_lfo_generator.cpp
-
-        test_file_stream.cpp
-        test_out_file_stream.cpp
-
-        test_audio_processor_parameter_float.cpp
-
-        )
-target_link_libraries(unit_test
-        gmock_main
-        libaa
-        dr_libs
-        )
-
-add_test(
-        NAME unit_test
-        COMMAND ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}/unit_test
-)
+add_subdirectory(fileio)
+add_subdirectory(core)
+add_subdirectory(dsp)
+add_subdirectory(processor)

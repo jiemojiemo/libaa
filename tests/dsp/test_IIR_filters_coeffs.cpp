@@ -4,7 +4,7 @@
 //
 
 #include "libaa/audio_effect/aa_iir_filter.h"
-#include "aa_test_helper.h"
+#include "../aa_test_helper.h"
 #include <array>
 #include <gmock/gmock.h>
 

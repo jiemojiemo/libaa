@@ -4,7 +4,7 @@
 //
 #include "libaa/fileio/aa_wav_audio_format_reader.h"
 #include "libaa/fileio/aa_file_input_stream.h"
-#include "aa_test_helper.h"
+#include "../aa_test_helper.h"
 #include <gmock/gmock.h>
 #include <fstream>
 #include <sstream>

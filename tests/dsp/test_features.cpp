@@ -6,7 +6,7 @@
 #include "libaa/dsp/aa_stft.h"
 #include "libaa/dsp/aa_window.h"
 #include "libaa/dsp/aa_mfcc.h"
-#include "aa_test_helper.h"
+#include "../aa_test_helper.h"
 #include <gmock/gmock.h>
 #include <Eigen/Core>
 #include <vector>

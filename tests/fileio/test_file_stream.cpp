@@ -6,7 +6,7 @@
 #include <gmock/gmock.h>
 #include <memory>
 #include <iostream>
-#include "aa_test_helper.h"
+#include "../aa_test_helper.h"
 
 using namespace std;
 using namespace testing;
