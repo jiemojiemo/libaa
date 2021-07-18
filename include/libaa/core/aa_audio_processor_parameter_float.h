@@ -54,6 +54,8 @@ private:
     float current_normalized_value_{0};
 };
 
+bool operator==(const AudioProcessorParameterFloat& lhs, const AudioProcessorParameterFloat& rhs);
+
 }
 
 #endif //LIBAA_INCLUDE_LIBAA_CORE_AA_AUDIO_PROCESSOR_PARAMETER_FLOAT_H

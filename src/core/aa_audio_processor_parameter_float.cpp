@@ -9,7 +9,7 @@
 namespace libaa
 {
 AudioProcessorParameterFloat::AudioProcessorParameterFloat(int param_id,
-                                      float default_val,float min_plain_value, float max_plain_value):
+                                                           float default_val,float min_plain_value, float max_plain_value):
     id_(param_id),
     plain_value_(default_val),
     min_plain_value_(min_plain_value),
@@ -107,4 +107,9 @@ float AudioProcessorParameterFloat::clip(float v, float min, float max) const
     return  v < min ? min : (v > max ? max : v);
 }
 
+bool operator==(const AudioProcessorParameterFloat &lhs, const AudioProcessorParameterFloat &rhs) {
+    return lhs.getPlainValue() == rhs.getPlainValue()
+        && lhs.getMinPlainValue() == rhs.getMinPlainValue()
+        && lhs.getMaxPlainValue() == rhs.getMaxPlainValue();
+}
 }
