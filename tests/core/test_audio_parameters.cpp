@@ -23,7 +23,7 @@ public:
     void addFloatParameter(int param_id, float default_val,float min_plain_value, float max_plain_value){
         eraseParameterIfExist(param_id);
 
-        parameters_list.emplace_back(param_id, default_val, min_plain_value, max_plain_value);
+        parameters_list.emplace_back(ParameterType::kFloat, param_id, default_val, min_plain_value, max_plain_value);
     }
 
     const AudioProcessorParameter* get(int param_id){
@@ -82,7 +82,7 @@ TEST_F(AParameters, CanAddFloatParameter)
     params.addFloatParameter(0, 1.0, 0, 2.0);
 
     auto* p = params.get(0);
-    AudioProcessorParameter expected{0, 1.0, 0, 2.0};
+    AudioProcessorParameter expected{ParameterType::kFloat, 0, 1.0, 0, 2.0};
 
     ASSERT_THAT(*p, Eq(expected));
 }
@@ -93,7 +93,7 @@ TEST_F(AParameters, AddParamterWithExistedIsWillOverwriteBeforeOne)
     params.addFloatParameter(param_id, 1.0, 0, 2.0);
     params.addFloatParameter(param_id, 2.0, 0, 2.0);
 
-    AudioProcessorParameter expected{param_id, 2.0, 0, 2.0};
+    AudioProcessorParameter expected{ParameterType::kFloat, param_id, 2.0, 0, 2.0};
     ASSERT_THAT(params.size(), Eq(1));
     ASSERT_THAT(params.get(param_id), Pointee(expected));
 }

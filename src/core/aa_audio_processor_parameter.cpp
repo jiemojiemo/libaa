@@ -8,8 +8,10 @@
 
 namespace libaa
 {
-AudioProcessorParameter::AudioProcessorParameter(int param_id,
+AudioProcessorParameter::AudioProcessorParameter(ParameterType type,
+                                                 int param_id,
                                                  float default_val, float min_plain_value, float max_plain_value):
+    type_(type),
     id_(param_id),
     plain_value_(default_val),
     min_plain_value_(min_plain_value),
@@ -27,6 +29,7 @@ AudioProcessorParameter::AudioProcessorParameter(int param_id,
 
     current_normalized_value_ = convertPlainValueToNormalizedValue(plain_value_);
 }
+
 
 float AudioProcessorParameter::getDefaultPlainValue() const
 {
@@ -105,6 +108,9 @@ bool AudioProcessorParameter::isInRange(float v) const
 float AudioProcessorParameter::clip(float v, float min, float max) const
 {
     return  v < min ? min : (v > max ? max : v);
+}
+ParameterType AudioProcessorParameter::getParameterType() const {
+    return type_;
 }
 
 bool operator==(const AudioProcessorParameter &lhs, const AudioProcessorParameter &rhs) {

@@ -9,13 +9,20 @@
 #include <string>
 namespace libaa
 {
+enum class ParameterType
+{
+    kFloat = 0,
+};
+
 class AudioProcessorParameter
 {
 public:
-    explicit AudioProcessorParameter(int param_id,
+    explicit AudioProcessorParameter(ParameterType type, int param_id,
                                      float default_val, float min_plain_value, float max_plain_value);
 
     float getDefaultPlainValue() const;
+
+    ParameterType getParameterType() const;
 
     int getParameterID() const;
 
@@ -47,6 +54,7 @@ private:
     float clip(float v, float min, float max) const;
 
 private:
+    ParameterType type_{ParameterType::kFloat};
     int id_{0};
     float plain_value_{0};
     float min_plain_value_{0};
