@@ -2,14 +2,14 @@
 //
 // Created by William.Hua on 2021/5/19.
 //
-#ifndef LIBAA_INCLUDE_LIBAA_CORE_AA_AUDIO_PROCESSOR_PARAMETER_FLOAT_H
-#include "libaa/core/aa_audio_processor_parameter_float.h"
+#ifndef LIBAA_INCLUDE_LIBAA_CORE_AA_AUDIO_PROCESSOR_PARAMETER_H
+#include "libaa/core/aa_audio_processor_parameter.h"
 #endif
 
 namespace libaa
 {
-AudioProcessorParameterFloat::AudioProcessorParameterFloat(int param_id,
-                                                           float default_val,float min_plain_value, float max_plain_value):
+AudioProcessorParameter::AudioProcessorParameter(int param_id,
+                                                 float default_val, float min_plain_value, float max_plain_value):
     id_(param_id),
     plain_value_(default_val),
     min_plain_value_(min_plain_value),
@@ -28,86 +28,86 @@ AudioProcessorParameterFloat::AudioProcessorParameterFloat(int param_id,
     current_normalized_value_ = convertPlainValueToNormalizedValue(plain_value_);
 }
 
-float AudioProcessorParameterFloat::getDefaultPlainValue() const
+float AudioProcessorParameter::getDefaultPlainValue() const
 {
     return plain_value_;
 }
 
-int AudioProcessorParameterFloat::getParameterID() const
+int AudioProcessorParameter::getParameterID() const
 {
     return id_;
 }
 
-float AudioProcessorParameterFloat::getMinPlainValue() const
+float AudioProcessorParameter::getMinPlainValue() const
 {
     return min_plain_value_;
 }
 
-float AudioProcessorParameterFloat::getMaxPlainValue() const
+float AudioProcessorParameter::getMaxPlainValue() const
 {
     return max_plain_value_;
 }
 
-float AudioProcessorParameterFloat::convertPlainValueToNormalizedValue(float plain_value) const
+float AudioProcessorParameter::convertPlainValueToNormalizedValue(float plain_value) const
 {
     plain_value = clip(plain_value, getMinPlainValue(), getMaxPlainValue());
 
     return (plain_value - getMinPlainValue()) / (getMaxPlainValue() - getMinPlainValue());
 }
 
-float AudioProcessorParameterFloat::convertNormalizedValueToPlainValue(float norm_value) const
+float AudioProcessorParameter::convertNormalizedValueToPlainValue(float norm_value) const
 {
     norm_value = clip(norm_value, 0, 1);
 
     return (getMaxPlainValue() - getMinPlainValue()) * norm_value + getMinPlainValue();
 }
 
-float AudioProcessorParameterFloat::getPlainValue() const
+float AudioProcessorParameter::getPlainValue() const
 {
     return convertNormalizedValueToPlainValue(current_normalized_value_);
 }
 
-float AudioProcessorParameterFloat::getNormalizedValue() const
+float AudioProcessorParameter::getNormalizedValue() const
 {
     return current_normalized_value_;
 }
 
-std::string AudioProcessorParameterFloat::getPlainValueString() const
+std::string AudioProcessorParameter::getPlainValueString() const
 {
     return std::to_string(getPlainValue());
 }
 
-void AudioProcessorParameterFloat::setPlainValue(float plain_value)
+void AudioProcessorParameter::setPlainValue(float plain_value)
 {
     current_normalized_value_ = convertPlainValueToNormalizedValue(plain_value);
 }
 
-void AudioProcessorParameterFloat::setPlainValue(const std::string& plain_value_str)
+void AudioProcessorParameter::setPlainValue(const std::string& plain_value_str)
 {
     setPlainValue(std::stof(plain_value_str));
 }
 
-void AudioProcessorParameterFloat::setNormalizedValue(float normalized_value)
+void AudioProcessorParameter::setNormalizedValue(float normalized_value)
 {
     current_normalized_value_ = clip(normalized_value, 0, 1);
 }
 
-void AudioProcessorParameterFloat::setNormalizedValue(const std::string& normalized_value_str)
+void AudioProcessorParameter::setNormalizedValue(const std::string& normalized_value_str)
 {
     setNormalizedValue(std::stof(normalized_value_str));
 }
 
-bool AudioProcessorParameterFloat::isInRange(float v) const
+bool AudioProcessorParameter::isInRange(float v) const
 {
     return getMinPlainValue() <= v && v <= getMaxPlainValue();
 }
 
-float AudioProcessorParameterFloat::clip(float v, float min, float max) const
+float AudioProcessorParameter::clip(float v, float min, float max) const
 {
     return  v < min ? min : (v > max ? max : v);
 }
 
-bool operator==(const AudioProcessorParameterFloat &lhs, const AudioProcessorParameterFloat &rhs) {
+bool operator==(const AudioProcessorParameter &lhs, const AudioProcessorParameter &rhs) {
     return lhs.getPlainValue() == rhs.getPlainValue()
         && lhs.getMinPlainValue() == rhs.getMinPlainValue()
         && lhs.getMaxPlainValue() == rhs.getMaxPlainValue();

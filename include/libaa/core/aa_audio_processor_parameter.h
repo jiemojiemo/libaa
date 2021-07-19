@@ -3,17 +3,17 @@
 // Created by William.Hua on 2021/5/19.
 //
 
-#ifndef LIBAA_INCLUDE_LIBAA_CORE_AA_AUDIO_PROCESSOR_PARAMETER_FLOAT_H
-#define LIBAA_INCLUDE_LIBAA_CORE_AA_AUDIO_PROCESSOR_PARAMETER_FLOAT_H
+#ifndef LIBAA_INCLUDE_LIBAA_CORE_AA_AUDIO_PROCESSOR_PARAMETER_H
+#define LIBAA_INCLUDE_LIBAA_CORE_AA_AUDIO_PROCESSOR_PARAMETER_H
 #pragma once
 #include <string>
 namespace libaa
 {
-class AudioProcessorParameterFloat
+class AudioProcessorParameter
 {
 public:
-    explicit AudioProcessorParameterFloat(int param_id,
-                                          float default_val,float min_plain_value, float max_plain_value);
+    explicit AudioProcessorParameter(int param_id,
+                                     float default_val, float min_plain_value, float max_plain_value);
 
     float getDefaultPlainValue() const;
 
@@ -54,8 +54,8 @@ private:
     float current_normalized_value_{0};
 };
 
-bool operator==(const AudioProcessorParameterFloat& lhs, const AudioProcessorParameterFloat& rhs);
+bool operator==(const AudioProcessorParameter& lhs, const AudioProcessorParameter& rhs);
 
 }
 
-#endif //LIBAA_INCLUDE_LIBAA_CORE_AA_AUDIO_PROCESSOR_PARAMETER_FLOAT_H
+#endif //LIBAA_INCLUDE_LIBAA_CORE_AA_AUDIO_PROCESSOR_PARAMETER_H

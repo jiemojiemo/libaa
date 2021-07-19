@@ -2,7 +2,7 @@
 //
 // Created by William.Hua on 2021/5/19.
 //
-#include "libaa/core/aa_audio_processor_parameter_float.h"
+#include "libaa/core/aa_audio_processor_parameter.h"
 #include <gmock/gmock.h>
 #include <memory>
 using namespace std;
@@ -14,20 +14,20 @@ class AAudioProcessorParameter : public Test
 public:
     void SetUp() override
     {
-        param = make_unique<AudioProcessorParameterFloat>(param_id, default_value, min_plain_value, max_plain_value);
+        param = make_unique<AudioProcessorParameter>(param_id, default_value, min_plain_value, max_plain_value);
     }
     int param_id = 0;
     float default_value = 1;
     float min_plain_value = -10;
     float max_plain_value = 10;
 
-    std::unique_ptr<AudioProcessorParameterFloat> param;
+    std::unique_ptr<AudioProcessorParameter> param;
 };
 
 
 TEST_F(AAudioProcessorParameter, CanInitWithIDAndValues)
 {
-    AudioProcessorParameterFloat p(param_id, default_value, min_plain_value, max_plain_value);
+    AudioProcessorParameter p(param_id, default_value, min_plain_value, max_plain_value);
 }
 
 TEST_F(AAudioProcessorParameter, CanGetPlainValueAfterInit)
@@ -48,14 +48,14 @@ TEST_F(AAudioProcessorParameter, CanGetParamterRange)
 
 TEST_F(AAudioProcessorParameter, DefaultValueSetToMinValueIfNotInRange)
 {
-    param = std::make_unique<AudioProcessorParameterFloat>(param_id, 100, -10, 10);
+    param = std::make_unique<AudioProcessorParameter>(param_id, 100, -10, 10);
 
     ASSERT_THAT(param->getDefaultPlainValue(), Eq(param->getMinPlainValue()));
 }
 
 TEST_F(AAudioProcessorParameter, SetMinValueToMaxValueIfInitMinValueLargeThanMax)
 {
-    param = std::make_unique<AudioProcessorParameterFloat>(param_id, default_value, 100, 10);
+    param = std::make_unique<AudioProcessorParameter>(param_id, default_value, 100, 10);
 
     ASSERT_THAT(param->getMinPlainValue(), Eq(max_plain_value));
 }
