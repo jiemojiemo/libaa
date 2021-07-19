@@ -30,6 +30,11 @@ TEST_F(AAudioProcessorParameter, CanInitWithIDAndValues)
     AudioProcessorParameter p(ParameterType::kFloat, param_id, default_value, min_plain_value, max_plain_value);
 }
 
+TEST_F(AAudioProcessorParameter, CanGetParameterType)
+{
+    ASSERT_THAT(param->getParameterType(), Eq(ParameterType::kFloat));
+}
+
 TEST_F(AAudioProcessorParameter, CanGetPlainValueAfterInit)
 {
     ASSERT_THAT(param->getDefaultPlainValue(), Eq(default_value));
