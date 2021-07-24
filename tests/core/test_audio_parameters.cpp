@@ -24,36 +24,23 @@ TEST_F(AParameters, DefaultContructWithEmpty)
 
 TEST_F(AParameters, AddParametersIncreaseTheSize)
 {
-    params.addFloatParameter(0, 1.0, 0, 2.0);
+    params.pushFloatParameter(1.0, 0, 2.0);
 
     ASSERT_THAT(params.size(), Eq(1));
 }
 
 TEST_F(AParameters, CanAddFloatParameter)
 {
-    params.addFloatParameter(0, 1.0, 0, 2.0);
+    params.pushFloatParameter(1.0, 0, 2.0);
 
-    auto* p = params.get(0);
+    AudioProcessorParameter& p = params.get(0);
     AudioProcessorParameter expected{ParameterType::kFloat, 0, 1.0, 0, 2.0};
 
-    ASSERT_THAT(*p, Eq(expected));
+    ASSERT_THAT(p, Eq(expected));
 }
 
-TEST_F(AParameters, AddParamterWithExistedIsWillOverwriteBeforeOne)
+TEST_F(AParameters, ThrowIfParameterIndexNotExist)
 {
-    int param_id = 0;
-    params.addFloatParameter(param_id, 1.0, 0, 2.0);
-    params.addFloatParameter(param_id, 2.0, 0, 2.0);
-
-    AudioProcessorParameter expected{ParameterType::kFloat, param_id, 2.0, 0, 2.0};
-    ASSERT_THAT(params.size(), Eq(1));
-    ASSERT_THAT(params.get(param_id), Pointee(expected));
-}
-
-TEST_F(AParameters, GetNullptrIfIDNotExist)
-{
-    auto* p = params.get(2);
-
-    ASSERT_THAT(p, IsNull());
+    EXPECT_ANY_THROW(params.get(2));
 }
 

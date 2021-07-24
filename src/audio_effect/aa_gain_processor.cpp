@@ -45,7 +45,7 @@ const Parameters& GainProcessor::getParameters() const{
 
 
 void GainProcessor::applyGain(float* out_buffer, size_t out_size){
-    float gain_db  = params_.get(0)->getPlainValue();
+    float gain_db  = params_.get(0).getPlainValue();
     if(gain_db != 0.0f){
         float gain_scale = db_to_scale(gain_db);
         for(size_t i = 0; i < out_size; ++i)
@@ -58,9 +58,18 @@ void GainProcessor::applyGain(float* out_buffer, size_t out_size){
 Parameters GainProcessor::buildParameters(float gain_db){
     Parameters params;
 
-    params.addFloatParameter(0, gain_db, -75, 35);
+    params.pushFloatParameter(gain_db, -75, 35);
 
     return params;
+}
+int GainProcessor::setParameter(int param_index, float normalized_value) {
+    try{
+        AudioProcessorParameter& p = params_.get(param_index);
+        p.setNormalizedValue(normalized_value);
+        return 0;
+    }catch (...){
+        return -1;
+    }
 }
 
 }
