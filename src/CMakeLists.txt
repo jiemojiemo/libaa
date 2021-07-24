@@ -30,3 +30,17 @@ target_compile_options(libaa PRIVATE
 target_compile_options(libaa PUBLIC -Wno-missing-braces)
 
 #add_compile_options( -Wno-unused-function -Wno-unused-parameter -Wno-missing-braces )
+
+if(LIBAA_INSTALL)
+    install(TARGETS libaa
+            EXPORT libaaTargets
+            LIBRARY DESTINATION lib  # 动态库安装路径
+            ARCHIVE DESTINATION lib  # 静态库安装路径
+            )
+
+    install(
+            DIRECTORY ${LIBAA_INC_DRI}/
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+            FILES_MATCHING PATTERN "*.h"
+    )
+endif()

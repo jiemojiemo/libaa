@@ -29,21 +29,20 @@ TEST_F(AGainProcessor, CanReportCorretName)
 
 TEST_F(AGainProcessor, GainParameterDefaultIsExpected)
 {
-    auto* param = gain.getParameters().get(0);
+    const AudioProcessorParameter& param = gain.getParameters().get(0);
 
-    ASSERT_THAT(param, NotNull());
-    ASSERT_THAT(param->getParameterType(), Eq(ParameterType::kFloat));
-    ASSERT_THAT(param->getDefaultPlainValue(), Eq(0));
-    ASSERT_THAT(param->getMinPlainValue(), Eq(-75));
-    ASSERT_THAT(param->getMaxPlainValue(), Eq(35));
+    ASSERT_THAT(param.getParameterType(), Eq(ParameterType::kFloat));
+    ASSERT_THAT(param.getDefaultPlainValue(), Eq(0));
+    ASSERT_THAT(param.getMinPlainValue(), Eq(-75));
+    ASSERT_THAT(param.getMaxPlainValue(), Eq(35));
 }
 
 TEST_F(AGainProcessor, CanContructWithGainDb)
 {
     gain = GainProcessor{2.0};
-    auto* param = gain.getParameters().get(0);
+    const AudioProcessorParameter& param = gain.getParameters().get(0);
 
-    ASSERT_THAT(param->getPlainValue(), Eq(2.0f));
+    ASSERT_THAT(param.getPlainValue(), Eq(2.0f));
 }
 
 MATCHER_P(FloatNearPointwise, tol, "Out of range") {
@@ -74,4 +73,26 @@ TEST_F(AGainProcessor, ApplyGain)
     std::vector<float> expected(num_block_size, input_scale*db_to_scale(gain_db));
 
     ASSERT_THAT(out_data, Pointwise( FloatNearPointwise(1e-8), expected));
+}
+
+TEST_F(AGainProcessor, CanSetParameter)
+{
+    int ret = gain.setParameter(0, 0.5);
+
+    ASSERT_THAT(ret, Eq(0));
+}
+
+TEST_F(AGainProcessor, SetParameterFailedIfIndexNotExist)
+{
+    int ret = gain.setParameter(10, 0.5);
+
+    ASSERT_THAT(ret, Eq(-1));
+}
+
+TEST_F(AGainProcessor, ParameterChangedAfterSetParameter)
+{
+    gain.setParameter(0, 0.5);
+    const AudioProcessorParameter& params = gain.getParameters().get(0);
+
+    ASSERT_THAT(params.getNormalizedValue(), 0.5);
 }

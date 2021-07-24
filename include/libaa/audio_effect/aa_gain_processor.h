@@ -25,6 +25,8 @@ public:
 
     const Parameters& getParameters() const;
 
+    int setParameter(int param_index, float normalized_value);
+
 private:
     void applyGain(float* out_buffer, size_t out_size);
     static Parameters buildParameters(float gain_db);
