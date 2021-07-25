@@ -32,13 +32,6 @@ void GainProcessor::processBlock(AudioBuffer<float> &buffer)  {
 (void)(buffer);
 }
 
-void GainProcessor::process(float* in_buffer, size_t in_size,
-             float* out_buffer, size_t out_size){
-    std::copy_n(in_buffer, in_size, out_buffer);
-
-    applyGain(out_buffer, out_size);
-}
-
 const Parameters& GainProcessor::getParameters() const{
     return params_;
 }
@@ -69,6 +62,14 @@ int GainProcessor::setParameter(int param_index, float normalized_value) {
         return 0;
     }catch (...){
         return -1;
+    }
+}
+void GainProcessor::process(AudioBufferNew<float> *in_block, AudioBufferNew<float> *out_block) {
+    out_block->copyFrom(in_block);
+
+    for(auto c = 0u; c < out_block->getNumberChannels(); ++c){
+        float* channel_data = out_block->getWriterPointer(c);
+        applyGain(channel_data, out_block->getNumberFrames());
     }
 }
 
