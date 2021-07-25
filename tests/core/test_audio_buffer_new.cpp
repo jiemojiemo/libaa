@@ -4,6 +4,7 @@
 //
 
 #include <gmock/gmock.h>
+#include "aa_test_helper.h"
 #include "libaa/core/aa_audio_buffer_new.h"
 using namespace testing;
 using namespace std;
@@ -84,4 +85,14 @@ TEST_F(AAudioBufferNew, DoCopyWhenConstructWithList)
     ASSERT_THAT(audio_buffer.getReadPointer(0)[2], Eq(3.0));
 
     ASSERT_THAT(audio_buffer.getReadPointer(1)[0], Eq(2));
+}
+
+TEST_F(AAudioBufferNew, CanCopyFromOtherBuffer)
+{
+    AudioBufferNew<float> input_buffer(channel_data);
+    AudioBufferNew<float> output_buffer(input_buffer.getNumberChannels(), input_buffer.getNumberFrames());
+
+    output_buffer.copyFrom(&input_buffer);
+
+    ASSERT_THAT(output_buffer, Eq(input_buffer));
 }

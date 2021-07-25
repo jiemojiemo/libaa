@@ -51,6 +51,12 @@ public:
         return &data_[channel * num_frames_];
     }
 
+    void copyFrom(AudioBufferNew<T>* other){
+        for(auto c = 0u; c < getNumberChannels(); ++c){
+            std::copy_n(other->getReadPointer(c), getNumberFrames(), this->getWriterPointer(c));
+        }
+    }
+
 private:
     size_t findTheMaxFramesSize(const std::list<std::vector<float>>& channel_data)
     {
