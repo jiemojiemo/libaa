@@ -8,6 +8,7 @@
 #pragma once
 #include "libaa/audio_effect/aa_audio_effect_processor.h"
 #include "libaa/core/aa_audio_processor_parameters.h"
+#include "libaa/core/aa_audio_buffer_new.h"
 namespace libaa
 {
 class GainProcessor : public AudioEffectProcessor
@@ -20,8 +21,8 @@ public:
     void releaseResources() override;
     void processBlock(AudioBuffer<float> &buffer) override;
 
-    void process(float* in_buffer, size_t in_size,
-                 float* out_buffer, size_t out_size);
+    void process(AudioBufferNew<float>* in_block,
+                 AudioBufferNew<float>* out_block);
 
     const Parameters& getParameters() const;
 

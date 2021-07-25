@@ -6,6 +6,7 @@
 #include <gmock/gmock.h>
 #include "libaa/audio_effect/aa_gain_processor.h"
 #include "libaa/dsp/aa_db_utils.h"
+#include "aa_test_helper.h"
 
 using namespace testing;
 using namespace libaa;
@@ -45,19 +46,15 @@ TEST_F(AGainProcessor, CanContructWithGainDb)
     ASSERT_THAT(param.getPlainValue(), Eq(2.0f));
 }
 
-MATCHER_P(FloatNearPointwise, tol, "Out of range") {
-    return (std::get<0>(arg)>std::get<1>(arg)-tol && std::get<0>(arg)<std::get<1>(arg)+tol) ;
-}
-
 TEST_F(AGainProcessor, DataNotChangedIfGainDbIsZero)
 {
-    int num_block_size = 10;
-    std::vector<float> in_data(num_block_size, 0.5);
-    std::vector<float> out_data(num_block_size);
+    AudioBufferNew<float> in_buffer({{1,2,3},
+                                     {1,2,3}});
+    AudioBufferNew<float> out_buffer(in_buffer.getNumberChannels(), in_buffer.getNumberFrames());
 
-    gain.process(in_data.data(), in_data.size(), out_data.data(), out_data.size());
+    gain.process(&in_buffer, &out_buffer);
 
-    ASSERT_THAT(out_data, Pointwise( FloatNearPointwise(1e-8), in_data));
+    ASSERT_THAT(in_buffer, Eq(out_buffer));
 }
 
 TEST_F(AGainProcessor, ApplyGain)
@@ -65,14 +62,23 @@ TEST_F(AGainProcessor, ApplyGain)
     int num_block_size = 10;
     float input_scale = 0.5;
     float gain_db = 2.0;
-    std::vector<float> in_data(num_block_size, input_scale);
-    std::vector<float> out_data(num_block_size);
+    AudioBufferNew<float> in_buffer({
+                                        {1.f},
+                                        {2.f}
+                                    });
+    AudioBufferNew<float> out_buffer(in_buffer.getNumberChannels(), in_buffer.getNumberFrames());
     gain = GainProcessor{gain_db};
 
-    gain.process(in_data.data(), in_data.size(), out_data.data(), out_data.size());
-    std::vector<float> expected(num_block_size, input_scale*db_to_scale(gain_db));
+    gain.process(&in_buffer, &out_buffer);
 
-    ASSERT_THAT(out_data, Pointwise( FloatNearPointwise(1e-8), expected));
+    AudioBufferNew<float> expected(
+        {
+            {1.0f * db_to_scale(gain_db)},
+            {2.0f * db_to_scale(gain_db)},
+        }
+        );
+
+    ASSERT_THAT(out_buffer, Eq(expected));
 }
 
 TEST_F(AGainProcessor, CanSetParameter)
