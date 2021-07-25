@@ -1,4 +1,4 @@
-add_library(aa_test_helper STATIC aa_scope_wave_file.cpp)
+add_library(aa_test_helper STATIC aa_scope_wave_file.cpp aa_test_helper.cpp)
 target_include_directories(aa_test_helper PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(aa_test_helper PUBLIC libaa gmock)
 

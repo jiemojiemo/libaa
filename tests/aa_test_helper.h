@@ -4,6 +4,7 @@
 
 #pragma once
 #include <gmock/gmock.h>
+#include "libaa/core/aa_audio_buffer_new.h"
 using namespace testing;
 
 MATCHER_P(FloatNearPointwise, tol, "Out of range") {
@@ -21,6 +22,8 @@ MATCHER_P2(ComplexNearEqual, ferr, rhs, "")
 {
     return abs(arg - rhs) < ferr;
 }
+
+bool operator==(const AudioBufferNew<float>& lhs, const AudioBufferNew<float>& rhs);
 
 class ScopeFile
 {
