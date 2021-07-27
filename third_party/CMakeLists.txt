@@ -6,3 +6,6 @@ add_subdirectory(libmp3lame EXCLUDE_FROM_ALL)
 if(BUILD_TESTING)
     add_subdirectory(googletest EXCLUDE_FROM_ALL)
 endif()
+
+add_library(Ring-Buffer INTERFACE)
+target_include_directories(Ring-Buffer INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/Ring-Buffer/")

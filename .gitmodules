@@ -8,3 +8,6 @@
 [submodule "third_party/libmp3lame"]
 	path = third_party/libmp3lame
 	url = https://github.com/Iunusov/libmp3lame-CMAKE
+[submodule "third_party/Ring-Buffer"]
+	path = third_party/Ring-Buffer
+	url = https://github.com/jnk0le/Ring-Buffer
