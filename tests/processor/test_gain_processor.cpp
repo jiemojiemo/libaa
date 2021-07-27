@@ -59,8 +59,6 @@ TEST_F(AGainProcessor, DataNotChangedIfGainDbIsZero)
 
 TEST_F(AGainProcessor, ApplyGain)
 {
-    int num_block_size = 10;
-    float input_scale = 0.5;
     float gain_db = 2.0;
     AudioBufferNew<float> in_buffer({
                                         {1.f},

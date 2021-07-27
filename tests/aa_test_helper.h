@@ -5,6 +5,7 @@
 #pragma once
 #include <gmock/gmock.h>
 #include "libaa/core/aa_audio_buffer_new.h"
+#include "libaa/core/aa_parameter_change_ringbuffer.h"
 using namespace testing;
 
 MATCHER_P(FloatNearPointwise, tol, "Out of range") {
@@ -24,6 +25,7 @@ MATCHER_P2(ComplexNearEqual, ferr, rhs, "")
 }
 
 bool operator==(const AudioBufferNew<float>& lhs, const AudioBufferNew<float>& rhs);
+bool operator==(const ParameterChangePoint& lhs, const ParameterChangePoint& rhs);
 
 class ScopeFile
 {
