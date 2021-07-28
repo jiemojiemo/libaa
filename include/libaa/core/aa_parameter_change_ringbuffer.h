@@ -17,10 +17,14 @@ struct ParameterChangePoint
     float normalized_value;
 };
 
-template <size_t buffer_size>
 class ParameterChangeRingbuffer
 {
 public:
+    ParameterChangeRingbuffer(size_t size):
+        ringbuffer_(size)
+    {
+
+    }
     size_t getReadAvailableSize() const{
         return ringbuffer_.readAvailable();
     }
@@ -64,7 +68,7 @@ public:
 
 private:
     int parameter_index_ = -1;
-    jnk0le::Ringbuffer<ParameterChangePoint, buffer_size> ringbuffer_;
+    jnk0le::Ringbuffer<ParameterChangePoint> ringbuffer_;
 };
 }
 
