@@ -18,26 +18,26 @@ public:
 
 TEST_F(AParameterChangeRingBuffer, ConstructWithSize)
 {
-    ParameterChangeRingbuffer<size> events;
+    ParameterChangeRingbuffer events(size);
 }
 
 TEST_F(AParameterChangeRingBuffer, NoAvailableWhenConstruct)
 {
-    ParameterChangeRingbuffer<size> events;
+    ParameterChangeRingbuffer events(size);
 
     ASSERT_THAT(events.getReadAvailableSize(), Eq(0));
 }
 
 TEST_F(AParameterChangeRingBuffer, DefaultIndexIsNegOne)
 {
-    ParameterChangeRingbuffer<size> events;
+    ParameterChangeRingbuffer events(size);
 
     ASSERT_THAT(events.getParameterIndex(), Eq(-1));
 }
 
 TEST_F(AParameterChangeRingBuffer, CanSetAndGetParameterIndex)
 {
-    ParameterChangeRingbuffer<size> events;
+    ParameterChangeRingbuffer events(size);
 
     events.setParameterIndex(0);
     ASSERT_THAT(events.getParameterIndex(), Eq(0));
@@ -45,7 +45,7 @@ TEST_F(AParameterChangeRingBuffer, CanSetAndGetParameterIndex)
 
 TEST_F(AParameterChangeRingBuffer, InsertWillIncreaseAvailableSize)
 {
-    ParameterChangeRingbuffer<size> events;
+    ParameterChangeRingbuffer events(size);
 
     ParameterChangePoint event{0, 0.5};
 
@@ -55,7 +55,7 @@ TEST_F(AParameterChangeRingBuffer, InsertWillIncreaseAvailableSize)
 
 TEST_F(AParameterChangeRingBuffer, CanGetItemByIndex)
 {
-    ParameterChangeRingbuffer<size> events;
+    ParameterChangeRingbuffer events(size);
 
     events.insert({0, 0.1});
     events.insert({0, 0.2});
@@ -66,7 +66,7 @@ TEST_F(AParameterChangeRingBuffer, CanGetItemByIndex)
 
 TEST_F(AParameterChangeRingBuffer, GetNullIfIndexOutofRange)
 {
-    ParameterChangeRingbuffer<size> events;
+    ParameterChangeRingbuffer events(size);
 
     events.insert({0, 0.1});
 
@@ -77,7 +77,7 @@ TEST_F(AParameterChangeRingBuffer, GetNullIfIndexOutofRange)
 
 TEST_F(AParameterChangeRingBuffer, InsertOverwriteTheOldestDataIfItIsFull)
 {
-    ParameterChangeRingbuffer<size> events;
+    ParameterChangeRingbuffer events(size);
     for(auto i = 0; i < size; ++i){
         events.insert({0, 0.1});
     }
