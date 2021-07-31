@@ -6,6 +6,7 @@
 #pragma once
 #include "libaa/fileio/aa_output_stream.h"
 #include <ostream>
+#include <memory>
 
 namespace libaa
 {

@@ -23,12 +23,14 @@ target_include_directories(libaa
 target_link_libraries(libaa
         PRIVATE dr_libs kissfft
         PUBLIC  fdk-aac mp3lame Ring-Buffer)
-target_compile_options(libaa PUBLIC
-        -Wall -Wextra -pedantic -Werror)
 
-# ignore some error
-target_compile_options(libaa PUBLIC -Wno-missing-braces)
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    target_compile_options(libaa PUBLIC
+            -Wall -Wextra -pedantic -Werror)
 
+    # ignore some error
+    target_compile_options(libaa PUBLIC -Wno-missing-braces)
+endif()
 #add_compile_options( -Wno-unused-function -Wno-unused-parameter -Wno-missing-braces )
 
 if(LIBAA_INSTALL)
