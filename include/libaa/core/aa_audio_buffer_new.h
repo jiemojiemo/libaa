@@ -22,6 +22,12 @@ public:
         allocateData();
     }
 
+    explicit AudioBufferNew(const std::list<std::vector<T>>& channel_data):
+        num_channels_(channel_data.size())
+    {
+        copyFromVectors(channel_data);
+    }
+
     explicit AudioBufferNew(std::list<std::vector<T>>&& channel_data):
         num_channels_(channel_data.size())
     {
