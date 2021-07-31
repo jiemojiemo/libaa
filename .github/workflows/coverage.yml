@@ -22,7 +22,9 @@ jobs:
 
       - name: run test
         shell: bash
-        run: ./build/tests/test_hellocov
+        run: |
+          cd build
+          ctest --verbose
 
       - name: lcov collection
         shell: bash
