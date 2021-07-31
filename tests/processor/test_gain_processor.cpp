@@ -6,7 +6,7 @@
 #include <gmock/gmock.h>
 #include "libaa/audio_effect/aa_gain_processor.h"
 #include "libaa/dsp/aa_db_utils.h"
-
+#include "aa_test_helper.h"
 using namespace testing;
 using namespace libaa;
 
