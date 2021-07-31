@@ -14,6 +14,7 @@ option(BUILD_TESTING "Build unit test" ON)
 option(LIBAA_INSTALL "install targets" ON)
 
 if(COVERAGE)
+    message(STATUS "build with coverage")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
 endif()
 
