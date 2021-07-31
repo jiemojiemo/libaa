@@ -5,6 +5,7 @@
 #pragma once
 #include "aa_audio_effect_processor.h"
 #include "libaa/dsp/aa_lfo.h"
+#include <memory>
 namespace libaa
 {
 class Tremolo : public AudioEffectProcessor
