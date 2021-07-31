@@ -22,18 +22,16 @@ public:
         allocateData();
     }
 
-    explicit AudioBufferNew(const std::list<std::vector<float>>& channel_data):
+    explicit AudioBufferNew(const std::list<std::vector<T>>& channel_data):
         num_channels_(channel_data.size())
     {
-        num_frames_ = findTheMaxFramesSize(channel_data);
-        allocateData();
+        copyFromVectors(channel_data);
+    }
 
-        size_t c = 0;
-        for(const auto& item : channel_data)
-        {
-            std::copy_n(item.data(), item.size(), getWriterPointer(c));
-            ++c;
-        }
+    explicit AudioBufferNew(std::list<std::vector<T>>&& channel_data):
+        num_channels_(channel_data.size())
+    {
+        copyFromVectors(channel_data);
     }
 
     size_t getNumberChannels() const{
@@ -72,6 +70,20 @@ private:
 
     void allocateData(){
         data_.resize(num_channels_ * num_frames_, 0.0f);
+    }
+
+private:
+    void copyFromVectors(const std::list<std::vector<T>>& channel_data)
+    {
+        num_frames_ = findTheMaxFramesSize(channel_data);
+        allocateData();
+
+        size_t c = 0;
+        for(const auto& item : channel_data)
+        {
+            std::copy_n(item.data(), item.size(), getWriterPointer(c));
+            ++c;
+        }
     }
 
 private:
