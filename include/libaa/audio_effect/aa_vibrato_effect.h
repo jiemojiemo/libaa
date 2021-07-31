@@ -7,6 +7,7 @@
 #include "aa_audio_effect_processor.h"
 #include "libaa/audio_basics/aa_delay_line.h"
 #include "libaa/dsp/aa_lfo.h"
+#include <memory>
 
 
 namespace libaa
