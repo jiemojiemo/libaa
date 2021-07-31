@@ -8,6 +8,7 @@
 #pragma once
 #include <list>
 #include <vector>
+#include <algorithm>
 namespace libaa
 {
 template <typename T>
