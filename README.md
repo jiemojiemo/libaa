@@ -1,5 +1,5 @@
 [![Build Status](https://github.com/jiemojiemo/libaa/workflows/build/badge.svg)](https://github.com/jiemojiemo/libaa/actions)
-[![Coverage Status](https://coveralls.io/repos/github/jiemojiemo/libaa/badge.svg?branch=master)](https://coveralls.io/github/jiemojiemo/libaa?branch=master)
+[![codecov](https://codecov.io/gh/jiemojiemo/libaa/branch/master/graph/badge.svg?token=Y3ZGGNX6I1)](https://codecov.io/gh/jiemojiemo/libaa)
 
 # LibAA
 LibAA is a audio library.
