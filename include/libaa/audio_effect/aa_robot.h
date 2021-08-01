@@ -5,7 +5,7 @@
 #pragma once
 #include "aa_audio_effect_processor.h"
 #include "libaa/dsp/aa_window.h"
-
+#include <memory>
 namespace libaa
 {
 class Robotisation : public AudioEffectProcessor

@@ -68,8 +68,8 @@ public:
      */
     T getInterpolation(float delay) const noexcept
     {
-        int previous_sample = static_cast<int>(std::floorf(delay));
-        int next_sample = static_cast<int>(std::ceilf(delay));
+        int previous_sample = static_cast<int>(floorf(delay));
+        int next_sample = static_cast<int>(ceilf(delay));
         float fraction = static_cast<float>(next_sample) - delay;
 
         return fraction*get(previous_sample) + (1.0f-fraction)*get(next_sample);

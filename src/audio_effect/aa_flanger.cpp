@@ -5,6 +5,7 @@
 #include "libaa/audio_effect/aa_flanger.h"
 #include "libaa/dsp/aa_lfo.h"
 #include "libaa/audio_basics/aa_delay_line_array.h"
+#include <cassert>
 namespace libaa
 {
 

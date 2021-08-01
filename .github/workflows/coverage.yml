@@ -1,0 +1,37 @@
+name: coverage
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: build
+        shell: bash
+        run: |
+          cmake -S . -B build -DBUILD_SHARED_LIBS=ON
+          cmake --build build -- -j 10
+
+      - name: Install LCOV
+        shell: bash
+        run: |
+          sudo apt-get --assume-yes install lcov > /dev/null
+
+      - name: run test
+        shell: bash
+        run: |
+          cd build
+          ctest --verbose
+
+      - name: lcov collection
+        shell: bash
+        run: |
+          cd build
+          lcov -c -d ./ -o cover.info
+
+      - uses: codecov/codecov-action@v1
+        with:
+          file: build/cover.info

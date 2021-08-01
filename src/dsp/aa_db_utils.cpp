@@ -9,6 +9,6 @@ namespace libaa
 {
 float db_to_scale(float db)
 {
-    return std::powf(10.0f, db/20.0f);
+    return powf(10.0f, db/20.0f);
 }
 }

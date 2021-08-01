@@ -8,7 +8,7 @@ namespace libaa::DSPUtilities
 {
 bool isPowerOf2(size_t number)
 {
-    return (number & number - 1) == 0 && number > 0;
+    return (number & (number - 1)) == 0 && number > 0;
 }
 
 

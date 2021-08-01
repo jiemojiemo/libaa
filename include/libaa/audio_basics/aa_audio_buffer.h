@@ -4,7 +4,6 @@
 
 #pragma once
 #include <vector>
-
 using std::vector;
 
 namespace libaa
@@ -25,9 +24,6 @@ public:
         : num_channels_(num_channels),
           size_(num_samples)
     {
-        assert(num_channels >= 0);
-        assert(num_samples >= 0);
-
         allocateData();
     }
 
@@ -38,11 +34,6 @@ public:
         : num_channels_(num_channel_to_use),
           size_(num_samples)
     {
-        assert(data_refer_to != nullptr);
-        assert(num_channel_to_use >= 0);
-        assert(start_sample >= 0);
-        assert(num_samples >= 0);
-
         allocateChannels(data_refer_to, start_sample);
     }
 
@@ -163,16 +154,11 @@ public:
 
     T* getWritePointer(size_t channel_number) const noexcept
     {
-        assert(channel_number < num_channels_);
-        assert(channel_number < channels_.size());
-
         return channels_[channel_number];
     }
 
     const T* getReadPointer(size_t channel_number) const noexcept
     {
-        assert(channel_number < num_channels_);
-
         return channels_[channel_number];
     }
 

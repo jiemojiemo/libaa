@@ -7,7 +7,6 @@
 #include "libaa/audio_effect/aa_gain_processor.h"
 #include "libaa/dsp/aa_db_utils.h"
 #include "aa_test_helper.h"
-
 using namespace testing;
 using namespace libaa;
 
@@ -61,8 +60,8 @@ TEST_F(AGainProcessor, ApplyGain)
 {
     float gain_db = 2.0;
     AudioBufferNew<float> in_buffer({
-                                        {1.f},
-                                        {2.f}
+                                        {1.f,1.0f},
+                                        {2.f,2.0f}
                                     });
     AudioBufferNew<float> out_buffer(in_buffer.getNumberChannels(), in_buffer.getNumberFrames());
     gain = GainProcessor{gain_db};
@@ -71,8 +70,8 @@ TEST_F(AGainProcessor, ApplyGain)
 
     AudioBufferNew<float> expected(
         {
-            {1.0f * db_to_scale(gain_db)},
-            {2.0f * db_to_scale(gain_db)},
+            {1.0f * db_to_scale(gain_db),1.0f * db_to_scale(gain_db)},
+            {2.0f * db_to_scale(gain_db),2.0f * db_to_scale(gain_db)},
         }
         );
 

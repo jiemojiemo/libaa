@@ -55,30 +55,26 @@ TEST_F(AAudioBufferNew, CanGetNumberOfFrames)
 
 TEST_F(AAudioBufferNew, CanConstructWithInitialzerList)
 {
-    AudioBufferNew<float> audio_buffer(channel_data);
+    AudioBufferNew<float> audio_buffer({{1,2,3}, {4, 5, 6}});
 }
 
 TEST_F(AAudioBufferNew, ConstructWithListCanGetNumChannels)
 {
-    AudioBufferNew<float> audio_buffer(channel_data);
+    AudioBufferNew<float> audio_buffer({{1,2,3}, {4, 5, 6}});
 
     ASSERT_THAT(audio_buffer.getNumberChannels(), Eq(2));
 }
 
 TEST_F(AAudioBufferNew, CanGetNumberOfFramesEqualsTheMaxFramesOfAllChannel)
 {
-    list<vector<float>> channel_data_with_diff_size = {{1,2,3}, {2}};
-
-    AudioBufferNew<float> audio_buffer(channel_data_with_diff_size);
+    AudioBufferNew<float> audio_buffer({{1,2,3}, {2}});
 
     ASSERT_THAT(audio_buffer.getNumberFrames(), Eq(3));
 }
 
 TEST_F(AAudioBufferNew, DoCopyWhenConstructWithList)
 {
-    list<vector<float>> channel_data_with_diff_size = {{1,2,3}, {2}};
-
-    AudioBufferNew<float> audio_buffer(channel_data_with_diff_size);
+    AudioBufferNew<float> audio_buffer({{1,2,3}, {2}});
 
     ASSERT_THAT(audio_buffer.getReadPointer(0)[0], Eq(1.0));
     ASSERT_THAT(audio_buffer.getReadPointer(0)[1], Eq(2.0));
@@ -89,7 +85,7 @@ TEST_F(AAudioBufferNew, DoCopyWhenConstructWithList)
 
 TEST_F(AAudioBufferNew, CanCopyFromOtherBuffer)
 {
-    AudioBufferNew<float> input_buffer(channel_data);
+    AudioBufferNew<float> input_buffer({{1,2,3}, {4, 5, 6}});
     AudioBufferNew<float> output_buffer(input_buffer.getNumberChannels(), input_buffer.getNumberFrames());
 
     output_buffer.copyFrom(&input_buffer);
