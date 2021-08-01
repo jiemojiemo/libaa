@@ -15,8 +15,6 @@ template <typename T>
 class AudioBufferNew
 {
 public:
-    explicit AudioBufferNew(const std::list<std::vector<T>>& channel_data) = delete;
-
     explicit AudioBufferNew(size_t num_channels, size_t num_frames):
         num_channels_(num_channels),
         num_frames_(num_frames)
