@@ -24,7 +24,7 @@ target_link_libraries(libaa
         PRIVATE dr_libs kissfft
         PUBLIC  fdk-aac mp3lame Ring-Buffer)
 
-if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     target_compile_options(libaa PUBLIC
             -Wall -Wextra -pedantic -Werror)
 
