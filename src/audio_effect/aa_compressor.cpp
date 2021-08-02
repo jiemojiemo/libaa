@@ -30,6 +30,7 @@ public:
     }
 
     void processBlock(AudioBuffer<float> &buffer, size_t block_size, double sample_rate) {
+        (void)(block_size);
         const auto num_samples = buffer.getNumFrames();
 
         input_buffer_.clear();

@@ -29,6 +29,17 @@ TEST_F(AParameters, AddParametersIncreaseTheSize)
     ASSERT_THAT(params.size(), Eq(1));
 }
 
+TEST_F(AParameters, AddParametersIncreaseTheParameterIndex)
+{
+    params.pushFloatParameter(1.0, 0, 2.0);
+    params.pushFloatParameter(1.0, 0, 2.0);
+
+    AudioProcessorParameter& p = params.get(1);
+    AudioProcessorParameter expected{ParameterType::kFloat, 1, 1.0, 0, 2.0};
+
+    ASSERT_THAT(p, Eq(expected));
+}
+
 TEST_F(AParameters, CanAddFloatParameter)
 {
     params.pushFloatParameter(1.0, 0, 2.0);
