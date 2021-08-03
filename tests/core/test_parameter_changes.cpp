@@ -4,42 +4,9 @@
 //
 
 #include <gmock/gmock.h>
-#include "libaa/core/aa_parameter_change_ringbuffer.h"
-#include <memory>
+#include "libaa/core/aa_parameter_changes.h"
 using namespace testing;
 using namespace libaa;
-
-class ParameterChanges
-{
-public:
-    using RingBuffers = std::vector<std::shared_ptr<ParameterChangeRingbuffer>>;
-    typedef typename std::vector<std::shared_ptr<ParameterChangeRingbuffer>> array_type;
-    typedef typename array_type::iterator iterator;
-    typedef typename array_type::const_iterator const_iterator;
-
-    explicit ParameterChanges(size_t num_param_change_ring_buffer = 0)
-    {
-        for(auto i = 0u; i < num_param_change_ring_buffer; ++i){
-            auto* ringbuffer = new ParameterChangeRingbuffer{kMaxParameterChanges};
-            ringbuffer->setParameterIndex(i);
-
-            changes_array_.emplace_back(ringbuffer);
-        }
-    }
-
-    const RingBuffers& getParameterChangesArray() const {
-        return changes_array_;
-    }
-
-    inline iterator begin() noexcept { return changes_array_.begin(); }
-    inline const_iterator cbegin() const noexcept { return changes_array_.cbegin(); }
-    inline iterator end() noexcept { return changes_array_.end(); }
-    inline const_iterator cend() const noexcept { return changes_array_.cend(); }
-
-private:
-    RingBuffers changes_array_;
-    constexpr static size_t kMaxParameterChanges = 512;
-};
 
 class AParameterChanges : public Test
 {
