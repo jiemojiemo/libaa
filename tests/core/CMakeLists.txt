@@ -5,4 +5,5 @@ add_libaa_test(aa_core_unit_test
         test_audio_parameters.cpp
         test_parameter_change_ringbuffer.cpp
         test_parameter_changes.cpp
+        test_audio_block.cpp
         )

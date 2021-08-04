@@ -15,6 +15,7 @@
 #include <stddef.h>
 #include <limits>
 #include <atomic>
+#include <cassert>
 
 namespace jnk0le
 {
