@@ -28,6 +28,14 @@ TEST_F(AAudioBufferNew, CanContructWithSize)
     AudioBufferNew<float> audio_buffer(num_channels, num_frames);
 }
 
+TEST_F(AAudioBufferNew, DefaultConstuctWithEmptyData)
+{
+    AudioBufferNew<float> audio_buffer;
+
+    ASSERT_THAT(audio_buffer.getNumberChannels(), Eq(0));
+    ASSERT_THAT(audio_buffer.getNumberFrames(), Eq(0));
+}
+
 TEST_F(AAudioBufferNew, ConstructWithSizeWillFillZerosToBuffer)
 {
     AudioBufferNew<float> audio_buffer(num_channels, num_frames);
@@ -91,4 +99,16 @@ TEST_F(AAudioBufferNew, CanCopyFromOtherBuffer)
     output_buffer.copyFrom(&input_buffer);
 
     ASSERT_THAT(output_buffer, Eq(input_buffer));
+}
+
+TEST_F(AAudioBufferNew, CanResize)
+{
+    AudioBufferNew<float> audio_buffer(2, 3);
+
+    int new_channels = 3;
+    int new_num_frames = 5;
+    audio_buffer.resize(new_channels, new_num_frames);
+
+    ASSERT_THAT(audio_buffer.getNumberChannels(), Eq(new_channels));
+    ASSERT_THAT(audio_buffer.getNumberFrames(), Eq(new_num_frames));
 }

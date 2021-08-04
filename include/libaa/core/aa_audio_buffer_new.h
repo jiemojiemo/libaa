@@ -15,6 +15,11 @@ template <typename T>
 class AudioBufferNew
 {
 public:
+    explicit AudioBufferNew():
+        AudioBufferNew(0, 0)
+    {
+
+    }
     explicit AudioBufferNew(size_t num_channels, size_t num_frames):
         num_channels_(num_channels),
         num_frames_(num_frames)
@@ -48,6 +53,14 @@ public:
         for(auto c = 0u; c < getNumberChannels(); ++c){
             std::copy_n(other->getReadPointer(c), getNumberFrames(), this->getWriterPointer(c));
         }
+    }
+
+    void resize(size_t num_channels, size_t num_frames)
+    {
+        num_channels_ = num_channels;
+        num_frames_ = num_frames;
+
+        allocateData();
     }
 
 private:
