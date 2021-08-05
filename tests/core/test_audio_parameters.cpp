@@ -24,28 +24,28 @@ TEST_F(AParameters, DefaultContructWithEmpty)
 
 TEST_F(AParameters, AddParametersIncreaseTheSize)
 {
-    params.pushFloatParameter(1.0, 0, 2.0);
+    params.pushFloatParameter("param_name", 1.0, 0, 2.0);
 
     ASSERT_THAT(params.size(), Eq(1));
 }
 
 TEST_F(AParameters, AddParametersIncreaseTheParameterIndex)
 {
-    params.pushFloatParameter(1.0, 0, 2.0);
-    params.pushFloatParameter(1.0, 0, 2.0);
+    params.pushFloatParameter("param_name", 1.0, 0, 2.0);
+    params.pushFloatParameter("param_name", 1.0, 0, 2.0);
 
     AudioProcessorParameter& p = params.get(1);
-    AudioProcessorParameter expected{ParameterType::kFloat, 1, 1.0, 0, 2.0};
+    AudioProcessorParameter expected{ParameterType::kFloat, 1, "param_name", 1.0, 0, 2.0};
 
     ASSERT_THAT(p, Eq(expected));
 }
 
 TEST_F(AParameters, CanAddFloatParameter)
 {
-    params.pushFloatParameter(1.0, 0, 2.0);
+    params.pushFloatParameter("param_name", 1.0, 0, 2.0);
 
     AudioProcessorParameter& p = params.get(0);
-    AudioProcessorParameter expected{ParameterType::kFloat, 0, 1.0, 0, 2.0};
+    AudioProcessorParameter expected{ParameterType::kFloat, 0, "param_name", 1.0, 0, 2.0};
 
     ASSERT_THAT(p, Eq(expected));
 }

@@ -51,7 +51,7 @@ void GainProcessor::applyGain(float* out_buffer, size_t out_size){
 Parameters GainProcessor::buildParameters(float gain_db){
     Parameters params;
 
-    params.pushFloatParameter(gain_db, -75, 35);
+    params.pushFloatParameter("Gain dB", gain_db, -75, 35);
 
     return params;
 }
