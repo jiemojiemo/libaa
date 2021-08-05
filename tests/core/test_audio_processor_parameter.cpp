@@ -14,12 +14,13 @@ class AAudioProcessorParameter : public Test
 public:
     void SetUp() override
     {
-        param = make_unique<AudioProcessorParameter>(ParameterType::kFloat, param_id, default_value, min_plain_value, max_plain_value);
+        param = make_unique<AudioProcessorParameter>(ParameterType::kFloat, param_id, test_name, default_value, min_plain_value, max_plain_value);
     }
     int param_id = 0;
     float default_value = 1;
     float min_plain_value = -10;
     float max_plain_value = 10;
+    const std::string test_name = "test_param";
 
     std::unique_ptr<AudioProcessorParameter> param;
 };
@@ -27,7 +28,7 @@ public:
 
 TEST_F(AAudioProcessorParameter, CanInitWithIDAndValues)
 {
-    AudioProcessorParameter p(ParameterType::kFloat, param_id, default_value, min_plain_value, max_plain_value);
+    AudioProcessorParameter p(ParameterType::kFloat, param_id, test_name, default_value, min_plain_value, max_plain_value);
 }
 
 TEST_F(AAudioProcessorParameter, CanGetParameterType)
@@ -53,14 +54,14 @@ TEST_F(AAudioProcessorParameter, CanGetParamterRange)
 
 TEST_F(AAudioProcessorParameter, DefaultValueSetToMinValueIfNotInRange)
 {
-    param = std::make_unique<AudioProcessorParameter>(ParameterType::kFloat,param_id, 100, -10, 10);
+    param = std::make_unique<AudioProcessorParameter>(ParameterType::kFloat,param_id, "param_name", 100, -10, 10);
 
     ASSERT_THAT(param->getDefaultPlainValue(), Eq(param->getMinPlainValue()));
 }
 
 TEST_F(AAudioProcessorParameter, SetMinValueToMaxValueIfInitMinValueLargeThanMax)
 {
-    param = std::make_unique<AudioProcessorParameter>(ParameterType::kFloat,param_id, default_value, 100, 10);
+    param = std::make_unique<AudioProcessorParameter>(ParameterType::kFloat,param_id, "param_name", default_value, 100, 10);
 
     ASSERT_THAT(param->getMinPlainValue(), Eq(max_plain_value));
 }
@@ -184,4 +185,20 @@ TEST_F(AAudioProcessorParameter, CanSetNormalizedValueString)
     param->setNormalizedValue(str);
 
     ASSERT_THAT(param->getNormalizedValue(), Eq(std::stof(str)));
+}
+
+TEST_F(AAudioProcessorParameter, CanGetParameterName)
+{
+    string name = param->getParameterName();
+
+    ASSERT_THAT(name, Eq(test_name));
+}
+
+TEST_F(AAudioProcessorParameter, CanSetParameterName)
+{
+    string new_name = "xx";
+
+    param->setParameterName(new_name);
+
+    ASSERT_THAT(param->getParameterName(), Eq(new_name));
 }

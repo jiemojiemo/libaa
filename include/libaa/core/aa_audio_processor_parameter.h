@@ -18,6 +18,7 @@ class AudioProcessorParameter
 {
 public:
     explicit AudioProcessorParameter(ParameterType type, int param_id,
+                                     std::string param_name,
                                      float default_val, float min_plain_value, float max_plain_value);
 
     float getDefaultPlainValue() const;
@@ -48,6 +49,10 @@ public:
 
     void setNormalizedValue(const std::string& normalized_value_str);
 
+    const std::string& getParameterName() const;
+
+    void setParameterName(std::string new_name);
+
 private:
     bool isInRange(float v) const;
 
@@ -60,6 +65,7 @@ private:
     float min_plain_value_{0};
     float max_plain_value_{0};
     float current_normalized_value_{0};
+    std::string name_;
 };
 
 bool operator==(const AudioProcessorParameter& lhs, const AudioProcessorParameter& rhs);

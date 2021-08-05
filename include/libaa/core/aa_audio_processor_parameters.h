@@ -20,7 +20,7 @@ public:
         return parameters_.size();
     }
 
-    int pushFloatParameter(float default_val, float min_plain_value, float max_plain_value);
+    int pushFloatParameter(std::string param_name, float default_val, float min_plain_value, float max_plain_value);
 
     const AudioProcessorParameter& get(int param_id) const;
     AudioProcessorParameter& get(int param_id);

@@ -10,12 +10,14 @@ namespace libaa
 {
 AudioProcessorParameter::AudioProcessorParameter(ParameterType type,
                                                  int param_id,
+                                                 std::string param_name,
                                                  float default_val, float min_plain_value, float max_plain_value):
     type_(type),
     id_(param_id),
     plain_value_(default_val),
     min_plain_value_(min_plain_value),
-    max_plain_value_(max_plain_value)
+    max_plain_value_(max_plain_value),
+    name_(std::move(param_name))
 {
     if(min_plain_value_ > max_plain_value_)
     {
@@ -111,6 +113,12 @@ float AudioProcessorParameter::clip(float v, float min, float max) const
 }
 ParameterType AudioProcessorParameter::getParameterType() const {
     return type_;
+}
+const std::string &AudioProcessorParameter::getParameterName() const{
+    return name_;
+}
+void AudioProcessorParameter::setParameterName(std::string new_name) {
+    name_ = std::move(new_name);
 }
 
 bool operator==(const AudioProcessorParameter &lhs, const AudioProcessorParameter &rhs) {
