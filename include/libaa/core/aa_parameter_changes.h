@@ -23,7 +23,7 @@ public:
     {
         for(auto i = 0u; i < num_param_change_ring_buffer; ++i){
             auto* ringbuffer = new ParameterChangeRingbuffer{kMaxParameterChanges};
-            ringbuffer->setParameterIndex(i);
+            ringbuffer->setParameterIndex(static_cast<int>(i));
 
             changes_array_.emplace_back(ringbuffer);
         }

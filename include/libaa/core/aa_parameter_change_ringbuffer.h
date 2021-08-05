@@ -37,7 +37,7 @@ public:
         return ringbuffer_.insert(event);
     }
 
-    ParameterChangePoint* at(int index){
+    ParameterChangePoint* at(size_t index){
         return ringbuffer_.at(index);
     }
 

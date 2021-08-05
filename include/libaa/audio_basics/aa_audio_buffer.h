@@ -21,8 +21,8 @@ public:
     }
 
     explicit AudioBuffer(int num_channels, int num_samples)
-        : num_channels_(num_channels),
-          size_(num_samples)
+        : num_channels_(static_cast<size_t>(num_channels)),
+          size_(static_cast<size_t>(num_samples))
     {
         allocateData();
     }
@@ -31,8 +31,8 @@ public:
                 int num_channel_to_use,
                 int start_sample,
                 int num_samples)
-        : num_channels_(num_channel_to_use),
-          size_(num_samples)
+        : num_channels_(static_cast<size_t>(num_channel_to_use)),
+          size_(static_cast<size_t>(num_samples))
     {
         allocateChannels(data_refer_to, start_sample);
     }
