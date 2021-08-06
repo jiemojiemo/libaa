@@ -8,4 +8,6 @@ add_libaa_test(aa_dsp_unit_test
         test_lfo.cpp
         test_lfo_generator.cpp
         test_window.cpp
-        test_yin.cpp)
+        test_yin.cpp
+        test_exponential_smoother.cpp
+        )
