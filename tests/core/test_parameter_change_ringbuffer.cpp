@@ -47,7 +47,7 @@ TEST_F(AParameterChangeRingBuffer, InsertWillIncreaseAvailableSize)
 {
     ParameterChangeRingbuffer events(size);
 
-    ParameterChangePoint event{0, 0.5};
+    ParameterChangePoint event{0, 0, 0.5};
 
     events.insert(event);
     ASSERT_THAT(events.getReadAvailableSize(), Eq(1));
@@ -57,18 +57,18 @@ TEST_F(AParameterChangeRingBuffer, CanGetItemByIndex)
 {
     ParameterChangeRingbuffer events(size);
 
-    events.insert({0, 0.1});
-    events.insert({0, 0.2});
+    events.insert({0, 0, 0.1});
+    events.insert({0, 0, 0.2});
 
-    ASSERT_THAT(*(events.at(0)), Eq(ParameterChangePoint{0, 0.1}));
-    ASSERT_THAT(*(events.at(1)), Eq(ParameterChangePoint{0, 0.2}));
+    ASSERT_THAT(*(events.at(0)), Eq(ParameterChangePoint{0, 0, 0.1}));
+    ASSERT_THAT(*(events.at(1)), Eq(ParameterChangePoint{0, 0, 0.2}));
 }
 
 TEST_F(AParameterChangeRingBuffer, GetNullIfIndexOutofRange)
 {
     ParameterChangeRingbuffer events(size);
 
-    events.insert({0, 0.1});
+    events.insert({0, 0, 0.1});
 
     int index = 2;
     ASSERT_THAT(index, Gt(events.getReadAvailableSize()));
@@ -79,10 +79,10 @@ TEST_F(AParameterChangeRingBuffer, InsertOverwriteTheOldestDataIfItIsFull)
 {
     ParameterChangeRingbuffer events(size);
     for(auto i = 0; i < size; ++i){
-        events.insert({0, 0.1});
+        events.insert({0, 0, 0.1});
     }
     ASSERT_TRUE(events.isFull());
 
-    events.insert({0, 0.2});
-    ASSERT_THAT(events.back(), Pointee(ParameterChangePoint{0, 0.2}));
+    events.insert({0, 0, 0.2});
+    ASSERT_THAT(events.back(), Pointee(ParameterChangePoint{0, 0, 0.2}));
 }

@@ -13,6 +13,7 @@ namespace libaa
 
 struct ParameterChangePoint
 {
+    int index;
     float time;
     float normalized_value;
 };

@@ -5,6 +5,7 @@
 
 #include <gmock/gmock.h>
 #include "libaa/core/aa_parameter_changes.h"
+#include "aa_test_helper.h"
 using namespace testing;
 using namespace libaa;
 
@@ -32,6 +33,46 @@ TEST_F(AParameterChanges, CanConstuctWithSizeOfParamterChange)
     auto param_changes = ParameterChanges{num_param_change_buffer};
 
     ASSERT_THAT(param_changes.getParameterChangesArray().size(), Eq(num_param_change_buffer));
+}
+
+TEST_F(AParameterChanges, ConstructWithParameterChangePoints)
+{
+    auto param_changes = ParameterChanges{
+        {0, 0, 0.1},
+        {0, 0, 0.2}
+    };
+}
+
+TEST_F(AParameterChanges, ConstructWithPointsHasSizeOfDifferentIndex)
+{
+    auto param_changes = ParameterChanges{
+        {0, 0, 0.1},
+        {0, 0, 0.1},
+        {1, 0, 0.2},
+        {1, 0, 0.2}
+    };
+
+    ASSERT_THAT(param_changes.getParameterChangesArray().size(), Eq(2));
+}
+
+TEST_F(AParameterChanges, ConstructWithPointsWillInsertPointIntoRingbuffer)
+{
+    auto param_changes = ParameterChanges{
+        {0, 0, 0.1},
+        {0, 0, 0.1},
+        {1, 0, 0.2},
+        {1, 0, 0.2}
+    };
+
+    ASSERT_THAT(param_changes.at(0)->getParameterIndex(), Eq(0));
+    ASSERT_THAT(param_changes.at(0)->getReadAvailableSize(), Eq(2));
+    ASSERT_THAT(param_changes.at(0)->at(0), Pointee(ParameterChangePoint{0, 0, 0.1}));
+    ASSERT_THAT(param_changes.at(0)->at(1), Pointee(ParameterChangePoint{0, 0, 0.1}));
+
+    ASSERT_THAT(param_changes.at(1)->getParameterIndex(), Eq(1));
+    ASSERT_THAT(param_changes.at(1)->getReadAvailableSize(), Eq(2));
+    ASSERT_THAT(param_changes.at(1)->at(0), Pointee(ParameterChangePoint{0, 0, 0.2}));
+    ASSERT_THAT(param_changes.at(1)->at(1), Pointee(ParameterChangePoint{0, 0, 0.2}));
 }
 
 TEST_F(AParameterChanges, RingbufferHasIncreasedIndex)
