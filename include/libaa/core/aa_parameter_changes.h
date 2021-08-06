@@ -19,7 +19,47 @@ public:
     typedef typename array_type::iterator iterator;
     typedef typename array_type::const_iterator const_iterator;
 
+    explicit ParameterChanges(std::initializer_list<ParameterChangePoint> points)
+    {
+        int max_index = -1;
+        for(const auto& p : points)
+        {
+            if(p.index > max_index) { max_index = p.index; }
+        }
+        int num_params = max_index + 1;
+
+        allocateRingbuffers(num_params);
+
+        for(const auto& p : points)
+        {
+            changes_array_.at(p.index)->insert(p);
+        }
+    }
+
     explicit ParameterChanges(size_t num_param_change_ring_buffer = 0)
+    {
+        allocateRingbuffers(num_param_change_ring_buffer);
+    }
+
+    const RingBuffers& getParameterChangesArray() const {
+        return changes_array_;
+    }
+
+    const std::shared_ptr<ParameterChangeRingbuffer>& at(int index) const{
+        return changes_array_.at(index);
+    }
+
+    std::shared_ptr<ParameterChangeRingbuffer> at(int index){
+        return changes_array_.at(index);
+    }
+
+    inline iterator begin() noexcept { return changes_array_.begin(); }
+    inline const_iterator cbegin() const noexcept { return changes_array_.cbegin(); }
+    inline iterator end() noexcept { return changes_array_.end(); }
+    inline const_iterator cend() const noexcept { return changes_array_.cend(); }
+
+private:
+    void allocateRingbuffers(size_t num_param_change_ring_buffer)
     {
         for(auto i = 0u; i < num_param_change_ring_buffer; ++i){
             auto* ringbuffer = new ParameterChangeRingbuffer{kMaxParameterChanges};
@@ -28,16 +68,6 @@ public:
             changes_array_.emplace_back(ringbuffer);
         }
     }
-
-    const RingBuffers& getParameterChangesArray() const {
-        return changes_array_;
-    }
-
-    inline iterator begin() noexcept { return changes_array_.begin(); }
-    inline const_iterator cbegin() const noexcept { return changes_array_.cbegin(); }
-    inline iterator end() noexcept { return changes_array_.end(); }
-    inline const_iterator cend() const noexcept { return changes_array_.cend(); }
-
 private:
     RingBuffers changes_array_;
     constexpr static size_t kMaxParameterChanges = 512;
