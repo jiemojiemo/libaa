@@ -29,7 +29,7 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
             -Wall -Wextra -pedantic -Werror)
 
     # ignore some error
-    target_compile_options(libaa PUBLIC -Wno-missing-braces)
+    target_compile_options(libaa PUBLIC -Wno-missing-braces -Wno-deprecated-copy -Wno-unknown-warning-option)
 endif()
 #add_compile_options( -Wno-unused-function -Wno-unused-parameter -Wno-missing-braces )
 
