@@ -28,11 +28,11 @@ public:
         }
         int num_params = max_index + 1;
 
-        allocateRingbuffers(num_params);
+        allocateRingbuffers(static_cast<size_t>(num_params));
 
         for(const auto& p : points)
         {
-            changes_array_.at(p.index)->insert(p);
+            changes_array_.at(static_cast<size_t>(p.index))->insert(p);
         }
     }
 
@@ -46,11 +46,11 @@ public:
     }
 
     const std::shared_ptr<ParameterChangeRingbuffer>& at(int index) const{
-        return changes_array_.at(index);
+        return changes_array_.at(static_cast<size_t>(index));
     }
 
     std::shared_ptr<ParameterChangeRingbuffer> at(int index){
-        return changes_array_.at(index);
+        return changes_array_.at(static_cast<size_t>(index));
     }
 
     inline iterator begin() noexcept { return changes_array_.begin(); }

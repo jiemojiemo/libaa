@@ -19,6 +19,13 @@ AudioBlock::AudioBlock(int num_channels, int num_frames):
 
 }
 
+AudioBlock::AudioBlock(int num_channels, int num_frames, int num_params):
+audio_buffer(num_channels, num_frames),
+param_changes(num_params)
+{
+
+}
+
 
 AudioBlock::AudioBlock(std::list<std::vector<float>>&& init_list):
 audio_buffer(std::move(init_list))
@@ -32,4 +39,6 @@ param_changes(std::move(changes))
 {
 
 }
+
+
 }
