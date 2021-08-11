@@ -9,6 +9,7 @@
 #include "libaa/audio_effect/aa_audio_effect_processor.h"
 #include "libaa/core/aa_audio_processor_parameters.h"
 #include "libaa/core/aa_audio_buffer_new.h"
+#include "libaa/core/aa_audio_block.h"
 namespace libaa
 {
 class GainProcessor : public AudioEffectProcessor
@@ -23,6 +24,9 @@ public:
 
     void process(AudioBufferNew<float>* in_block,
                  AudioBufferNew<float>* out_block);
+
+    void process(AudioBlock* in_block,
+                 AudioBlock* out_block);
 
     const Parameters& getParameters() const;
 

@@ -25,7 +25,7 @@ public:
         {
             insert(p);
         }
-
+      
     }
 
     explicit ParameterChanges(size_t num_param_change_ring_buffer = 0)

@@ -73,4 +73,13 @@ void GainProcessor::process(AudioBufferNew<float> *in_block, AudioBufferNew<floa
     }
 }
 
+void GainProcessor::process(AudioBlock *in_block, AudioBlock *out_block) {
+
+    if(!in_block->param_changes.at(0)->isEmpty()){
+        ParameterChangePoint* p = in_block->param_changes.at(0)->back();
+        params_.get(0).setNormalizedValue(p->normalized_value);
+    }
+    process(&in_block->audio_buffer, &out_block->audio_buffer);
+}
+
 }

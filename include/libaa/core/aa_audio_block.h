@@ -16,6 +16,8 @@ public:
 
     explicit AudioBlock(int num_channels, int num_frames);
 
+    explicit AudioBlock(int num_channels, int num_frames, int num_params);
+
     explicit AudioBlock(std::list<std::vector<float>>&& init_list);
 
     explicit AudioBlock(AudioBufferNew<float> buffer, ParameterChanges changes);
