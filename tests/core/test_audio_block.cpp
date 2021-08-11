@@ -49,7 +49,7 @@ TEST_F(AAudioBlock, ConstructWithEmptyParameterChanges)
 {
     AudioBlock audio_block;
 
-    ASSERT_THAT(audio_block.param_changes.getParameterChangesArray().size(), Eq(0));
+    ASSERT_THAT(audio_block.param_changes.getParameterChangeSet().size(), Eq(0));
 }
 
 TEST_F(AAudioBlock, CanMoveConstructWithAudioBufferAndParameterChanges)
@@ -63,6 +63,6 @@ TEST_F(AAudioBlock, CanMoveConstructWithAudioBufferAndParameterChanges)
     auto audio_block = AudioBlock{ audio_buffer, param_changes };
 
     ASSERT_THAT(audio_block.audio_buffer, Eq(audio_buffer));
-    ASSERT_THAT(audio_block.param_changes.getParameterChangesArray().size(),
-                Eq(param_changes.getParameterChangesArray().size()));
+    ASSERT_THAT(audio_block.param_changes.getParameterChangeSet().size(),
+                Eq(param_changes.getParameterChangeSet().size()));
 }
