@@ -9,7 +9,8 @@
 
 namespace libaa
 {
-float db_to_scale(float db);
+float dbToScale(float db);
+float scaleToDb(float scale);
 }
 
 #endif //LIBAA_SRC_DSP_AA_DB_UTILS_H
