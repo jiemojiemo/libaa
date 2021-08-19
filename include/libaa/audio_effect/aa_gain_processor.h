@@ -22,17 +22,13 @@ public:
     void releaseResources() override;
     void processBlock(AudioBuffer<float> &buffer) override;
 
-    void process(AudioBufferNew<float>* in_block,
-                 AudioBufferNew<float>* out_block);
-
     void process(AudioBlock* in_block,
                  AudioBlock* out_block);
 
     const Parameters& getParameters() const;
-
-    int setParameter(int param_index, float normalized_value);
-
 private:
+    void applyStaticGain(AudioBlock* out_block);
+    void applyDynamicGain(const ParameterChanges& param_changes, AudioBlock* out_block);
     void applyGain(float* out_buffer, size_t out_size);
     static Parameters buildParameters(float gain_db);
 
