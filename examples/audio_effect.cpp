@@ -38,7 +38,6 @@ int main()
 
 
     BiquadFilter processor;
-    processor.setRateAndBufferSizeDetails(audio_file.getSampleRate(), predefine_block_size);
     processor.prepareToPlay(audio_file.getSampleRate(), predefine_block_size);
     processor.setCoefficients({{1.0,
                                 0.73,

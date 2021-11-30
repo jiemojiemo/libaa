@@ -17,11 +17,6 @@ public:
     virtual std::string getName() const  = 0;
 
     /**
-     * This is called by the processor to specify its details before being used.
-     */
-    virtual void setRateAndBufferSizeDetails(double new_sample_rate, int new_block_size);
-
-    /**
      * Called before processing starts, to let processor prepare itself.
      */
     virtual void prepareToPlay(double sample_rate, int max_block_size) = 0;
