@@ -21,4 +21,16 @@ int Parameters::pushFloatParameter(std::string param_name, float default_val, fl
     return new_param_index;
 }
 
+int Parameters::pushChoiceParameter(std::string param_name, int default_index, std::vector<std::string> choice_strings){
+    int new_param_index = parameters_.size();
+    parameters_.emplace_back(ParameterType::kChoice,
+                             new_param_index,
+                             std::move(param_name),
+                             default_index, 0, choice_strings.size(),
+                             std::move(choice_strings));
+
+    return new_param_index;
+}
+
+
 }

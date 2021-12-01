@@ -55,3 +55,14 @@ TEST_F(AParameters, ThrowIfParameterIndexNotExist)
     EXPECT_ANY_THROW(params.get(2));
 }
 
+TEST_F(AParameters, CanAddChoiceParameter)
+{
+    std::vector<std::string> choices{"A", "B"};
+    params.pushChoiceParameter("choice", 0, choices);
+
+    AudioProcessorParameter& p = params.get(0);
+    AudioProcessorParameter expected{ParameterType::kChoice, 0, "choice", 0, 0, float(choices.size()), choices};
+
+    ASSERT_THAT(p, Eq(expected));
+}
+
