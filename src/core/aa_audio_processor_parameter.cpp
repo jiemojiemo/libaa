@@ -2,22 +2,22 @@
 //
 // Created by William.Hua on 2021/5/19.
 //
-#ifndef LIBAA_INCLUDE_LIBAA_CORE_AA_AUDIO_PROCESSOR_PARAMETER_H
 #include "libaa/core/aa_audio_processor_parameter.h"
-#endif
 
 namespace libaa
 {
 AudioProcessorParameter::AudioProcessorParameter(ParameterType type,
                                                  int param_id,
                                                  std::string param_name,
-                                                 float default_val, float min_plain_value, float max_plain_value):
-    type_(type),
-    id_(param_id),
-    plain_value_(default_val),
-    min_plain_value_(min_plain_value),
-    max_plain_value_(max_plain_value),
-    name_(std::move(param_name))
+                                                 float default_val, float min_plain_value, float max_plain_value,
+                                                 std::vector<std::string> choices_strings):
+        type_(type),
+        id_(param_id),
+        plain_value_(default_val),
+        min_plain_value_(min_plain_value),
+        max_plain_value_(max_plain_value),
+        name_(std::move(param_name)),
+        choice_strings_(std::move(choices_strings))
 {
     if(min_plain_value_ > max_plain_value_)
     {
@@ -66,6 +66,14 @@ float AudioProcessorParameter::convertNormalizedValueToPlainValue(float norm_val
 
     return (getMaxPlainValue() - getMinPlainValue()) * norm_value + getMinPlainValue();
 }
+
+std::string AudioProcessorParameter::convertNormalizedValueToChoiceString(float norm_value) const
+{
+    size_t choice_index = static_cast<size_t>(convertNormalizedValueToPlainValue(norm_value));
+    if(choice_index >= choice_strings_.size()){return {};}
+    return choice_strings_[choice_index];
+}
+
 
 float AudioProcessorParameter::getPlainValue() const
 {
@@ -123,7 +131,7 @@ void AudioProcessorParameter::setParameterName(std::string new_name) {
 
 bool operator==(const AudioProcessorParameter &lhs, const AudioProcessorParameter &rhs) {
     return lhs.getPlainValue() == rhs.getPlainValue()
-        && lhs.getMinPlainValue() == rhs.getMinPlainValue()
-        && lhs.getMaxPlainValue() == rhs.getMaxPlainValue();
+           && lhs.getMinPlainValue() == rhs.getMinPlainValue()
+           && lhs.getMaxPlainValue() == rhs.getMaxPlainValue();
 }
 }

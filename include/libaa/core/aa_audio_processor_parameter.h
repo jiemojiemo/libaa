@@ -7,11 +7,13 @@
 #define LIBAA_INCLUDE_LIBAA_CORE_AA_AUDIO_PROCESSOR_PARAMETER_H
 #pragma once
 #include <string>
+#include <vector>
 namespace libaa
 {
 enum class ParameterType
 {
     kFloat = 0,
+    kChoice
 };
 
 class AudioProcessorParameter
@@ -19,7 +21,8 @@ class AudioProcessorParameter
 public:
     explicit AudioProcessorParameter(ParameterType type, int param_id,
                                      std::string param_name,
-                                     float default_val, float min_plain_value, float max_plain_value);
+                                     float default_val, float min_plain_value, float max_plain_value,
+                                     std::vector<std::string> choices_strings = {});
 
     float getDefaultPlainValue() const;
 
@@ -34,6 +37,8 @@ public:
     float convertPlainValueToNormalizedValue(float plain_value) const;
 
     float convertNormalizedValueToPlainValue(float norm_value) const;
+
+    std::string convertNormalizedValueToChoiceString(float norm_value) const;
 
     float getPlainValue() const;
 
@@ -66,6 +71,7 @@ private:
     float max_plain_value_{0};
     float current_normalized_value_{0};
     std::string name_;
+    std::vector<std::string> choice_strings_;
 };
 
 bool operator==(const AudioProcessorParameter& lhs, const AudioProcessorParameter& rhs);

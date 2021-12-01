@@ -21,6 +21,7 @@ public:
     float min_plain_value = -10;
     float max_plain_value = 10;
     const std::string test_name = "test_param";
+    std::vector<std::string> choices_strings = {"A", "B", "C"};
 
     std::unique_ptr<AudioProcessorParameter> param;
 };
@@ -201,4 +202,44 @@ TEST_F(AAudioProcessorParameter, CanSetParameterName)
     param->setParameterName(new_name);
 
     ASSERT_THAT(param->getParameterName(), Eq(new_name));
+}
+
+TEST_F(AAudioProcessorParameter, CanConstructWithChoiceStrings)
+{
+    int default_index = 0;
+    param = std::make_unique<AudioProcessorParameter>(ParameterType::kChoice, param_id, "choices",
+                                                      default_index, 0, choices_strings.size(), choices_strings);
+
+}
+
+TEST_F(AAudioProcessorParameter, ChoiceStringCanConvertToNormalizedValueWithStep)
+{
+    int default_index = 1;
+    param = std::make_unique<AudioProcessorParameter>(ParameterType::kChoice, param_id, "choices",
+                                                      default_index, 0, choices_strings.size(), choices_strings);
+
+    float step = 1.0f / choices_strings.size();
+
+    ASSERT_THAT(param->getNormalizedValue(), FloatEq(step * default_value));
+}
+
+TEST_F(AAudioProcessorParameter, CanConvertNormalizedValueToChoiceString)
+{
+    int default_index = 1;
+    param = std::make_unique<AudioProcessorParameter>(ParameterType::kChoice, param_id, "choices",
+                                                      default_index, 0, choices_strings.size(), choices_strings);
+
+    float norm_val = param->getNormalizedValue();
+    ASSERT_THAT(param->convertNormalizedValueToChoiceString(norm_val),Eq(choices_strings[default_index]));
+}
+
+TEST_F(AAudioProcessorParameter, ConvertNormalizedValueReturnsEmptyIfChoiceStringIsEmpty)
+{
+    int default_index = 1;
+    choices_strings = {};
+    param = std::make_unique<AudioProcessorParameter>(ParameterType::kChoice, param_id, "choices",
+                                                      default_index, 0, choices_strings.size(), choices_strings);
+
+    float norm_val = 0.5;
+    ASSERT_THAT(param->convertNormalizedValueToChoiceString(norm_val),Eq(""));
 }
