@@ -46,7 +46,6 @@ public:
 TEST_F(AudioEffectTest, DelayTest)
 {
     DelayEffect processor;
-    processor.setRateAndBufferSizeDetails(sample_rate, block_size);
     processor.prepareToPlay(sample_rate, block_size);
 
     processor.processBlock(block);
@@ -57,7 +56,6 @@ TEST_F(AudioEffectTest, DelayTest)
 TEST_F(AudioEffectTest, VibratoTest)
 {
     VibratoEffect processor;
-    processor.setRateAndBufferSizeDetails(sample_rate, block_size);
     processor.prepareToPlay(sample_rate, block_size);
 
     processor.processBlock(block);
@@ -68,7 +66,6 @@ TEST_F(AudioEffectTest, VibratoTest)
 TEST_F(AudioEffectTest, FlangerTest)
 {
     Flanger processor;
-    processor.setRateAndBufferSizeDetails(sample_rate, block_size);
     processor.prepareToPlay(sample_rate, block_size);
 
     processor.processBlock(block);
@@ -79,7 +76,6 @@ TEST_F(AudioEffectTest, FlangerTest)
 TEST_F(AudioEffectTest, Chorus)
 {
     Chorus processor;
-    processor.setRateAndBufferSizeDetails(sample_rate, block_size);
     processor.prepareToPlay(sample_rate, block_size);
 
     processor.processBlock(block);
@@ -90,7 +86,6 @@ TEST_F(AudioEffectTest, Chorus)
 TEST_F(AudioEffectTest, Tremolo)
 {
     Tremolo processor;
-    processor.setRateAndBufferSizeDetails(sample_rate, block_size);
     processor.prepareToPlay(sample_rate, block_size);
 
     processor.processBlock(block);
@@ -102,7 +97,6 @@ TEST_F(AudioEffectTest, Tremolo)
 TEST_F(AudioEffectTest, Compressor)
 {
     Compressor processor;
-    processor.setRateAndBufferSizeDetails(sample_rate, block_size);
     processor.prepareToPlay(sample_rate, block_size);
 
     processor.processBlock(block);
@@ -114,7 +108,6 @@ TEST_F(AudioEffectTest, Compressor)
 TEST_F(AudioEffectTest, Distortion)
 {
     Distortion processor;
-    processor.setRateAndBufferSizeDetails(sample_rate, block_size);
     processor.prepareToPlay(sample_rate, block_size);
 
     processor.processBlock(block);
@@ -125,7 +118,6 @@ TEST_F(AudioEffectTest, Distortion)
 TEST_F(AudioEffectTest, Robotisation)
 {
     Robotisation processor;
-    processor.setRateAndBufferSizeDetails(sample_rate, block_size);
     processor.prepareToPlay(sample_rate, block_size);
 
     processor.processBlock(block);
@@ -136,7 +128,6 @@ TEST_F(AudioEffectTest, Robotisation)
 TEST_F(AudioEffectTest, BiquadFilter)
 {
     BiquadFilter processor;
-    processor.setRateAndBufferSizeDetails(sample_rate, block_size);
     processor.prepareToPlay(sample_rate, block_size);
 
     processor.processBlock(block);
@@ -147,7 +138,6 @@ TEST_F(AudioEffectTest, BiquadFilter)
 TEST_F(AudioEffectTest, IIRFilter)
 {
     IIRFilter processor;
-    processor.setRateAndBufferSizeDetails(sample_rate, block_size);
     processor.prepareToPlay(sample_rate, block_size);
 
     processor.processBlock(block);

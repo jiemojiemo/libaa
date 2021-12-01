@@ -5,7 +5,7 @@
 
 #pragma once
 #include "aa_audio_effect_processor.h"
-#include "aa_biquad_impl.h"
+#include "libaa/dsp/aa_biquad_impl.h"
 
 namespace libaa
 {

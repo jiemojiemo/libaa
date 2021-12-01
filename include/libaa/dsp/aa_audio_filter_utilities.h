@@ -1,16 +1,13 @@
-
 //
-// Created by William.Hua on 2020/12/21.
+// Created by bytedance on 2021/12/1.
 //
 
-#pragma once
-#include "aa_audio_effect_processor.h"
+#ifndef LIBAA_AA_AUDIO_FILTER_UTILITIES_H
+#define LIBAA_AA_AUDIO_FILTER_UTILITIES_H
 #include "libaa/dsp/aa_biquad_impl.h"
-#include <cmath>
-#include <memory>
+
 namespace libaa
 {
-
 enum class FilterType
 {
     kLPF1 = 0,          // 1st order low-pass filter
@@ -43,9 +40,9 @@ public:
 
     bool operator==(const IIRFilterParameter& p) const{
         return p.type == type &&
-            p.fc == fc &&
-            p.Q == Q &&
-            p.boost_or_cut_db == boost_or_cut_db;
+               p.fc == fc &&
+               p.Q == Q &&
+               p.boost_or_cut_db == boost_or_cut_db;
     }
 
     bool operator!=(const IIRFilterParameter& p) const{
@@ -53,25 +50,12 @@ public:
     }
 };
 
-class IIRFilter : public AudioEffectProcessor
+class AudioFilterUtilities
 {
 public:
-    static FilterCoeffs calcFilterCoeffs(const IIRFilterParameter& iir_param, float sample_rate);
-
-    IIRFilter();
-
-    std::string getName() const override{
-        return std::string("IIRFilter");
-    }
-
-    void prepareToPlay(double sample_rate, int max_block_size) override;
-    void reset() override;
-    void releaseResources() override;
-    void processBlock(AudioBuffer<float> &buffer) override;
-
-    int setParameter(IIRFilterParameter param);
-private:
-    class Impl;
-    std::shared_ptr<Impl> impl_;
+    static libaa::FilterCoeffs calcFilterCoefficients(const IIRFilterParameter& iir_param, float sample_rate);
 };
+
 }
+
+#endif //LIBAA_AA_AUDIO_FILTER_UTILITIES_H
