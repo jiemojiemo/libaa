@@ -9,6 +9,7 @@ set(DSP_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_lfo.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_dsp_utilities.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_db_utils.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/aa_audio_filter_utilities.cpp
         )
 
 set(DSP_SRC ${DSP_SRC} PARENT_SCOPE)
