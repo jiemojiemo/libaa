@@ -24,3 +24,20 @@ jobs:
       # Execute the build.  You can specify a specific target with "--target <NAME>"
       run: cmake --build build -- -j 8
 
+  asan_check:
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+            submodules: true
+
+      - name: build
+        shell: bash
+        run: bash ./ci/mac_build_with_asan.sh
+
+      - name: run unit test
+        shell: bash
+        run: |
+          cd build
+          ctest --verbose
+
