@@ -58,6 +58,8 @@ public:
 
     void setParameterName(std::string new_name);
 
+    std::vector<std::string> getChoiceStrings() const;
+
 private:
     bool isInRange(float v) const;
 

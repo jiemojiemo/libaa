@@ -31,9 +31,15 @@ enum class FilterType
     kNumFilterType
 };
 
-class IIRFilterParameter
+struct IIRFilterParameter
 {
 public:
+    IIRFilterParameter() = default;
+
+    IIRFilterParameter(FilterType t, float f, float q, float g):
+        type(t), fc(f),Q(q),boost_or_cut_db(g)
+    {
+    }
     FilterType type         {FilterType::kLPF1};
     float fc                {0.0f};
     float Q                 {0.0f};
@@ -58,7 +64,7 @@ public:
 
     void updateCoeffes(FilterType type, float fc, float Q, float boost_or_cut, float sample_rate)
     {
-        updateCoeffes({type, fc, Q, boost_or_cut}, sample_rate);
+        updateCoeffes(IIRFilterParameter{type, fc, Q, boost_or_cut}, sample_rate);
     }
 
     void updateCoeffes(const IIRFilterParameter& iir_param, float sample_rate){

@@ -129,6 +129,11 @@ void AudioProcessorParameter::setParameterName(std::string new_name) {
     name_ = std::move(new_name);
 }
 
+std::vector<std::string> AudioProcessorParameter::getChoiceStrings()const{
+    return choice_strings_;
+}
+
+
 bool operator==(const AudioProcessorParameter &lhs, const AudioProcessorParameter &rhs) {
     return lhs.getPlainValue() == rhs.getPlainValue()
            && lhs.getMinPlainValue() == rhs.getMinPlainValue()

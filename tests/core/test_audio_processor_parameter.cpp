@@ -243,3 +243,13 @@ TEST_F(AAudioProcessorParameter, ConvertNormalizedValueReturnsEmptyIfChoiceStrin
     float norm_val = 0.5;
     ASSERT_THAT(param->convertNormalizedValueToChoiceString(norm_val),Eq(""));
 }
+
+TEST_F(AAudioProcessorParameter, CanGetChoiceStrings)
+{
+    int default_index = 1;
+    choices_strings = {};
+    param = std::make_unique<AudioProcessorParameter>(ParameterType::kChoice, param_id, "choices",
+                                                      default_index, 0, choices_strings.size(), choices_strings);
+
+    ASSERT_THAT(param->getChoiceStrings(), Eq(choices_strings));
+}
