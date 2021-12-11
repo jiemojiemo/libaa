@@ -11,6 +11,7 @@ set(AUDIO_EFFECT_DIR
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_biquad_filter.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_iir_filter.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_gain_processor.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/aa_audio_filter_processor.cpp
         )
 
 set(AUDIO_EFFECT_DIR ${AUDIO_EFFECT_DIR} PARENT_SCOPE)

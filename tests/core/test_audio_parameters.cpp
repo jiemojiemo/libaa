@@ -65,4 +65,3 @@ TEST_F(AParameters, CanAddChoiceParameter)
 
     ASSERT_THAT(p, Eq(expected));
 }
-
