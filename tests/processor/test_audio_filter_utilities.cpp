@@ -5,6 +5,7 @@
 #include <gmock/gmock.h>
 #include "libaa/dsp/aa_biquad_impl.h"
 #include "libaa/dsp/aa_audio_filter_utilities.h"
+#include "libaa/core/aa_audio_block.h"
 using namespace testing;
 using namespace libaa;
 
@@ -39,4 +40,22 @@ TEST_F(AAudioFilterUtilities, Use93PercentsNyquistAsCutOffFrequencyIfInputFCLarg
     auto expected_coeffs = AudioFilterUtilities::calcFilterCoefficients(expected_p, sample_rate);
 
     ASSERT_THAT(coeffs, Eq(expected_coeffs));
+}
+
+TEST_F(AAudioFilterUtilities, ConstructWithTwoBiquad)
+{
+    AudioFilterUtilities utilities;
+
+    ASSERT_THAT(utilities.biquad_array.size(), Eq(2));
+}
+
+TEST_F(AAudioFilterUtilities, CanUpdateBiquadParameters)
+{
+    AudioFilterUtilities utilities;
+    auto expected = utilities.calcFilterCoefficients(p, sample_rate);
+
+    utilities.updateCoeffes(p, sample_rate);
+
+    ASSERT_THAT(utilities.biquad_array[0].coeff_array, Eq(expected));
+    ASSERT_THAT(utilities.biquad_array[1].coeff_array, Eq(expected));
 }

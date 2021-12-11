@@ -21,7 +21,7 @@ void BiquadFilter::processBlock(AudioBuffer<float> &buffer)  {
 
 void BiquadFilter::setCoefficients(const FilterCoeffs& coff){
     for(auto& biq : biquad_filters_){
-        biq.coeff_array_ = coff;
+        biq.coeff_array = coff;
     }
 }
 }

@@ -28,6 +28,7 @@ enum class FilterType
     kHighShelf,         // 1sr order high shelving filter
     kNCQParaEQ,         // 2nd order non-constant Q parametric EQ filter
     kCQParaEQ,          // 2nd order constant Q parametric EQ filter
+    kNumFilterType
 };
 
 class IIRFilterParameter
@@ -54,6 +55,22 @@ class AudioFilterUtilities
 {
 public:
     static libaa::FilterCoeffs calcFilterCoefficients(const IIRFilterParameter& iir_param, float sample_rate);
+
+    void updateCoeffes(FilterType type, float fc, float Q, float boost_or_cut, float sample_rate)
+    {
+        updateCoeffes({type, fc, Q, boost_or_cut}, sample_rate);
+    }
+
+    void updateCoeffes(const IIRFilterParameter& iir_param, float sample_rate){
+        auto coeffs = calcFilterCoefficients(iir_param, sample_rate);
+        for(auto& b : biquad_array){
+            b.updateCoeffs(coeffs);
+        }
+    }
+
+
+
+    std::array<Biquad, 2> biquad_array;
 };
 
 }
