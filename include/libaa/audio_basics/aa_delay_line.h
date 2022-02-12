@@ -33,7 +33,7 @@ public:
     void resize(size_t size) noexcept
     {
         raw_data_.resize(size);
-        least_recent_index_ = 0;
+        next_write_index = 0;
 
         clear();
     }
@@ -43,8 +43,8 @@ public:
      */
     void push(T value) noexcept
     {
-        raw_data_[least_recent_index_] = value;
-        least_recent_index_ = (least_recent_index_ == 0) ? (size() - 1):(least_recent_index_ - 1);
+        raw_data_[next_write_index] = value;
+        next_write_index = (next_write_index == 0) ? (size() - 1) : (next_write_index - 1);
     }
 
     /**
@@ -52,7 +52,7 @@ public:
      */
     T back() const noexcept
     {
-        return raw_data_[(least_recent_index_ + 1) % size()];
+        return raw_data_[(next_write_index + 1) % size()];
     }
 
     /**
@@ -60,7 +60,7 @@ public:
      */
     T get(size_t delay_in_samples) const noexcept
     {
-        return raw_data_[(least_recent_index_ + 1 + delay_in_samples) % size()];
+        return raw_data_[(next_write_index + 1 + delay_in_samples) % size()];
     }
 
     /**
@@ -80,11 +80,11 @@ public:
      */
     void set(size_t delay_in_samples, T new_val) noexcept
     {
-        raw_data_[(least_recent_index_ + 1 + delay_in_samples) % size()] = new_val;
+        raw_data_[(next_write_index + 1 + delay_in_samples) % size()] = new_val;
     }
 
 private:
-    size_t least_recent_index_{0};
+    size_t next_write_index{0};
     std::vector<T> raw_data_;
 };
 }
