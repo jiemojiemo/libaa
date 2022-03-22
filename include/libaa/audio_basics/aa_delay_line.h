@@ -3,26 +3,24 @@
 //
 
 #pragma once
-
+#include "libaa/core/aa_math_tools.h"
 #include <vector>
 #include <cmath>
-
+#include <memory>
 namespace libaa
 {
 template <typename T>
-class DelayLine
-{
+class DelayLine {
 public:
-    void clear() noexcept
-    {
-        std::fill(raw_data_.begin(), raw_data_.end(), T(0));
+    void clear() noexcept {
+        std::fill(&raw_data_[0], (&raw_data_[0] + size()), T(0));
     }
+
     /**
      * return the size of delay line
      */
-    size_t size() const noexcept
-    {
-        return raw_data_.size();
+    size_t size() const noexcept {
+        return buffer_size_;
     }
 
     /**
@@ -30,10 +28,11 @@ public:
      *
      * @note resize will clears the data in delay line
      */
-    void resize(size_t size) noexcept
-    {
-        raw_data_.resize(size);
-        next_write_index = 0;
+    void resize(size_t size) noexcept {
+        buffer_size_ = findNextPower2Number(size);
+        mask_ = buffer_size_ - 1;
+        raw_data_.reset(new T[buffer_size_]);
+        write_index_ = 0;
 
         clear();
     }
@@ -41,50 +40,51 @@ public:
     /**
      * push a value to delay line
      */
-    void push(T value) noexcept
-    {
-        raw_data_[next_write_index] = value;
-        next_write_index = (next_write_index == 0) ? (size() - 1) : (next_write_index - 1);
+    void push(T value) noexcept {
+        raw_data_[write_index_] = value;
+        ++write_index_;
+        write_index_ &= mask_;
     }
 
     /**
      * returns the last value
      */
-    T back() const noexcept
-    {
-        return raw_data_[(next_write_index + 1) % size()];
+    T back() const noexcept {
+        size_t read_index = (write_index_ - 1) & mask_;
+        return raw_data_[read_index];
     }
 
     /**
      * returns value with delay
      */
-    T get(size_t delay_in_samples) const noexcept
-    {
-        return raw_data_[(next_write_index + 1 + delay_in_samples) % size()];
+    T get(size_t delay_in_samples) const noexcept {
+        size_t read_index = (write_index_ - 1 - delay_in_samples) & mask_;
+        return raw_data_[read_index];
     }
 
     /**
      * Returns interpolation value
      */
-    T getInterpolation(float delay) const noexcept
-    {
+    T getInterpolation(float delay) const noexcept {
         int previous_sample = static_cast<int>(floorf(delay));
         int next_sample = static_cast<int>(ceilf(delay));
         float fraction = static_cast<float>(next_sample) - delay;
 
-        return fraction*get(previous_sample) + (1.0f-fraction)*get(next_sample);
+        return fraction * get(previous_sample) + (1.0f - fraction) * get(next_sample);
     }
 
     /**
      * set value in specific delay
      */
-    void set(size_t delay_in_samples, T new_val) noexcept
-    {
-        raw_data_[(next_write_index + 1 + delay_in_samples) % size()] = new_val;
+    void set(size_t delay_in_samples, T new_val) noexcept {
+        size_t pos = (write_index_ - delay_in_samples) & mask_;
+        raw_data_[pos] = new_val;
     }
 
 private:
-    size_t next_write_index{0};
-    std::vector<T> raw_data_;
+    size_t write_index_{0};
+    size_t buffer_size_{0};
+    size_t mask_;
+    std::unique_ptr<T[]> raw_data_ = nullptr;
 };
 }

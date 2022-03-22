@@ -20,11 +20,12 @@ TEST_F(ADelayLine, SizeIsZeroAfterCreate)
     ASSERT_THAT(dline.size(), Eq(0));
 }
 
-TEST_F(ADelayLine, SizeChangedAfterResize)
+TEST_F(ADelayLine, SizeChangedToPower2AfterResize)
 {
-    int target_size = 10;
-    dline.resize(target_size);
+    int input_size = 10;
+    dline.resize(input_size);
 
+    int target_size = findNextPower2Number(input_size);
     ASSERT_THAT(dline.size(), Eq(target_size));
 }
 

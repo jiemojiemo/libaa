@@ -14,7 +14,7 @@ public:
 
     }
     int num_lines = 2;
-    int line_size = 100;
+    int line_size = 128;
 
     DelayLineArray<float> dlines;
 
@@ -58,7 +58,7 @@ TEST_F(ADelayLineArray, ResizeAllDelayLines)
 
     auto* dline = dlines.getDelayLine(0);
 
-    ASSERT_THAT(dline->size(), Eq(new_size));
+    ASSERT_THAT(dline->size(), Eq(findNextPower2Number(new_size)));
 }
 
 TEST_F(ADelayLineArray, AllocateNewLines)
@@ -68,5 +68,5 @@ TEST_F(ADelayLineArray, AllocateNewLines)
     dlines.allocateDelayLines(new_num_lines, new_size);
 
     ASSERT_THAT(dlines.getNumLines(), Eq(new_num_lines));
-    ASSERT_THAT(dlines.getSize(), Eq(new_size));
+    ASSERT_THAT(dlines.getSize(), Eq(findNextPower2Number(new_size)));
 }
