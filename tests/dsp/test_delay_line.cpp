@@ -25,7 +25,8 @@ TEST_F(ADelayLine, SizeChangedAfterResize)
     int target_size = 10;
     dline.resize(target_size);
 
-    ASSERT_THAT(dline.size(), Eq(target_size));
+    int power2_size = findNextPower2Number(target_size);
+    ASSERT_THAT(dline.size(), Eq(power2_size));
 }
 
 TEST_F(ADelayLine, GetNewPushedValueFromBack)
