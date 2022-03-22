@@ -7,10 +7,9 @@
 #define LIBAA_SRC_DSP_AA_DB_UTILS_H
 #pragma once
 
-namespace libaa
-{
+namespace libaa {
 float dbToScale(float db);
 float scaleToDb(float scale);
-}
+} // namespace libaa
 
-#endif //LIBAA_SRC_DSP_AA_DB_UTILS_H
+#endif // LIBAA_SRC_DSP_AA_DB_UTILS_H

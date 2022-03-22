@@ -7,12 +7,11 @@
 using namespace testing;
 using namespace libaa;
 
-
-TEST(ALFO, CalcValueWithPhaseAndWaveType)
-{
+TEST(ALFO, CalcValueWithPhaseAndWaveType) {
     LFO lfo;
     float phase = 0.0;
 
     phase = 1.0;
-    EXPECT_THAT(lfo.lfo(phase, LFO::WaveformType::kWaveformSine), FloatEq(0.5 + 0.5*sin(2*M_PI*phase)));
+    EXPECT_THAT(lfo.lfo(phase, LFO::WaveformType::kWaveformSine),
+                FloatEq(0.5 + 0.5 * sin(2 * M_PI * phase)));
 }

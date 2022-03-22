@@ -7,15 +7,11 @@
 #define LIBAA_INCLUDE_LIBAA_FILEIO_AA_MP3_AUDIO_FORMAT_WRITER_H
 #pragma once
 #include "libaa/fileio/aa_audio_format_writer.h"
-namespace libaa
-{
-class MP3FormatWriter : public AudioFormatWriter
-{
+namespace libaa {
+class MP3FormatWriter : public AudioFormatWriter {
 public:
-    MP3FormatWriter(std::unique_ptr<OutputStream> out_stream,
-                    int rate,
-                    int channels,
-                    int bits);
+    MP3FormatWriter(std::unique_ptr<OutputStream> out_stream, int rate,
+                    int channels, int bits);
 
     virtual ~MP3FormatWriter() = default;
 
@@ -32,6 +28,6 @@ private:
     std::shared_ptr<Impl> impl_;
 };
 
-}
+} // namespace libaa
 
-#endif //LIBAA_INCLUDE_LIBAA_FILEIO_AA_MP3_AUDIO_FORMAT_WRITER_H
+#endif // LIBAA_INCLUDE_LIBAA_FILEIO_AA_MP3_AUDIO_FORMAT_WRITER_H

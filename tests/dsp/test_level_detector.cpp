@@ -2,33 +2,29 @@
 // Created by hw on 2021/12/27.
 //
 
-#include <gmock/gmock.h>
 #include "libaa/dsp/aa_level_detector.h"
+#include <gmock/gmock.h>
 using namespace libaa;
 using namespace testing;
 
-class ALevelDetector : public Test
-{
+class ALevelDetector : public Test {
 public:
     LevelDetectorParameters p;
-    float sample_rate =  44100;
+    float sample_rate = 44100;
 };
 
-TEST_F(ALevelDetector, CanConstructWithParameters)
-{
+TEST_F(ALevelDetector, CanConstructWithParameters) {
     LevelDetector detector(p);
 }
 
-TEST_F(ALevelDetector, CanGetSampleRateAfterPrepare)
-{
+TEST_F(ALevelDetector, CanGetSampleRateAfterPrepare) {
     LevelDetector detector(p);
     detector.prepare(sample_rate);
 
     ASSERT_THAT(detector.getSampleRate(), Eq(sample_rate));
 }
 
-TEST_F(ALevelDetector, CanSetAttackTime)
-{
+TEST_F(ALevelDetector, CanSetAttackTime) {
     LevelDetector detector(p);
     detector.prepare(sample_rate);
 
@@ -38,8 +34,7 @@ TEST_F(ALevelDetector, CanSetAttackTime)
     ASSERT_THAT(detector.getAttackTime(), FloatEq(new_attack_time_ms));
 }
 
-TEST_F(ALevelDetector, CanSetReleaseTime)
-{
+TEST_F(ALevelDetector, CanSetReleaseTime) {
     LevelDetector detector(p);
     detector.prepare(sample_rate);
 
@@ -49,54 +44,53 @@ TEST_F(ALevelDetector, CanSetReleaseTime)
     ASSERT_THAT(detector.getReleaseTime(), FloatEq(new_release_time_ms));
 }
 
-TEST_F(ALevelDetector, CanGetAttackTimeAlphaAfterConstruct)
-{
+TEST_F(ALevelDetector, CanGetAttackTimeAlphaAfterConstruct) {
     p.attack_time_ms = 50;
 
     LevelDetector detector(p);
     detector.prepare(sample_rate);
 
-    float expected_alpha = exp(-1.0f/(p.attack_time_ms*sample_rate*0.001));
+    float expected_alpha =
+        exp(-1.0f / (p.attack_time_ms * sample_rate * 0.001));
     ASSERT_THAT(detector.getAttackAlpha(), FloatEq(expected_alpha));
 }
 
-TEST_F(ALevelDetector, CanGetReleaseTimeAlphaAfterConstruct)
-{
+TEST_F(ALevelDetector, CanGetReleaseTimeAlphaAfterConstruct) {
     p.release_time_ms = 20;
 
     LevelDetector detector(p);
     detector.prepare(sample_rate);
 
-    float expected_alpha = exp(-1.0f/(p.release_time_ms*sample_rate*0.001));
+    float expected_alpha =
+        exp(-1.0f / (p.release_time_ms * sample_rate * 0.001));
     ASSERT_THAT(detector.getReleaseAlpha(), FloatEq(expected_alpha));
 }
 
-TEST_F(ALevelDetector, AttackTimeAlphaUpdatedAfterSetAttackTime)
-{
+TEST_F(ALevelDetector, AttackTimeAlphaUpdatedAfterSetAttackTime) {
     LevelDetector detector(p);
     detector.prepare(sample_rate);
 
     float new_attack_time_ms = 50;
     detector.setAttackTime(new_attack_time_ms);
 
-    float expected_alpha = exp(-1.0f/(new_attack_time_ms*sample_rate*0.001));
+    float expected_alpha =
+        exp(-1.0f / (new_attack_time_ms * sample_rate * 0.001));
     ASSERT_THAT(detector.getAttackAlpha(), FloatEq(expected_alpha));
 }
 
-TEST_F(ALevelDetector, ReleaseTimeAlphaUpdatedAfterSetReleaseTime)
-{
+TEST_F(ALevelDetector, ReleaseTimeAlphaUpdatedAfterSetReleaseTime) {
     LevelDetector detector(p);
     detector.prepare(sample_rate);
 
     float new_release_time_ms = 20;
     detector.setReleaseTime(new_release_time_ms);
 
-    float expected_alpha = exp(-1.0f/(new_release_time_ms*sample_rate*0.001));
+    float expected_alpha =
+        exp(-1.0f / (new_release_time_ms * sample_rate * 0.001));
     ASSERT_THAT(detector.getReleaseAlpha(), FloatEq(expected_alpha));
 }
 
-TEST_F(ALevelDetector, CanUpdateParameters)
-{
+TEST_F(ALevelDetector, CanUpdateParameters) {
     LevelDetector detector(p);
     detector.prepare(sample_rate);
 
@@ -110,30 +104,27 @@ TEST_F(ALevelDetector, CanUpdateParameters)
     ASSERT_THAT(detector.getParameters(), Eq(p));
 }
 
-TEST_F(ALevelDetector, CanProcessAndReturnsWithModeMS)
-{
+TEST_F(ALevelDetector, CanProcessAndReturnsWithModeMS) {
     p.mode = LevelDetectorMode::kLevelDetectorMode_MS;
     LevelDetector detector(p);
     detector.prepare(sample_rate);
 
     float xn = 0.5f;
-    float expected = 0.5 *(xn * xn);
+    float expected = 0.5 * (xn * xn);
     ASSERT_THAT(detector.process(xn), Eq(expected));
 }
 
-TEST_F(ALevelDetector, CanProcessAndReturnsWithModeRMS)
-{
+TEST_F(ALevelDetector, CanProcessAndReturnsWithModeRMS) {
     p.mode = LevelDetectorMode::kLevelDetectorMode_RMS;
     LevelDetector detector(p);
     detector.prepare(sample_rate);
 
     float xn = 0.5f;
-    float expected = powf(0.5 *(xn * xn), 0.5f);
+    float expected = powf(0.5 * (xn * xn), 0.5f);
     ASSERT_THAT(detector.process(xn), Eq(expected));
 }
 
-TEST_F(ALevelDetector, CanProcessAndReturnWithPeakMode)
-{
+TEST_F(ALevelDetector, CanProcessAndReturnWithPeakMode) {
     p.mode = LevelDetectorMode::kLevelDetectorMode_Peak;
     p.release_time_ms = 50;
     p.attack_time_ms = 10;
@@ -142,14 +133,15 @@ TEST_F(ALevelDetector, CanProcessAndReturnWithPeakMode)
     detector.prepare(sample_rate);
 
     float xn = 0.5f;
-    float y1 = std::max(xn, detector.getReleaseAlpha()*0 + (1-detector.getReleaseAlpha()) * xn);
-    float expected = detector.getAttackAlpha()*0 + (1-detector.getAttackAlpha())*y1;
+    float y1 = std::max(xn, detector.getReleaseAlpha() * 0 +
+                                (1 - detector.getReleaseAlpha()) * xn);
+    float expected =
+        detector.getAttackAlpha() * 0 + (1 - detector.getAttackAlpha()) * y1;
 
     ASSERT_THAT(detector.process(xn), Eq(expected));
 }
 
-TEST_F(ALevelDetector, CanProcessWithClampToMax)
-{
+TEST_F(ALevelDetector, CanProcessWithClampToMax) {
     p.mode = LevelDetectorMode::kLevelDetectorMode_Peak;
     p.clamp_to_unity_max = true;
 
@@ -162,8 +154,7 @@ TEST_F(ALevelDetector, CanProcessWithClampToMax)
     ASSERT_THAT(detector.process(xn), Eq(expected));
 }
 
-TEST_F(ALevelDetector, CanProcessAndReturnDb)
-{
+TEST_F(ALevelDetector, CanProcessAndReturnDb) {
     p.mode = LevelDetectorMode::kLevelDetectorMode_RMS;
     p.detect_db = true;
 
@@ -171,13 +162,12 @@ TEST_F(ALevelDetector, CanProcessAndReturnDb)
     detector.prepare(sample_rate);
 
     float xn = 0.5f;
-    float expected = powf(0.5 *(xn * xn), 0.5f);
+    float expected = powf(0.5 * (xn * xn), 0.5f);
     expected = 20 * log10(expected);
     ASSERT_THAT(detector.process(xn), Eq(expected));
 }
 
-TEST_F(ALevelDetector, ReturnMinDbIfInputIsZero)
-{
+TEST_F(ALevelDetector, ReturnMinDbIfInputIsZero) {
     p.mode = LevelDetectorMode::kLevelDetectorMode_RMS;
     p.detect_db = true;
 

@@ -6,17 +6,12 @@
 #include "aa_audio_effect_processor.h"
 #include "libaa/audio_basics/aa_delay_line.h"
 #include <memory>
-namespace libaa
-{
-class DelayEffect : public AudioEffectProcessor
-{
+namespace libaa {
+class DelayEffect : public AudioEffectProcessor {
 public:
     DelayEffect();
 
-    std::string getName() const override
-    {
-        return "delay";
-    }
+    std::string getName() const override { return "delay"; }
 
     void prepareToPlay(double sample_rate, int max_block_size) override;
 
@@ -36,4 +31,4 @@ private:
     std::shared_ptr<Impl> impl_;
 };
 
-}
+} // namespace libaa

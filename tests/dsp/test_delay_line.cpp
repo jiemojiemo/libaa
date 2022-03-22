@@ -8,20 +8,14 @@
 using namespace testing;
 using namespace libaa;
 
-
-class ADelayLine : public Test
-{
+class ADelayLine : public Test {
 public:
     DelayLine<float> dline;
 };
 
-TEST_F(ADelayLine, SizeIsZeroAfterCreate)
-{
-    ASSERT_THAT(dline.size(), Eq(0));
-}
+TEST_F(ADelayLine, SizeIsZeroAfterCreate) { ASSERT_THAT(dline.size(), Eq(0)); }
 
-TEST_F(ADelayLine, SizeChangedToPower2AfterResize)
-{
+TEST_F(ADelayLine, SizeChangedToPower2AfterResize) {
     int input_size = 10;
     dline.resize(input_size);
 
@@ -29,8 +23,7 @@ TEST_F(ADelayLine, SizeChangedToPower2AfterResize)
     ASSERT_THAT(dline.size(), Eq(target_size));
 }
 
-TEST_F(ADelayLine, GetNewPushedValueFromBack)
-{
+TEST_F(ADelayLine, GetNewPushedValueFromBack) {
     int target_size = 10;
     dline.resize(target_size);
 
@@ -40,8 +33,7 @@ TEST_F(ADelayLine, GetNewPushedValueFromBack)
     ASSERT_THAT(dline.back(), FloatEq(x));
 }
 
-TEST_F(ADelayLine, GetNewPushedValueIfDelayIsZero)
-{
+TEST_F(ADelayLine, GetNewPushedValueIfDelayIsZero) {
     int target_size = 10;
     dline.resize(target_size);
 
@@ -52,20 +44,21 @@ TEST_F(ADelayLine, GetNewPushedValueIfDelayIsZero)
     ASSERT_THAT(dline.get(delay_in_sample), FloatEq(x));
 }
 
-TEST_F(ADelayLine, GetDelayedValue)
-{
+TEST_F(ADelayLine, GetDelayedValue) {
     int target_size = 10;
     dline.resize(target_size);
 
-    for(int i = 0; i < target_size; ++i){ dline.push(float(i)); }
+    for (int i = 0; i < target_size; ++i) {
+        dline.push(float(i));
+    }
 
     size_t delay_in_sample = 5;
 
-    ASSERT_THAT(dline.get(delay_in_sample), FloatEq(target_size - delay_in_sample - 1));
+    ASSERT_THAT(dline.get(delay_in_sample),
+                FloatEq(target_size - delay_in_sample - 1));
 }
 
-TEST_F(ADelayLine, SetAllValueToZeroAfterClear)
-{
+TEST_F(ADelayLine, SetAllValueToZeroAfterClear) {
     int target_size = 10;
     dline.resize(target_size);
     dline.push(1.0);
@@ -75,16 +68,14 @@ TEST_F(ADelayLine, SetAllValueToZeroAfterClear)
     ASSERT_THAT(dline.back(), FloatEq(0.0f));
 }
 
-TEST_F(ADelayLine, RetrunsInterpolatonValueIfDelayIsFloat)
-{
+TEST_F(ADelayLine, RetrunsInterpolatonValueIfDelayIsFloat) {
     int target_size = 10;
     dline.resize(target_size);
-    for(int i = 0; i < target_size; ++i){ dline.push(float(i)); }
+    for (int i = 0; i < target_size; ++i) {
+        dline.push(float(i));
+    }
 
     float delay = 2.5;
 
     ASSERT_THAT(dline.getInterpolation(delay), FloatEq(6.5f));
 }
-
-
-

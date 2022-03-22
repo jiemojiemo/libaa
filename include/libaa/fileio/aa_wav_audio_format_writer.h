@@ -6,19 +6,15 @@
 #pragma once
 #include "libaa/fileio/aa_audio_format_writer.h"
 #include <vector>
-namespace libaa
-{
-class WavFormatWriter : public AudioFormatWriter
-{
+namespace libaa {
+class WavFormatWriter : public AudioFormatWriter {
 public:
-    WavFormatWriter(std::unique_ptr<OutputStream> out_stream,
-                    int rate,
-                    int channels,
-                    int bits);
+    WavFormatWriter(std::unique_ptr<OutputStream> out_stream, int rate,
+                    int channels, int bits);
 
     bool writePlanar(const float **samples, int num_samples) override;
 
-    bool writeInterleave(const float* samples, int num_samples) override;
+    bool writeInterleave(const float *samples, int num_samples) override;
 
     bool isOpen() const override;
 
@@ -31,4 +27,4 @@ private:
     std::shared_ptr<Impl> impl_;
 };
 
-}
+} // namespace libaa

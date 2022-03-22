@@ -6,18 +6,14 @@
 #include "aa_audio_effect_processor.h"
 #include <cmath>
 #include <memory>
-namespace libaa
-{
-class Compressor : public AudioEffectProcessor
-{
+namespace libaa {
+class Compressor : public AudioEffectProcessor {
 public:
     Compressor();
 
     ~Compressor() override = default;
 
-    std::string getName() const override {
-        return std::string("Compressor");
-    }
+    std::string getName() const override { return std::string("Compressor"); }
     void prepareToPlay(double sample_rate, int max_block_size) override;
 
     void reset() override;
@@ -36,4 +32,4 @@ private:
     class Impl;
     std::shared_ptr<Impl> impl_;
 };
-}
+} // namespace libaa

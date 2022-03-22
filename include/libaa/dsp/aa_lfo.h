@@ -5,15 +5,10 @@
 #pragma once
 #include "libaa/aa_common.h"
 #include <cmath>
-namespace libaa
-{
-class LFO
-{
+namespace libaa {
+class LFO {
 public:
-    enum class WaveformType
-    {
-        kWaveformSine = 0
-    };
+    enum class WaveformType { kWaveformSine = 0 };
     LFO() = default;
 
     float lfo(float phase, WaveformType waveform);
@@ -21,4 +16,4 @@ public:
 private:
     float lfoSine(float phase) const;
 };
-}
+} // namespace libaa

@@ -6,10 +6,8 @@
 #include "aa_audio_effect_processor.h"
 #include "libaa/dsp/aa_lfo.h"
 #include <memory>
-namespace libaa
-{
-class Tremolo : public AudioEffectProcessor
-{
+namespace libaa {
+class Tremolo : public AudioEffectProcessor {
 public:
     Tremolo();
 
@@ -17,7 +15,7 @@ public:
 
     void prepareToPlay(double sample_rate, int max_block_size) override;
 
-    void reset() override ;
+    void reset() override;
 
     void releaseResources() override;
 
@@ -31,4 +29,4 @@ private:
     class Impl;
     std::shared_ptr<Impl> impl_;
 };
-}
+} // namespace libaa

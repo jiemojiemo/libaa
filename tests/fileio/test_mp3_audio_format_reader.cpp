@@ -2,25 +2,22 @@
 //
 // Created by William.Hua on 2021/2/9.
 //
-#include "libaa/fileio/aa_mp3_audio_format_reader.h"
 #include "libaa/fileio/aa_file_input_stream.h"
+#include "libaa/fileio/aa_mp3_audio_format_reader.h"
 
 #include "../aa_test_helper.h"
-#include "libaa/fileio/aa_mp3_audio_format_writer.h"
 #include "libaa/fileio/aa_file_output_stream.h"
-#include <gmock/gmock.h>
+#include "libaa/fileio/aa_mp3_audio_format_writer.h"
 #include <fstream>
+#include <gmock/gmock.h>
 #include <sstream>
 using namespace testing;
 using namespace libaa;
 using namespace std;
 
-
-class AMp3AudioFormatReader : public Test
-{
+class AMp3AudioFormatReader : public Test {
 public:
-    void SetUp() override
-    {
+    void SetUp() override {
         left_buffer.resize(n_read_samples);
         right_buffer.resize(n_read_samples);
         third_buffer.resize(n_read_samples);
@@ -31,17 +28,15 @@ public:
         auto out_stream = std::make_unique<FileOutputStream>();
         out_stream->open(test_file_name);
 
-        MP3FormatWriter writer(std::move(out_stream), sample_rate, num_channels, num_bits);
-        writer.writePlanar((const float**)dest, n_read_samples);
+        MP3FormatWriter writer(std::move(out_stream), sample_rate, num_channels,
+                               num_bits);
+        writer.writePlanar((const float **)dest, n_read_samples);
         writer.close();
 
         test_file = std::make_unique<ScopeFile>(test_file_name);
     }
 
-    void TearDown() override
-    {
-        test_file = nullptr;
-    }
+    void TearDown() override { test_file = nullptr; }
 
     const size_t sample_rate = 44100;
     const size_t num_channels = 2;
@@ -53,15 +48,13 @@ public:
     vector<float> left_buffer;
     vector<float> right_buffer;
     vector<float> third_buffer;
-    float* dest[3];
+    float *dest[3];
 
-    const std::string test_file_name="libaa_test.mp3";
+    const std::string test_file_name = "libaa_test.mp3";
     std::unique_ptr<ScopeFile> test_file;
-
 };
 
-class FakeStream : public InputStream
-{
+class FakeStream : public InputStream {
 public:
     ~FakeStream() override = default;
     int64_t read(uint8_t *dst_buf, int64_t size) override {
@@ -69,28 +62,22 @@ public:
         (void)size;
         return 0;
     }
-    int64_t tellg() override {
-        return 0;
-    }
+    int64_t tellg() override { return 0; }
     int seekg(int64_t pos, int mode) override {
         (void)pos;
         (void)mode;
         return 0;
     }
-    int64_t length() const override {
-        return 0;
-    }
+    int64_t length() const override { return 0; }
 };
 
-
-TEST_F(AMp3AudioFormatReader, InitWithInputStream)
-{
-    auto in_stream = std::unique_ptr<InputStream>(new FileInputStream(test_file_name));
+TEST_F(AMp3AudioFormatReader, InitWithInputStream) {
+    auto in_stream =
+        std::unique_ptr<InputStream>(new FileInputStream(test_file_name));
     Mp3AudioFormatReader reader(std::move(in_stream));
 }
 
-TEST_F(AMp3AudioFormatReader, ReturnsFalseIfOpenFailed)
-{
+TEST_F(AMp3AudioFormatReader, ReturnsFalseIfOpenFailed) {
     auto in_stream = std::unique_ptr<InputStream>(new FakeStream());
 
     Mp3AudioFormatReader reader(std::move(in_stream));
@@ -98,17 +85,16 @@ TEST_F(AMp3AudioFormatReader, ReturnsFalseIfOpenFailed)
     ASSERT_FALSE(reader.isOpenOk());
 }
 
-TEST_F(AMp3AudioFormatReader, ReturnTrueIfOpenSuccessfully)
-{
-    auto in_stream = std::unique_ptr<InputStream>(new FileInputStream(test_file_name));
+TEST_F(AMp3AudioFormatReader, ReturnTrueIfOpenSuccessfully) {
+    auto in_stream =
+        std::unique_ptr<InputStream>(new FileInputStream(test_file_name));
 
     Mp3AudioFormatReader reader(std::move(in_stream));
 
     ASSERT_TRUE(reader.isOpenOk());
 }
 
-TEST_F(AMp3AudioFormatReader, ReadReturnFalseIfOpenFailed)
-{
+TEST_F(AMp3AudioFormatReader, ReadReturnFalseIfOpenFailed) {
     auto fake_stream = std::unique_ptr<InputStream>(new FakeStream());
     Mp3AudioFormatReader reader(std::move(fake_stream));
     ASSERT_FALSE(reader.isOpenOk());
@@ -117,9 +103,9 @@ TEST_F(AMp3AudioFormatReader, ReadReturnFalseIfOpenFailed)
 
     ASSERT_FALSE(ret);
 }
-TEST_F(AMp3AudioFormatReader, CanReadSamples)
-{
-    auto in_stream = std::unique_ptr<InputStream>(new FileInputStream(test_file_name));
+TEST_F(AMp3AudioFormatReader, CanReadSamples) {
+    auto in_stream =
+        std::unique_ptr<InputStream>(new FileInputStream(test_file_name));
     Mp3AudioFormatReader reader(std::move(in_stream));
 
     auto ret = reader.readSamples(dest, num_channels, 0, 0, n_read_samples);
@@ -127,9 +113,9 @@ TEST_F(AMp3AudioFormatReader, CanReadSamples)
     ASSERT_TRUE(ret);
 }
 
-TEST_F(AMp3AudioFormatReader, ReadWithStartOffsetOfFileWillChangePosition)
-{
-    auto in_stream = std::unique_ptr<InputStream>(new FileInputStream(test_file_name));
+TEST_F(AMp3AudioFormatReader, ReadWithStartOffsetOfFileWillChangePosition) {
+    auto in_stream =
+        std::unique_ptr<InputStream>(new FileInputStream(test_file_name));
     Mp3AudioFormatReader reader(std::move(in_stream));
 
     const int offset = 5;
@@ -139,7 +125,7 @@ TEST_F(AMp3AudioFormatReader, ReadWithStartOffsetOfFileWillChangePosition)
 }
 
 //
-//TEST_F(AMp3AudioFormatReader, ReadOnlyAvailableChannels)
+// TEST_F(AMp3AudioFormatReader, ReadOnlyAvailableChannels)
 //{
 //    ifstream in_stream(test_file_name);
 //    Mp3AudioFormatReader reader(std::move(in_stream));
@@ -154,7 +140,7 @@ TEST_F(AMp3AudioFormatReader, ReadWithStartOffsetOfFileWillChangePosition)
 //    ASSERT_THAT(third_buffer, ContainerEq(all_0));
 //}
 //
-//TEST_F(AMp3AudioFormatReader, ReadWithStartOfDest)
+// TEST_F(AMp3AudioFormatReader, ReadWithStartOfDest)
 //{
 //    ifstream in_stream(test_file_name);
 //    Mp3AudioFormatReader reader(std::move(in_stream));
@@ -162,12 +148,11 @@ TEST_F(AMp3AudioFormatReader, ReadWithStartOffsetOfFileWillChangePosition)
 //    const int offset = 5;
 //    reader.readSamples(dest, num_channels, offset, 0, n_read_samples);
 //
-//    vector<float> offset_data{left_buffer.begin(), left_buffer.begin() + offset};
-//    vector<float> samples_data{left_buffer.begin() + offset, left_buffer.end()};
-//    vector<float> ref(samples_data.size(), fill_val);
+//    vector<float> offset_data{left_buffer.begin(), left_buffer.begin() +
+//    offset}; vector<float> samples_data{left_buffer.begin() + offset,
+//    left_buffer.end()}; vector<float> ref(samples_data.size(), fill_val);
 //    vector<float> all_0(offset, 0.0f);
 //    ASSERT_THAT(offset_data, ContainerEq(all_0));
 //    ASSERT_THAT(samples_data, Pointwise(FloatNearPointwise(1e-3), ref));
 //}
 //
-

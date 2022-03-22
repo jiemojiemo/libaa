@@ -7,10 +7,8 @@
 #include "aa_audio_signal_genrator.h"
 #include <cmath>
 #include <memory>
-namespace libaa
-{
-class LFOGenerator : public AudioSignalGenerator
-{
+namespace libaa {
+class LFOGenerator : public AudioSignalGenerator {
 public:
     LFOGenerator();
 
@@ -20,10 +18,11 @@ public:
 
     double getPhaseIncrement() const;
 
-    double frequency_hz        = {0.0f};
+    double frequency_hz = {0.0f};
     GeneratorWaveform waveform = {GeneratorWaveform::kTriangle};
+
 private:
     class Impl;
     std::shared_ptr<Impl> impl_;
 };
-}
+} // namespace libaa

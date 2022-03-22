@@ -6,10 +6,8 @@
 #define LIBAA_AA_AUDIO_FILTER_PROCESSOR_H
 #include "libaa/audio_effect/aa_i_audio_processor.h"
 #include "libaa/dsp/aa_audio_filter_utilities.h"
-namespace libaa
-{
-class AudioFilterProcessor : public IProcessor
-{
+namespace libaa {
+class AudioFilterProcessor : public IProcessor {
 public:
     AudioFilterProcessor();
 
@@ -35,6 +33,6 @@ private:
     class Impl;
     std::shared_ptr<Impl> impl_;
 };
-}
+} // namespace libaa
 
-#endif //LIBAA_AA_AUDIO_FILTER_PROCESSOR_H
+#endif // LIBAA_AA_AUDIO_FILTER_PROCESSOR_H

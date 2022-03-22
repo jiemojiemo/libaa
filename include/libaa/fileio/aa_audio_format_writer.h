@@ -5,20 +5,15 @@
 
 #pragma once
 #include "libaa/fileio/aa_output_stream.h"
-#include <ostream>
 #include <memory>
+#include <ostream>
 
-namespace libaa
-{
-class AudioFormatWriter
-{
+namespace libaa {
+class AudioFormatWriter {
 public:
-    AudioFormatWriter(std::unique_ptr<OutputStream> out_stream,
-                      int sample_rate,
-                      int num_channels,
-                      int num_bits):
-        out_stream_(std::move(out_stream))
-    {
+    AudioFormatWriter(std::unique_ptr<OutputStream> out_stream, int sample_rate,
+                      int num_channels, int num_bits)
+        : out_stream_(std::move(out_stream)) {
         (void)sample_rate;
         (void)num_channels;
         (void)num_bits;
@@ -26,8 +21,8 @@ public:
 
     ~AudioFormatWriter() = default;
 
-    virtual bool writePlanar(const float** samples, int num_samples) = 0;
-    virtual bool writeInterleave(const float* samples, int num_samples) = 0;
+    virtual bool writePlanar(const float **samples, int num_samples) = 0;
+    virtual bool writeInterleave(const float *samples, int num_samples) = 0;
     virtual bool isOpen() const = 0;
 
     virtual void flush() = 0;
@@ -42,4 +37,4 @@ public:
     int num_bits{-1};
 };
 
-}
+} // namespace libaa

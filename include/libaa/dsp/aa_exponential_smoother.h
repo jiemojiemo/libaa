@@ -7,26 +7,18 @@
 #define LIBAA_INCLUDE_LIBAA_DSP_AA_EXPONENTIAL_SMOOTHER_H
 #pragma once
 
-namespace libaa
-{
-class ExponentialSmoother
-{
+namespace libaa {
+class ExponentialSmoother {
 public:
-    explicit ExponentialSmoother(float alpha):
-        alpha_(alpha)
-    {
-    }
+    explicit ExponentialSmoother(float alpha) : alpha_(alpha) {}
 
-    float getAlpha() const{
-        return alpha_;
-    }
+    float getAlpha() const { return alpha_; }
 
-    void setAlpha(float new_alpha){
-        alpha_ = new_alpha;
-    }
+    void setAlpha(float new_alpha) { alpha_ = new_alpha; }
 
-    float process(float input_val){
-        float result = (input_val - pre_val_)*alpha_ + pre_val_; // S = a*y + (1-a)*S'
+    float process(float input_val) {
+        float result =
+            (input_val - pre_val_) * alpha_ + pre_val_; // S = a*y + (1-a)*S'
         pre_val_ = result;
         return result;
     }
@@ -36,6 +28,6 @@ private:
     float pre_val_{0.0f};
 };
 
-}
+} // namespace libaa
 
-#endif //LIBAA_INCLUDE_LIBAA_DSP_AA_EXPONENTIAL_SMOOTHER_H
+#endif // LIBAA_INCLUDE_LIBAA_DSP_AA_EXPONENTIAL_SMOOTHER_H
