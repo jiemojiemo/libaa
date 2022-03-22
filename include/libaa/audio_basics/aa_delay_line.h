@@ -7,7 +7,7 @@
 #include "libaa/core/aa_math_tools.h"
 #include <vector>
 #include <cmath>
-
+#include <memory>
 namespace libaa
 {
 template <typename T>
