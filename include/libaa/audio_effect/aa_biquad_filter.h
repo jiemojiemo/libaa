@@ -7,27 +7,22 @@
 #include "aa_audio_effect_processor.h"
 #include "libaa/dsp/aa_biquad_impl.h"
 
-namespace libaa
-{
-class BiquadFilter : public AudioEffectProcessor
-{
+namespace libaa {
+class BiquadFilter : public AudioEffectProcessor {
 public:
-    std::string getName() const override {
-        return std::string("BiquadFilter");
-    }
+    std::string getName() const override { return std::string("BiquadFilter"); }
     void prepareToPlay(double sample_rate, int max_block_size) override {
         (void)max_block_size;
         (void)sample_rate;
     }
-    void reset() override {
-    }
-    void releaseResources() override {
-    }
+    void reset() override {}
+    void releaseResources() override {}
     void processBlock(AudioBuffer<float> &buffer) override;
 
-    void setCoefficients(const FilterCoeffs& coff);
+    void setCoefficients(const FilterCoeffs &coff);
+
 private:
     constexpr static size_t kDefaultNumChannels{2};
     std::vector<Biquad> biquad_filters_{kDefaultNumChannels};
 };
-}
+} // namespace libaa

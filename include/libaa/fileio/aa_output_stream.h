@@ -5,10 +5,8 @@
 
 #pragma once
 #include <inttypes.h>
-namespace libaa
-{
-class OutputStream
-{
+namespace libaa {
+class OutputStream {
 public:
     virtual ~OutputStream() = default;
 
@@ -18,7 +16,7 @@ public:
      * @param size number of size to write
      * @return number of written bytes, returns -1 if failed
      */
-    virtual int64_t write(const uint8_t* source_buf, int64_t size) = 0;
+    virtual int64_t write(const uint8_t *source_buf, int64_t size) = 0;
 
     /**
      * returns the write pointer position
@@ -40,4 +38,4 @@ public:
      */
     virtual int64_t length() = 0;
 };
-}
+} // namespace libaa

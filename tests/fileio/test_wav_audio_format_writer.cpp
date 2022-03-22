@@ -2,20 +2,18 @@
 //
 // Created by William.Hua on 2021/3/8.
 //
-#include "libaa/fileio/aa_wav_audio_format_writer.h"
 #include "libaa/fileio/aa_file_output_stream.h"
-#include <gmock/gmock.h>
+#include "libaa/fileio/aa_wav_audio_format_writer.h"
 #include <fstream>
+#include <gmock/gmock.h>
 #include <vector>
 using namespace testing;
 using namespace std;
 using namespace libaa;
 
-class AWaveFormatWriter : public Test
-{
+class AWaveFormatWriter : public Test {
 public:
-    void SetUp() override
-    {
+    void SetUp() override {
         out_stream = std::make_unique<FileOutputStream>();
         out_stream->open("test_wav.wav");
 
@@ -36,119 +34,119 @@ public:
     vector<float> left_data;
     vector<float> right_data;
     vector<float> interleave_data;
-    vector<const float*> data_refer_to;
+    vector<const float *> data_refer_to;
 };
 
-TEST_F(AWaveFormatWriter, InitWithOuputStream)
-{
-    WavFormatWriter writer(std::move(out_stream), sample_rate, num_channels, num_bits);
+TEST_F(AWaveFormatWriter, InitWithOuputStream) {
+    WavFormatWriter writer(std::move(out_stream), sample_rate, num_channels,
+                           num_bits);
 }
 
-TEST_F(AWaveFormatWriter, IsOpenReturnTrueIfInitSucessfully)
-{
-    WavFormatWriter writer(std::move(out_stream), sample_rate, num_channels, num_bits);
+TEST_F(AWaveFormatWriter, IsOpenReturnTrueIfInitSucessfully) {
+    WavFormatWriter writer(std::move(out_stream), sample_rate, num_channels,
+                           num_bits);
 
     ASSERT_TRUE(writer.isOpen());
 }
 
-TEST_F(AWaveFormatWriter, CanGetSampleRateIfOpenSucessfully)
-{
-    WavFormatWriter writer(std::move(out_stream), sample_rate, num_channels, num_bits);
+TEST_F(AWaveFormatWriter, CanGetSampleRateIfOpenSucessfully) {
+    WavFormatWriter writer(std::move(out_stream), sample_rate, num_channels,
+                           num_bits);
 
     ASSERT_TRUE(writer.isOpen());
     ASSERT_THAT(writer.sample_rate, Eq(sample_rate));
 }
 
-TEST_F(AWaveFormatWriter, CanGetNumChannelsIfOpenSucessfully)
-{
-    WavFormatWriter writer(std::move(out_stream), sample_rate, num_channels, num_bits);
+TEST_F(AWaveFormatWriter, CanGetNumChannelsIfOpenSucessfully) {
+    WavFormatWriter writer(std::move(out_stream), sample_rate, num_channels,
+                           num_bits);
 
     ASSERT_TRUE(writer.isOpen());
     ASSERT_THAT(writer.num_channels, Eq(num_channels));
 }
 
-TEST_F(AWaveFormatWriter, NumBisIs32IfOpenSucessfully)
-{
-    WavFormatWriter writer(std::move(out_stream), sample_rate, num_channels, num_bits);
+TEST_F(AWaveFormatWriter, NumBisIs32IfOpenSucessfully) {
+    WavFormatWriter writer(std::move(out_stream), sample_rate, num_channels,
+                           num_bits);
 
     ASSERT_TRUE(writer.isOpen());
     ASSERT_THAT(writer.num_bits, Eq(32));
 }
 
-TEST_F(AWaveFormatWriter, IsOpenReturnFalseIfOutputStreamOpenFailed)
-{
+TEST_F(AWaveFormatWriter, IsOpenReturnFalseIfOutputStreamOpenFailed) {
     auto bad_stream = std::make_unique<FileOutputStream>("/bad/path");
     ASSERT_FALSE(bad_stream->isOpen());
 
-    WavFormatWriter writer(std::move(bad_stream), sample_rate, num_channels, num_bits);
+    WavFormatWriter writer(std::move(bad_stream), sample_rate, num_channels,
+                           num_bits);
 
     ASSERT_FALSE(writer.isOpen());
 }
 
-TEST_F(AWaveFormatWriter, OpenFailedIfSampleRateUnsupported)
-{
+TEST_F(AWaveFormatWriter, OpenFailedIfSampleRateUnsupported) {
     const int unsupported_sample_rate = -1;
 
-    WavFormatWriter writer(std::move(out_stream), unsupported_sample_rate, num_channels, num_bits);
+    WavFormatWriter writer(std::move(out_stream), unsupported_sample_rate,
+                           num_channels, num_bits);
 
     ASSERT_FALSE(writer.isOpen());
 }
 
-TEST_F(AWaveFormatWriter, OpenFailedIsNumChannelUnsupported)
-{
+TEST_F(AWaveFormatWriter, OpenFailedIsNumChannelUnsupported) {
     const int invalid_channels = 0;
 
-    WavFormatWriter writer(std::move(out_stream), sample_rate, invalid_channels, num_bits);
+    WavFormatWriter writer(std::move(out_stream), sample_rate, invalid_channels,
+                           num_bits);
 
     ASSERT_FALSE(writer.isOpen());
 }
 
-TEST_F(AWaveFormatWriter, OpenFailedIsNumBitsUnsupported)
-{
+TEST_F(AWaveFormatWriter, OpenFailedIsNumBitsUnsupported) {
     const int invalid_bits = -1;
 
-    WavFormatWriter writer(std::move(out_stream), sample_rate, num_channels, invalid_bits);
+    WavFormatWriter writer(std::move(out_stream), sample_rate, num_channels,
+                           invalid_bits);
 
     ASSERT_FALSE(writer.isOpen());
 }
 
-TEST_F(AWaveFormatWriter, WritePlanarFaildIfOpenFailed)
-{
+TEST_F(AWaveFormatWriter, WritePlanarFaildIfOpenFailed) {
     const int invalid_bits = -1;
 
-    WavFormatWriter writer(std::move(out_stream), sample_rate, num_channels, invalid_bits);
+    WavFormatWriter writer(std::move(out_stream), sample_rate, num_channels,
+                           invalid_bits);
     ASSERT_FALSE(writer.isOpen());
 
     ASSERT_FALSE(writer.writePlanar(data_refer_to.data(), num_samples));
 }
 
-TEST_F(AWaveFormatWriter, WriteInterleaveFaildIfOpenFailed)
-{
+TEST_F(AWaveFormatWriter, WriteInterleaveFaildIfOpenFailed) {
     const int invalid_bits = -1;
 
-    WavFormatWriter writer(std::move(out_stream), sample_rate, num_channels, invalid_bits);
+    WavFormatWriter writer(std::move(out_stream), sample_rate, num_channels,
+                           invalid_bits);
     ASSERT_FALSE(writer.isOpen());
 
     ASSERT_FALSE(writer.writeInterleave(interleave_data.data(), num_samples));
 }
 
-TEST_F(AWaveFormatWriter, CanWritePlanar)
-{
-    WavFormatWriter writer(std::move(out_stream), sample_rate, num_channels, num_bits);
+TEST_F(AWaveFormatWriter, CanWritePlanar) {
+    WavFormatWriter writer(std::move(out_stream), sample_rate, num_channels,
+                           num_bits);
 
     ASSERT_TRUE(writer.writePlanar(data_refer_to.data(), num_samples));
 }
 
-TEST_F(AWaveFormatWriter, CanWriteInterleave)
-{
-    WavFormatWriter writer(std::move(out_stream), sample_rate, num_channels, num_bits);
+TEST_F(AWaveFormatWriter, CanWriteInterleave) {
+    WavFormatWriter writer(std::move(out_stream), sample_rate, num_channels,
+                           num_bits);
 
     ASSERT_TRUE(writer.writeInterleave(interleave_data.data(), num_samples));
 }
 
-TEST_F(AWaveFormatWriter, CloseWillResetAudioConfig)
-{
-    WavFormatWriter writer(std::move(out_stream), sample_rate, num_channels, num_bits);
+TEST_F(AWaveFormatWriter, CloseWillResetAudioConfig) {
+    WavFormatWriter writer(std::move(out_stream), sample_rate, num_channels,
+                           num_bits);
     writer.close();
 
     ASSERT_THAT(writer.sample_rate, Eq(-1));

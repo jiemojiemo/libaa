@@ -4,13 +4,11 @@
 
 #pragma once
 #include "libaa/core/aa_math_tools.h"
-#include <vector>
 #include <cmath>
 #include <memory>
-namespace libaa
-{
-template <typename T>
-class DelayLine {
+#include <vector>
+namespace libaa {
+template <typename T> class DelayLine {
 public:
     void clear() noexcept {
         std::fill(&raw_data_[0], (&raw_data_[0] + size()), T(0));
@@ -19,9 +17,7 @@ public:
     /**
      * return the size of delay line
      */
-    size_t size() const noexcept {
-        return buffer_size_;
-    }
+    size_t size() const noexcept { return buffer_size_; }
 
     /**
      * resize the delay line
@@ -70,7 +66,8 @@ public:
         int next_sample = static_cast<int>(ceilf(delay));
         float fraction = static_cast<float>(next_sample) - delay;
 
-        return fraction * get(previous_sample) + (1.0f - fraction) * get(next_sample);
+        return fraction * get(previous_sample) +
+               (1.0f - fraction) * get(next_sample);
     }
 
     /**
@@ -87,4 +84,4 @@ private:
     size_t mask_;
     std::unique_ptr<T[]> raw_data_ = nullptr;
 };
-}
+} // namespace libaa

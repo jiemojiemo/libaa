@@ -10,8 +10,7 @@
 using namespace testing;
 using namespace libaa;
 
-class ALFOGenerator : public Test
-{
+class ALFOGenerator : public Test {
 public:
     LFOGenerator lfo;
 
@@ -19,21 +18,18 @@ public:
     const double sr = 44100.0;
 };
 
-TEST_F(ALFOGenerator, PhaseIncreasementIsZeroWhenInit)
-{
+TEST_F(ALFOGenerator, PhaseIncreasementIsZeroWhenInit) {
     ASSERT_THAT(lfo.getPhaseIncrement(), DoubleEq(0));
 }
 
-TEST_F(ALFOGenerator, PrepareWillRecalculatePhaseInc)
-{
+TEST_F(ALFOGenerator, PrepareWillRecalculatePhaseInc) {
     lfo.frequency_hz = freq_hz;
     lfo.prepare(sr);
 
     ASSERT_THAT(lfo.getPhaseIncrement(), DoubleEq(freq_hz / sr));
 }
 
-TEST_F(ALFOGenerator, CanGenerateSineWave)
-{
+TEST_F(ALFOGenerator, CanGenerateSineWave) {
     lfo.frequency_hz = freq_hz;
     lfo.waveform = GeneratorWaveform::kSin;
     lfo.prepare(sr);
@@ -43,11 +39,11 @@ TEST_F(ALFOGenerator, CanGenerateSineWave)
     ASSERT_THAT(output.normal_output, DoubleEq(0.0));
     ASSERT_THAT(output.inverted_output, DoubleEq(-output.normal_output));
     ASSERT_THAT(output.quad_phase_output_pos, DoubleEq(-1.0));
-    ASSERT_THAT(output.quad_phase_output_neg, DoubleEq(-output.quad_phase_output_pos));
+    ASSERT_THAT(output.quad_phase_output_neg,
+                DoubleEq(-output.quad_phase_output_pos));
 }
 
-TEST_F(ALFOGenerator, CanGenerateTriangleWave)
-{
+TEST_F(ALFOGenerator, CanGenerateTriangleWave) {
     lfo.frequency_hz = freq_hz;
     lfo.waveform = GeneratorWaveform::kTriangle;
     lfo.prepare(sr);
@@ -57,11 +53,11 @@ TEST_F(ALFOGenerator, CanGenerateTriangleWave)
     ASSERT_THAT(output.normal_output, DoubleEq(1.0));
     ASSERT_THAT(output.inverted_output, DoubleEq(-output.normal_output));
     ASSERT_THAT(output.quad_phase_output_pos, DoubleEq(0.0));
-    ASSERT_THAT(output.quad_phase_output_neg, DoubleEq(-output.quad_phase_output_pos));
+    ASSERT_THAT(output.quad_phase_output_neg,
+                DoubleEq(-output.quad_phase_output_pos));
 }
 
-TEST_F(ALFOGenerator, CanGenerateSawWave)
-{
+TEST_F(ALFOGenerator, CanGenerateSawWave) {
     lfo.frequency_hz = freq_hz;
     lfo.waveform = GeneratorWaveform::kSaw;
     lfo.prepare(sr);
@@ -71,5 +67,6 @@ TEST_F(ALFOGenerator, CanGenerateSawWave)
     ASSERT_THAT(output.normal_output, DoubleEq(-1.0));
     ASSERT_THAT(output.inverted_output, DoubleEq(-output.normal_output));
     ASSERT_THAT(output.quad_phase_output_pos, DoubleEq(-0.5));
-    ASSERT_THAT(output.quad_phase_output_neg, DoubleEq(-output.quad_phase_output_pos));
+    ASSERT_THAT(output.quad_phase_output_neg,
+                DoubleEq(-output.quad_phase_output_pos));
 }

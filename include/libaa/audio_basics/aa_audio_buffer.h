@@ -6,53 +6,36 @@
 #include <vector>
 using std::vector;
 
-namespace libaa
-{
-template <typename T>
-class AudioBuffer
-{
+namespace libaa {
+template <typename T> class AudioBuffer {
 public:
-    AudioBuffer()
-        : num_channels_(0),
-          size_(0),
-          channels_(32, nullptr)
-    {
-
-    }
+    AudioBuffer() : num_channels_(0), size_(0), channels_(32, nullptr) {}
 
     explicit AudioBuffer(int num_channels, int num_samples)
         : num_channels_(static_cast<size_t>(num_channels)),
-          size_(static_cast<size_t>(num_samples))
-    {
+          size_(static_cast<size_t>(num_samples)) {
         allocateData();
     }
 
-    AudioBuffer(T* const* data_refer_to,
-                int num_channel_to_use,
-                int start_sample,
-                int num_samples)
+    AudioBuffer(T *const *data_refer_to, int num_channel_to_use,
+                int start_sample, int num_samples)
         : num_channels_(static_cast<size_t>(num_channel_to_use)),
-          size_(static_cast<size_t>(num_samples))
-    {
+          size_(static_cast<size_t>(num_samples)) {
         allocateChannels(data_refer_to, start_sample);
     }
 
     /**
      * Copies another buffer.
      *
-     * This buffer will make its own copy of other's data, unless the buffer was created using
-     * an external data buffer
+     * This buffer will make its own copy of other's data, unless the buffer was
+     * created using an external data buffer
      */
-    AudioBuffer(const AudioBuffer& other)
-        : num_channels_(other.num_channels_),
-          size_(other.size_),
-          allocated_size_(other.allocated_size_)
-    {
-        if(allocated_size_ == 0)
-        {
+    AudioBuffer(const AudioBuffer &other)
+        : num_channels_(other.num_channels_), size_(other.size_),
+          allocated_size_(other.allocated_size_) {
+        if (allocated_size_ == 0) {
             channels_ = other.channels_;
-        } else
-        {
+        } else {
             allocateData();
             copyChannels(other.channels_);
         }
@@ -61,22 +44,18 @@ public:
     /**
      * Copies another buffer onto this one
      *
-     * This buffer will make its own copy of other's data, unless the buffer was created using
-     * an external data buffer
+     * This buffer will make its own copy of other's data, unless the buffer was
+     * created using an external data buffer
      */
-    AudioBuffer& operator=(const AudioBuffer& other)
-    {
-        if(this != &other)
-        {
+    AudioBuffer &operator=(const AudioBuffer &other) {
+        if (this != &other) {
             num_channels_ = other.num_channels_;
             size_ = other.size_;
             allocated_size_ = other.allocated_size_;
 
-            if(allocated_size_ == 0)
-            {
+            if (allocated_size_ == 0) {
                 channels_ = other.channels_;
-            } else
-            {
+            } else {
                 allocateData();
                 copyChannels(other.channels_);
             }
@@ -88,20 +67,17 @@ public:
     /**
      * Move constructor
      */
-    AudioBuffer(AudioBuffer&& other) noexcept
-        : num_channels_(other.num_channels_),
-          size_(other.size_),
+    AudioBuffer(AudioBuffer &&other) noexcept
+        : num_channels_(other.num_channels_), size_(other.size_),
           allocated_size_(other.allocated_size_),
           channels_(std::move(other.channels_)),
-          allocated_data_(std::move(other.allocated_data_))
-    {
+          allocated_data_(std::move(other.allocated_data_)) {
         other.num_channels_ = 0;
         other.size_ = 0;
         other.allocated_size_ = 0;
     }
 
-    AudioBuffer& operator=(AudioBuffer&& other) noexcept
-    {
+    AudioBuffer &operator=(AudioBuffer &&other) noexcept {
         num_channels_ = other.num_channels_;
         size_ = other.size_;
         allocated_size_ = other.allocated_size_;
@@ -115,9 +91,7 @@ public:
         return *this;
     }
 
-
-    void copyFrom(const AudioBuffer& other)
-    {
+    void copyFrom(const AudioBuffer &other) {
         num_channels_ = other.num_channels_;
         size_ = other.size_;
 
@@ -125,22 +99,17 @@ public:
         copyChannels(other.channels_);
     }
 
-    void allocateChannels(T* const* data_refer_to,
-                          int offset)
-    {
+    void allocateChannels(T *const *data_refer_to, int offset) {
         channels_.resize(num_channels_ + 1);
         channels_[num_channels_] = nullptr;
 
-        for(size_t i = 0; i < num_channels_; ++i)
-        {
+        for (size_t i = 0; i < num_channels_; ++i) {
             channels_[i] = data_refer_to[i] + offset;
         }
     }
 
-    void copyChannels(const std::vector<T*>& other_channels)
-    {
-        for(size_t i = 0; i < num_channels_; ++i)
-        {
+    void copyChannels(const std::vector<T *> &other_channels) {
+        for (size_t i = 0; i < num_channels_; ++i) {
             auto first_iter = other_channels[i];
             auto last_iter = first_iter + size_;
             auto output_iter = channels_[i];
@@ -148,32 +117,26 @@ public:
         }
     }
 
+    size_t getNumFrames() const { return size_; }
+    size_t getNumChannels() const { return num_channels_; }
 
-    size_t getNumFrames() const {return size_;}
-    size_t getNumChannels() const {return num_channels_;}
-
-    T* getWritePointer(size_t channel_number) const noexcept
-    {
+    T *getWritePointer(size_t channel_number) const noexcept {
         return channels_[channel_number];
     }
 
-    const T* getReadPointer(size_t channel_number) const noexcept
-    {
+    const T *getReadPointer(size_t channel_number) const noexcept {
         return channels_[channel_number];
     }
 
-    void clear() const noexcept
-    {
-        for(size_t i = 0; i < num_channels_; ++i)
-        {
-            std::fill(channels_[i], channels_[i]+size_, 0);
+    void clear() const noexcept {
+        for (size_t i = 0; i < num_channels_; ++i) {
+            std::fill(channels_[i], channels_[i] + size_, 0);
         }
     }
 
-    void setSize(int new_num_channels, int new_num_samples) noexcept
-    {
-        if(new_num_channels != static_cast<int>(num_channels_) || new_num_samples != static_cast<int>(size_))
-        {
+    void setSize(int new_num_channels, int new_num_samples) noexcept {
+        if (new_num_channels != static_cast<int>(num_channels_) ||
+            new_num_samples != static_cast<int>(size_)) {
             num_channels_ = new_num_channels;
             size_ = new_num_samples;
 
@@ -183,23 +146,21 @@ public:
     }
 
 private:
-    void allocateData()
-    {
+    void allocateData() {
         allocated_size_ = size_ * num_channels_;
 
         allocated_data_.resize(allocated_size_);
         channels_.resize(num_channels_ + 1);
-        for(size_t i = 0; i < num_channels_; ++i)
-        {
-            channels_[i] = (allocated_data_.data() + i*size_);
+        for (size_t i = 0; i < num_channels_; ++i) {
+            channels_[i] = (allocated_data_.data() + i * size_);
         }
         channels_[num_channels_] = nullptr;
     }
 
-    size_t num_channels_={0};
+    size_t num_channels_ = {0};
     size_t size_ = {0};
     size_t allocated_size_ = {0};
-    std::vector<T*> channels_;
+    std::vector<T *> channels_;
     std::vector<T> allocated_data_;
 };
-}
+} // namespace libaa

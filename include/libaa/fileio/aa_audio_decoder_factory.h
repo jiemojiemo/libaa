@@ -4,25 +4,21 @@
 
 #pragma once
 #include "aa_wav_decoder.h"
-#include <string>
 #include <iostream>
+#include <string>
 
-namespace libaa
-{
-class AudioDecoderFactory
-{
+namespace libaa {
+class AudioDecoderFactory {
 public:
-    static std::unique_ptr<AudioDecoder> createDecoder(const std::string& filename)
-    {
+    static std::unique_ptr<AudioDecoder>
+    createDecoder(const std::string &filename) {
         std::string::size_type idx = filename.rfind('.');
         std::string extension{"NoExtension"};
-        if(idx != std::string::npos)
-        {
-            extension = filename.substr(idx+1);
+        if (idx != std::string::npos) {
+            extension = filename.substr(idx + 1);
         }
 
-        if(extension == "wav")
-        {
+        if (extension == "wav") {
             return std::make_unique<WavDecoder>();
         }
 
@@ -30,15 +26,10 @@ public:
         return nullptr;
     }
 
-    static std::vector<std::string> getSupportFormat()
-    {
-        return {"wav"};
-    }
+    static std::vector<std::string> getSupportFormat() { return {"wav"}; }
 
-    static std::unique_ptr<AudioDecoder> createWaveDecoder()
-    {
+    static std::unique_ptr<AudioDecoder> createWaveDecoder() {
         return std::make_unique<WavDecoder>();
     }
-
 };
-}
+} // namespace libaa

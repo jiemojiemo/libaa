@@ -5,12 +5,7 @@
 
 #include "libaa/fileio/aa_audio_format_reader.h"
 
-namespace libaa
-{
-bool AudioFormatReader::isOpenOk() {
-    return false;
-}
-int64_t AudioFormatReader::getPosition() const {
-    return pos_;
-}
-}
+namespace libaa {
+bool AudioFormatReader::isOpenOk() { return false; }
+int64_t AudioFormatReader::getPosition() const { return pos_; }
+} // namespace libaa

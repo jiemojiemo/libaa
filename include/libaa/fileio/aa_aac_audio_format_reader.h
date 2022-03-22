@@ -5,19 +5,15 @@
 
 #pragma once
 #include "libaa/fileio/aa_audio_format_reader.h"
-namespace libaa
-{
-class AACAudioFormatReader : public AudioFormatReader
-{
+namespace libaa {
+class AACAudioFormatReader : public AudioFormatReader {
 public:
     explicit AACAudioFormatReader(std::unique_ptr<InputStream> in_stream);
 
     bool isOpenOk() override;
 
-    bool readSamples(float **dest_channels,
-                     int num_dest_channels,
-                     int start_offset_of_dest,
-                     int64_t start_offset_of_file,
+    bool readSamples(float **dest_channels, int num_dest_channels,
+                     int start_offset_of_dest, int64_t start_offset_of_file,
                      int num_samples) override;
 
 private:
@@ -25,4 +21,4 @@ private:
     std::shared_ptr<Impl> impl_;
 };
 
-}
+} // namespace libaa

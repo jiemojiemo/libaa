@@ -4,17 +4,14 @@
 //
 #include "libaa/dsp/aa_dsp_utilities.h"
 #include <cmath>
-namespace libaa::DSPUtilities
-{
-bool isPowerOf2(size_t number)
-{
+namespace libaa::DSPUtilities {
+bool isPowerOf2(size_t number) {
     return (number & (number - 1)) == 0 && number > 0;
 }
 
-
-double parabolicSine(double angle){
+double parabolicSine(double angle) {
     constexpr double B = 4.0 / M_PI;
-    constexpr double C = -4.0 / (M_PI*M_PI);
+    constexpr double C = -4.0 / (M_PI * M_PI);
     constexpr double P = 0.225;
 
     double y = B * angle + C * angle * fabs(angle);
@@ -22,4 +19,4 @@ double parabolicSine(double angle){
     return y;
 }
 
-}
+} // namespace libaa::DSPUtilities

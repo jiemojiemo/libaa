@@ -6,19 +6,17 @@
 #include "aa_fft.h"
 #include <Eigen/Core>
 
-namespace libaa
-{
+namespace libaa {
 using namespace Eigen;
 
-class Yin
-{
+class Yin {
 public:
     Yin(size_t block_size, size_t sample_rate, float threshold);
 
-    float getPitch(const float* data);
+    float getPitch(const float *data);
 
 private:
-    void difference(const float* data);
+    void difference(const float *data);
 
     void cumulativeMeanNormaliztion();
 
@@ -36,4 +34,4 @@ private:
     static constexpr int kMinTau = 2;
 };
 
-}
+} // namespace libaa

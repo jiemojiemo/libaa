@@ -9,16 +9,11 @@
 #include "libaa/dsp/aa_lfo.h"
 #include <memory>
 
-
-namespace libaa
-{
-class VibratoEffect : public AudioEffectProcessor
-{
+namespace libaa {
+class VibratoEffect : public AudioEffectProcessor {
 public:
     VibratoEffect();
-    std::string getName() const override {
-        return std::string("vibrato");
-    }
+    std::string getName() const override { return std::string("vibrato"); }
     void prepareToPlay(double sample_rate, int max_block_size) override;
 
     void reset() override {}
@@ -33,6 +28,5 @@ public:
 private:
     class Impl;
     std::shared_ptr<Impl> impl_;
-
 };
-}
+} // namespace libaa

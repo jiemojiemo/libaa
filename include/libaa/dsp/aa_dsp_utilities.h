@@ -4,8 +4,7 @@
 
 #pragma once
 #include <stddef.h>
-namespace libaa::DSPUtilities
-{
+namespace libaa::DSPUtilities {
 bool isPowerOf2(size_t number);
 double parabolicSine(double angle);
-}
+} // namespace libaa::DSPUtilities

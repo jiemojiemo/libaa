@@ -5,17 +5,11 @@
 #pragma once
 #include <cstdlib>
 
-namespace libaa
-{
+namespace libaa {
 
-enum class DistanceType
-{
-    kEuclidean = 0,
-    kCosine
-};
+enum class DistanceType { kEuclidean = 0, kCosine };
 
-enum class WindowType
-{
+enum class WindowType {
     kRectangle = 0,
     kHann,
     kHamming,
@@ -24,8 +18,7 @@ enum class WindowType
     kBlackmanHarris
 };
 
-class Options
-{
+class Options {
 public:
     size_t hop_size{256};
     size_t win_size{1024};
@@ -39,4 +32,4 @@ public:
     bool norm{true};
 };
 
-}
+} // namespace libaa

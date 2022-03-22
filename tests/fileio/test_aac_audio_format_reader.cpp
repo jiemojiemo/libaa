@@ -10,9 +10,7 @@ using namespace std;
 using namespace testing;
 using namespace libaa;
 
-
-class FakeStream : public InputStream
-{
+class FakeStream : public InputStream {
 public:
     ~FakeStream() override = default;
     int64_t read(uint8_t *dst_buf, int64_t size) override {
@@ -20,24 +18,18 @@ public:
         (void)size;
         return 0;
     }
-    int64_t tellg() override {
-        return 0;
-    }
+    int64_t tellg() override { return 0; }
     int seekg(int64_t pos, int mode) override {
         (void)pos;
         (void)mode;
         return 0;
     }
-    int64_t length() const override {
-        return 0;
-    }
+    int64_t length() const override { return 0; }
 };
 
-class AAACAudioFormatReader : public Test
-{
+class AAACAudioFormatReader : public Test {
 public:
-    void SetUp() override
-    {
+    void SetUp() override {
         in_stream = std::make_unique<FileInputStream>(test_file_name);
         left_buffer.resize(n_read_samples);
         right_buffer.resize(n_read_samples);
@@ -47,9 +39,7 @@ public:
         dest[2] = third_buffer.data();
     }
 
-    void TearDown() override
-    {
-    }
+    void TearDown() override {}
 
     const size_t sample_rate = 44100;
     const size_t num_channels = 2;
@@ -61,19 +51,17 @@ public:
     vector<float> left_buffer;
     vector<float> right_buffer;
     vector<float> third_buffer;
-    float* dest[3];
+    float *dest[3];
 
-    const std::string test_file_name="../../res/sound/sample1.aac";
+    const std::string test_file_name = "../../res/sound/sample1.aac";
     std::unique_ptr<InputStream> in_stream;
 };
 
-TEST_F(AAACAudioFormatReader, InitWithInputStream)
-{
+TEST_F(AAACAudioFormatReader, InitWithInputStream) {
     AACAudioFormatReader read(std::move(in_stream));
 }
 
-TEST_F(AAACAudioFormatReader, ReturnsFalseIfOpenFailed)
-{
+TEST_F(AAACAudioFormatReader, ReturnsFalseIfOpenFailed) {
     auto fake_stream = std::unique_ptr<InputStream>(new FakeStream());
 
     AACAudioFormatReader reader(std::move(fake_stream));
@@ -81,15 +69,13 @@ TEST_F(AAACAudioFormatReader, ReturnsFalseIfOpenFailed)
     ASSERT_FALSE(reader.isOpenOk());
 }
 
-TEST_F(AAACAudioFormatReader, ReturnTrueIfOpenSuccessfully)
-{
+TEST_F(AAACAudioFormatReader, ReturnTrueIfOpenSuccessfully) {
     AACAudioFormatReader reader(std::move(in_stream));
 
     ASSERT_TRUE(reader.isOpenOk());
 }
 
-TEST_F(AAACAudioFormatReader, CanGetAudioInformationIfOpenSuccessfully)
-{
+TEST_F(AAACAudioFormatReader, CanGetAudioInformationIfOpenSuccessfully) {
     AACAudioFormatReader reader(std::move(in_stream));
 
     ASSERT_TRUE(reader.isOpenOk());
@@ -99,9 +85,9 @@ TEST_F(AAACAudioFormatReader, CanGetAudioInformationIfOpenSuccessfully)
     ASSERT_THAT(reader.length_in_samples, Gt(0));
 }
 
-TEST_F(AAACAudioFormatReader, CanReadSamples)
-{
-    auto in_stream = std::unique_ptr<InputStream>(new FileInputStream(test_file_name));
+TEST_F(AAACAudioFormatReader, CanReadSamples) {
+    auto in_stream =
+        std::unique_ptr<InputStream>(new FileInputStream(test_file_name));
     AACAudioFormatReader reader(std::move(in_stream));
 
     auto ret = reader.readSamples(dest, num_channels, 0, 0, n_read_samples);
@@ -109,9 +95,9 @@ TEST_F(AAACAudioFormatReader, CanReadSamples)
     ASSERT_TRUE(ret);
 }
 
-TEST_F(AAACAudioFormatReader, ReadWithStartOffsetOfFileWillChangePosition)
-{
-    auto in_stream = std::unique_ptr<InputStream>(new FileInputStream(test_file_name));
+TEST_F(AAACAudioFormatReader, ReadWithStartOffsetOfFileWillChangePosition) {
+    auto in_stream =
+        std::unique_ptr<InputStream>(new FileInputStream(test_file_name));
     AACAudioFormatReader reader(std::move(in_stream));
 
     const int offset = 5;

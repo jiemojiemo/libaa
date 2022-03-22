@@ -6,19 +6,18 @@
 #pragma once
 #include <stdint.h>
 
-namespace libaa
-{
-class InputStream
-{
+namespace libaa {
+class InputStream {
 public:
     virtual ~InputStream() = default;
     /**
      * read from inout stream
      * @param dst_buf destination buffer
      * @param size the read size
-     * @return number of bytes actually read, 0 if reach the end, negative value if has error
+     * @return number of bytes actually read, 0 if reach the end, negative value
+     * if has error
      */
-    virtual int64_t read(uint8_t* dst_buf, int64_t size) = 0;
+    virtual int64_t read(uint8_t *dst_buf, int64_t size) = 0;
 
     /**
      * return the read pointer position
@@ -39,5 +38,4 @@ public:
      */
     virtual int64_t length() const = 0;
 };
-}
-
+} // namespace libaa

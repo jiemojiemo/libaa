@@ -8,21 +8,15 @@
 #pragma once
 #include <string>
 #include <vector>
-namespace libaa
-{
-enum class ParameterType
-{
-    kFloat = 0,
-    kChoice
-};
+namespace libaa {
+enum class ParameterType { kFloat = 0, kChoice };
 
-class AudioProcessorParameter
-{
+class AudioProcessorParameter {
 public:
-    explicit AudioProcessorParameter(ParameterType type, int param_id,
-                                     std::string param_name,
-                                     float default_val, float min_plain_value, float max_plain_value,
-                                     std::vector<std::string> choices_strings = {});
+    explicit AudioProcessorParameter(
+        ParameterType type, int param_id, std::string param_name,
+        float default_val, float min_plain_value, float max_plain_value,
+        std::vector<std::string> choices_strings = {});
 
     float getDefaultPlainValue() const;
 
@@ -48,13 +42,13 @@ public:
 
     void setPlainValue(float plain_value);
 
-    void setPlainValue(const std::string& plain_value_str);
+    void setPlainValue(const std::string &plain_value_str);
 
     void setNormalizedValue(float normalized_value);
 
-    void setNormalizedValue(const std::string& normalized_value_str);
+    void setNormalizedValue(const std::string &normalized_value_str);
 
-    const std::string& getParameterName() const;
+    const std::string &getParameterName() const;
 
     void setParameterName(std::string new_name);
 
@@ -76,8 +70,9 @@ private:
     std::vector<std::string> choice_strings_;
 };
 
-bool operator==(const AudioProcessorParameter& lhs, const AudioProcessorParameter& rhs);
+bool operator==(const AudioProcessorParameter &lhs,
+                const AudioProcessorParameter &rhs);
 
-}
+} // namespace libaa
 
-#endif //LIBAA_INCLUDE_LIBAA_CORE_AA_AUDIO_PROCESSOR_PARAMETER_H
+#endif // LIBAA_INCLUDE_LIBAA_CORE_AA_AUDIO_PROCESSOR_PARAMETER_H
