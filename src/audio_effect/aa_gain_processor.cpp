@@ -21,7 +21,9 @@ void GainProcessor::reset() {}
 void GainProcessor::releaseResources() {}
 void GainProcessor::processBlock(AudioBuffer<float> &buffer) { (void)(buffer); }
 
-const Parameters &GainProcessor::getParameters() const { return params_; }
+const AudioProcessorParameters &GainProcessor::getParameters() const {
+    return params_;
+}
 
 void GainProcessor::applyGain(float *out_buffer, size_t out_size) {
     float gain_db = params_.get(0).getPlainValue();
@@ -33,8 +35,8 @@ void GainProcessor::applyGain(float *out_buffer, size_t out_size) {
     }
 }
 
-Parameters GainProcessor::buildParameters(float gain_db) {
-    Parameters params;
+AudioProcessorParameters GainProcessor::buildParameters(float gain_db) {
+    AudioProcessorParameters params;
 
     params.pushFloatParameter("Gain dB", gain_db, -75, 35);
 

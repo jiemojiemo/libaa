@@ -19,7 +19,7 @@ public:
     virtual int getLatencySamples() = 0;
     virtual int getTailLengthSamples() const = 0;
     virtual void reset() = 0;
-    virtual const Parameters &getParameters() = 0;
+    virtual const AudioProcessorParameters &getParameters() = 0;
     virtual int processBlock(AudioBlock *in_block,
                              AudioBlock *output_block) = 0;
 };

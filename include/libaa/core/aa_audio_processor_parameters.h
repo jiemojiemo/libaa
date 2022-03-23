@@ -9,9 +9,9 @@
 #include "libaa/core/aa_audio_processor_parameter.h"
 #include <vector>
 namespace libaa {
-class Parameters {
+class AudioProcessorParameters {
 public:
-    Parameters() = default;
+    AudioProcessorParameters() = default;
 
     size_t size() const { return parameters_.size(); }
 
