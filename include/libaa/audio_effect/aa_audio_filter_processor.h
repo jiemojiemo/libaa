@@ -25,7 +25,7 @@ public:
 
     void reset() override;
 
-    const Parameters &getParameters() override;
+    const AudioProcessorParameters &getParameters() override;
 
     int processBlock(AudioBlock *in_block, AudioBlock *output_block) override;
 

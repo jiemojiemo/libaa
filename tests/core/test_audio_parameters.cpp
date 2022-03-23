@@ -11,11 +11,11 @@ using namespace libaa;
 
 class AParameters : public Test {
 public:
-    Parameters params;
+    AudioProcessorParameters params;
 };
 
 TEST_F(AParameters, DefaultContructWithEmpty) {
-    Parameters params;
+    AudioProcessorParameters params;
 
     ASSERT_THAT(params.size(), Eq(0));
 }

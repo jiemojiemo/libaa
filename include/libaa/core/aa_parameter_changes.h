@@ -65,6 +65,7 @@ public:
             insertNewRingBuffer(p.index);
         }
 
+
         changes_set_.at(p.index)->insert(p);
     }
 

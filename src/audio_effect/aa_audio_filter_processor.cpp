@@ -77,7 +77,7 @@ public:
         return 0;
     }
 
-    Parameters param_;
+    AudioProcessorParameters param_;
     AudioFilterUtilities utilities_;
     float sample_rate_;
 };
@@ -107,7 +107,7 @@ int AudioFilterProcessor::getTailLengthSamples() const { return 0; }
 
 void AudioFilterProcessor::reset() {}
 
-const Parameters &AudioFilterProcessor::getParameters() {
+const AudioProcessorParameters &AudioFilterProcessor::getParameters() {
     return impl_->param_;
 }
 
