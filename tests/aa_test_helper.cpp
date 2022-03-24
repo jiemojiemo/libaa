@@ -6,8 +6,8 @@
 #include "aa_test_helper.h"
 
 namespace libaa {
-bool operator==(const AudioBufferNew<float> &lhs,
-                const AudioBufferNew<float> &rhs) {
+bool operator==(const AudioBufferX<float> &lhs,
+                const AudioBufferX<float> &rhs) {
     if (lhs.getNumberFrames() != rhs.getNumberFrames() ||
         lhs.getNumberChannels() != rhs.getNumberChannels()) {
         return false;

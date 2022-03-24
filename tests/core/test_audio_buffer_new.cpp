@@ -20,18 +20,18 @@ public:
 };
 
 TEST_F(AAudioBufferNew, CanContructWithSize) {
-    AudioBufferNew<float> audio_buffer(num_channels, num_frames);
+    AudioBufferX<float> audio_buffer(num_channels, num_frames);
 }
 
 TEST_F(AAudioBufferNew, DefaultConstuctWithEmptyData) {
-    AudioBufferNew<float> audio_buffer;
+    AudioBufferX<float> audio_buffer;
 
     ASSERT_THAT(audio_buffer.getNumberChannels(), Eq(0));
     ASSERT_THAT(audio_buffer.getNumberFrames(), Eq(0));
 }
 
 TEST_F(AAudioBufferNew, ConstructWithSizeWillFillZerosToBuffer) {
-    AudioBufferNew<float> audio_buffer(num_channels, num_frames);
+    AudioBufferX<float> audio_buffer(num_channels, num_frames);
 
     for (int c = 0; c < num_channels; ++c) {
         for (int i = 0; i < num_frames; ++i) {
@@ -41,33 +41,33 @@ TEST_F(AAudioBufferNew, ConstructWithSizeWillFillZerosToBuffer) {
 }
 
 TEST_F(AAudioBufferNew, CanGetNumberOfChannels) {
-    AudioBufferNew<float> audio_buffer(num_channels, num_frames);
+    AudioBufferX<float> audio_buffer(num_channels, num_frames);
     ASSERT_THAT(audio_buffer.getNumberChannels(), Eq(num_channels));
 }
 
 TEST_F(AAudioBufferNew, CanGetNumberOfFrames) {
-    AudioBufferNew<float> audio_buffer(num_channels, num_frames);
+    AudioBufferX<float> audio_buffer(num_channels, num_frames);
     ASSERT_THAT(audio_buffer.getNumberFrames(), Eq(num_channels));
 }
 
 TEST_F(AAudioBufferNew, CanConstructWithInitialzerList) {
-    AudioBufferNew<float> audio_buffer({{1, 2, 3}, {4, 5, 6}});
+    AudioBufferX<float> audio_buffer({{1, 2, 3}, {4, 5, 6}});
 }
 
 TEST_F(AAudioBufferNew, ConstructWithListCanGetNumChannels) {
-    AudioBufferNew<float> audio_buffer({{1, 2, 3}, {4, 5, 6}});
+    AudioBufferX<float> audio_buffer({{1, 2, 3}, {4, 5, 6}});
 
     ASSERT_THAT(audio_buffer.getNumberChannels(), Eq(2));
 }
 
 TEST_F(AAudioBufferNew, CanGetNumberOfFramesEqualsTheMaxFramesOfAllChannel) {
-    AudioBufferNew<float> audio_buffer({{1, 2, 3}, {2}});
+    AudioBufferX<float> audio_buffer({{1, 2, 3}, {2}});
 
     ASSERT_THAT(audio_buffer.getNumberFrames(), Eq(3));
 }
 
 TEST_F(AAudioBufferNew, DoCopyWhenConstructWithList) {
-    AudioBufferNew<float> audio_buffer({{1, 2, 3}, {2}});
+    AudioBufferX<float> audio_buffer({{1, 2, 3}, {2}});
 
     ASSERT_THAT(audio_buffer.getReadPointer(0)[0], Eq(1.0));
     ASSERT_THAT(audio_buffer.getReadPointer(0)[1], Eq(2.0));
@@ -77,9 +77,9 @@ TEST_F(AAudioBufferNew, DoCopyWhenConstructWithList) {
 }
 
 TEST_F(AAudioBufferNew, CanCopyFromOtherBuffer) {
-    AudioBufferNew<float> input_buffer({{1, 2, 3}, {4, 5, 6}});
-    AudioBufferNew<float> output_buffer(input_buffer.getNumberChannels(),
-                                        input_buffer.getNumberFrames());
+    AudioBufferX<float> input_buffer({{1, 2, 3}, {4, 5, 6}});
+    AudioBufferX<float> output_buffer(input_buffer.getNumberChannels(),
+                                      input_buffer.getNumberFrames());
 
     output_buffer.copyFrom(&input_buffer);
 
@@ -87,7 +87,7 @@ TEST_F(AAudioBufferNew, CanCopyFromOtherBuffer) {
 }
 
 TEST_F(AAudioBufferNew, CanResize) {
-    AudioBufferNew<float> audio_buffer(2, 3);
+    AudioBufferX<float> audio_buffer(2, 3);
 
     int new_channels = 3;
     int new_num_frames = 5;

@@ -9,70 +9,45 @@
 using namespace testing;
 using namespace libaa;
 
-class AParameterChangeRingBuffer : public Test {
+class AParameterChange : public Test {
 public:
-    constexpr static int size = 8;
+    ParameterChangePoint point{0, 0, 0};
 };
 
-TEST_F(AParameterChangeRingBuffer, ConstructWithSize) {
-    ParameterChangeRingbuffer events(size);
+TEST_F(AParameterChange, CanInitWithSize) {
+    size_t p_size = 2;
+    ParameterChange param_change(p_size);
+
+    ASSERT_THAT(param_change.getSize(), Eq(p_size));
 }
 
-TEST_F(AParameterChangeRingBuffer, NoAvailableWhenConstruct) {
-    ParameterChangeRingbuffer events(size);
+TEST_F(AParameterChange, CanPushPoint) {
+    ParameterChange param_change(2);
+    auto input_point = ParameterChangePoint{0, 0, 0.1};
 
-    ASSERT_THAT(events.getReadAvailableSize(), Eq(0));
+    bool ok = param_change.push(input_point);
+    ASSERT_TRUE(ok);
 }
 
-TEST_F(AParameterChangeRingBuffer, DefaultIndexIsNegOne) {
-    ParameterChangeRingbuffer events(size);
+TEST_F(AParameterChange, CanPopPoint) {
+    ParameterChange param_change(2);
+    auto input_point = ParameterChangePoint{1, 1, 1};
+    param_change.push(input_point);
 
-    ASSERT_THAT(events.getParameterIndex(), Eq(-1));
+    bool ok = param_change.pop(point);
+
+    ASSERT_TRUE(ok);
+    ASSERT_THAT(point, Eq(input_point));
 }
 
-TEST_F(AParameterChangeRingBuffer, CanSetAndGetParameterIndex) {
-    ParameterChangeRingbuffer events(size);
+TEST_F(AParameterChange, PushOverWriteIfOutOfSize) {
+    ParameterChange param_change(2);
+    param_change.push({1, 1, 1});
+    param_change.push({2, 2, 2});
+    param_change.push({3, 3, 3});
 
-    events.setParameterIndex(0);
-    ASSERT_THAT(events.getParameterIndex(), Eq(0));
-}
+    bool ok = param_change.pop(point);
 
-TEST_F(AParameterChangeRingBuffer, InsertWillIncreaseAvailableSize) {
-    ParameterChangeRingbuffer events(size);
-
-    ParameterChangePoint event{0, 0, 0.5};
-
-    events.insert(event);
-    ASSERT_THAT(events.getReadAvailableSize(), Eq(1));
-}
-
-TEST_F(AParameterChangeRingBuffer, CanGetItemByIndex) {
-    ParameterChangeRingbuffer events(size);
-
-    events.insert({0, 0, 0.1});
-    events.insert({0, 0, 0.2});
-
-    ASSERT_THAT(*(events.at(0)), Eq(ParameterChangePoint{0, 0, 0.1}));
-    ASSERT_THAT(*(events.at(1)), Eq(ParameterChangePoint{0, 0, 0.2}));
-}
-
-TEST_F(AParameterChangeRingBuffer, GetNullIfIndexOutofRange) {
-    ParameterChangeRingbuffer events(size);
-
-    events.insert({0, 0, 0.1});
-
-    int index = 2;
-    ASSERT_THAT(index, Gt(events.getReadAvailableSize()));
-    ASSERT_THAT(events.at(index), IsNull());
-}
-
-TEST_F(AParameterChangeRingBuffer, InsertOverwriteTheOldestDataIfItIsFull) {
-    ParameterChangeRingbuffer events(size);
-    for (auto i = 0; i < size; ++i) {
-        events.insert({0, 0, 0.1});
-    }
-    ASSERT_TRUE(events.isFull());
-
-    events.insert({0, 0, 0.2});
-    ASSERT_THAT(events.back(), Pointee(ParameterChangePoint{0, 0, 0.2}));
+    ASSERT_TRUE(ok);
+    ASSERT_THAT(point, Eq(ParameterChangePoint{3, 3, 3}));
 }
