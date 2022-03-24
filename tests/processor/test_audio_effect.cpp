@@ -2,7 +2,7 @@
 // Created by william on 2020/2/28.
 //
 
-#include "libaa/audio_basics/aa_delay_line_array.h"
+#include "libaa/audio_basics/aa_delay_lines.h"
 #include "libaa/audio_effect/aa_biquad_filter.h"
 #include "libaa/audio_effect/aa_chorus.h"
 #include "libaa/audio_effect/aa_compressor.h"

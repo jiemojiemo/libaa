@@ -3,7 +3,7 @@
 //
 
 #include "libaa/audio_effect/aa_flanger.h"
-#include "libaa/audio_basics/aa_delay_line_array.h"
+#include "libaa/audio_basics/aa_delay_lines.h"
 #include "libaa/dsp/aa_lfo.h"
 #include <cassert>
 namespace libaa {
@@ -13,7 +13,7 @@ public:
     float phase_ = {0.0f};
     float invert_sample_rate_{0.0f};
     LFO lfo_;
-    DelayLineArray<float> dlines_;
+    DelayLines<float> dlines_;
 };
 
 Flanger::Flanger() : impl_(std::make_shared<Impl>()) {}
