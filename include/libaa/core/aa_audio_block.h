@@ -8,20 +8,18 @@
 #pragma once
 #include "libaa/core/aa_audio_buffer_new.h"
 #include "libaa/core/aa_parameter_changes.h"
+
 namespace libaa {
 class AudioBlock {
 public:
     explicit AudioBlock();
 
-    explicit AudioBlock(int num_channels, int num_frames);
-
-    explicit AudioBlock(int num_channels, int num_frames, int num_params);
+    explicit AudioBlock(std::list<std::vector<float>> &&init_list,
+                        int num_params);
 
     explicit AudioBlock(std::list<std::vector<float>> &&init_list);
 
-    explicit AudioBlock(AudioBufferNew<float> buffer, ParameterChanges changes);
-
-    AudioBufferNew<float> audio_buffer;
+    AudioBufferX<float> buffer;
     ParameterChanges param_changes;
 };
 

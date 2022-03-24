@@ -7,50 +7,34 @@
 #define LIBAA_INCLUDE_LIBAA_CORE_AA_PARAMETER_CHANGE_RINGBUFFER_H
 #pragma once
 
-#include "ringbuffer.hpp"
+#include <memory>
 namespace libaa {
-
 struct ParameterChangePoint {
     int index;
     float time;
     float normalized_value;
 };
 
-class ParameterChangeRingbuffer {
+class ParameterChange {
 public:
-    ParameterChangeRingbuffer(size_t size) : ringbuffer_(size) {}
-    size_t getReadAvailableSize() const { return ringbuffer_.readAvailable(); }
+    explicit ParameterChange(size_t size);
 
-    bool insert(const ParameterChangePoint &event) {
-        if (isFull()) {
-            ringbuffer_.remove();
-        }
+    ParameterChange(const ParameterChange &c) = delete;
 
-        return ringbuffer_.insert(event);
-    }
+    size_t getSize() const;
 
-    ParameterChangePoint *at(size_t index) { return ringbuffer_.at(index); }
+    bool push(ParameterChangePoint result);
 
-    ParameterChangePoint *back() {
-        if (isEmpty()) {
-            return nullptr;
-        } else {
-            return at(getReadAvailableSize() - 1);
-        }
-    }
-
-    void setParameterIndex(int param_index) { parameter_index_ = param_index; }
-
-    int getParameterIndex() const { return parameter_index_; }
-
-    bool isFull() const { return ringbuffer_.isFull(); }
-
-    bool isEmpty() const { return ringbuffer_.isEmpty(); }
+    bool pop(ParameterChangePoint &result);
 
 private:
-    int parameter_index_ = -1;
-    jnk0le::Ringbuffer<ParameterChangePoint> ringbuffer_;
+    class Impl;
+    std::shared_ptr<Impl> impl_;
 };
+
+bool operator==(const ParameterChangePoint &lhs,
+                const ParameterChangePoint &rhs);
+
 } // namespace libaa
 
 #endif // LIBAA_INCLUDE_LIBAA_CORE_AA_PARAMETER_CHANGE_RINGBUFFER_H

@@ -6,7 +6,7 @@
 #define AUDIOEFFECT_AE_MATH_TOOLS_H
 
 #pragma once
-
+#include <algorithm>
 namespace libaa {
 template <typename T> T findNextPower2Number(T v) {
     v--;
@@ -18,6 +18,9 @@ template <typename T> T findNextPower2Number(T v) {
     v++;
     return v;
 }
+
+bool approximatelyEqual(float a, float b, float epsilon);
+
 } // namespace libaa
 
 #endif // AUDIOEFFECT_AE_MATH_TOOLS_H

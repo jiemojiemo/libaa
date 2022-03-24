@@ -1,96 +1,73 @@
-
 //
-// Created by William.Hua on 2021/8/2.
+// Created by William on 3/23/22.
 //
 
-#include "aa_test_helper.h"
 #include "libaa/core/aa_parameter_changes.h"
 #include <gmock/gmock.h>
+
 using namespace testing;
 using namespace libaa;
 
 class AParameterChanges : public Test {
 public:
+    size_t num_param = 10;
+    size_t fifo_size = 1;
+    ParameterChangePoint p0{0, 0, 1};
+    ParameterChangePoint p1{1, 0, 1};
 };
 
-TEST_F(AParameterChanges, CanConstructByDefaut) {
-    auto param_changes = ParameterChanges{};
+TEST_F(AParameterChanges, ConstructWithSizes) {
+    ParameterChanges param_changes(num_param, fifo_size);
 }
 
-TEST_F(AParameterChanges, DefautConstructInitWithEmptyParameterRingBuffer) {
-    auto param_changes = ParameterChanges{};
+TEST_F(AParameterChanges, CanGetNumberParameter) {
+    ParameterChanges param_changes(num_param, fifo_size);
 
-    ASSERT_TRUE(param_changes.getParameterChangeSet().empty());
+    ASSERT_THAT(param_changes.getNumParameters(), Eq(num_param));
 }
 
-TEST_F(AParameterChanges, IsEmptyWhenConstructByDefault) {
-    auto param_changes = ParameterChanges{};
+TEST_F(AParameterChanges, CanPushParameterChangePoint) {
+    ParameterChanges param_changes(num_param, fifo_size);
 
-    ASSERT_TRUE(param_changes.empty());
+    bool ok = param_changes.push(0, p0);
+
+    ASSERT_TRUE(ok);
 }
 
-TEST_F(AParameterChanges, CanConstuctWithSizeOfParamterChange) {
-    size_t num_param_change_buffer = 2;
-    auto param_changes = ParameterChanges{num_param_change_buffer};
+TEST_F(AParameterChanges, PushFailedIfParamIndexOutOfSize) {
+    int outof_size_index = num_param;
+    ParameterChanges param_changes(num_param, fifo_size);
 
-    ASSERT_THAT(param_changes.getParameterChangeSet().size(),
-                Eq(num_param_change_buffer));
+    bool ok = param_changes.push(outof_size_index, p0);
+
+    ASSERT_FALSE(ok);
 }
 
-TEST_F(AParameterChanges, ConstructWithParameterChangePoints) {
-    auto param_changes = ParameterChanges{{0, 0, 0.1}, {0, 0, 0.2}};
+TEST_F(AParameterChanges, CanPopParameterChangePoint) {
+    ParameterChanges param_changes(num_param, fifo_size);
+    param_changes.push(0, p0);
+    param_changes.push(1, p1);
+
+    ParameterChangePoint output_point;
+    bool ok = param_changes.pop(0, output_point);
+    ASSERT_TRUE(ok);
+    ASSERT_THAT(output_point.index, Eq(0));
+    ASSERT_THAT(output_point.time, Eq(0));
+    ASSERT_THAT(output_point.normalized_value, Eq(1));
+
+    ok = param_changes.pop(1, output_point);
+    ASSERT_TRUE(ok);
+    ASSERT_THAT(output_point.index, Eq(1));
+    ASSERT_THAT(output_point.time, Eq(0));
+    ASSERT_THAT(output_point.normalized_value, Eq(1));
 }
 
-TEST_F(AParameterChanges, ConstructWithPointsHasSizeOfDifferentIndex) {
-    auto param_changes =
-        ParameterChanges{{0, 0, 0.1}, {0, 0, 0.1}, {1, 0, 0.2}, {1, 0, 0.2}};
+TEST_F(AParameterChanges, PopFailedIfParamIndexOutOfSize) {
+    int outof_size_index = num_param;
+    ParameterChanges param_changes(num_param, fifo_size);
+    param_changes.push(0, p0);
 
-    ASSERT_THAT(param_changes.getParameterChangeSet().size(), Eq(2));
-}
+    bool ok = param_changes.pop(outof_size_index, p0);
 
-TEST_F(AParameterChanges, ConstructWithPointsWillInsertPointIntoRingbuffer) {
-    auto param_changes =
-        ParameterChanges{{0, 0, 0.1}, {0, 0, 0.1}, {1, 0, 0.2}, {1, 0, 0.2}};
-
-    ASSERT_THAT(param_changes.at(0)->getParameterIndex(), Eq(0));
-    ASSERT_THAT(param_changes.at(0)->getReadAvailableSize(), Eq(2));
-    ASSERT_THAT(param_changes.at(0)->at(0),
-                Pointee(ParameterChangePoint{0, 0, 0.1}));
-    ASSERT_THAT(param_changes.at(0)->at(1),
-                Pointee(ParameterChangePoint{0, 0, 0.1}));
-
-    ASSERT_THAT(param_changes.at(1)->getParameterIndex(), Eq(1));
-    ASSERT_THAT(param_changes.at(1)->getReadAvailableSize(), Eq(2));
-    ASSERT_THAT(param_changes.at(1)->at(0),
-                Pointee(ParameterChangePoint{0, 0, 0.2}));
-    ASSERT_THAT(param_changes.at(1)->at(1),
-                Pointee(ParameterChangePoint{0, 0, 0.2}));
-}
-
-TEST_F(AParameterChanges, RingbufferHasIncreasedIndex) {
-    size_t num_param_change_buffer = 2;
-    auto param_changes = ParameterChanges{num_param_change_buffer};
-
-    const ParameterChanges::ParameterChangeSet &ringbuffers =
-        param_changes.getParameterChangeSet();
-
-    ASSERT_THAT(ringbuffers.at(0)->getParameterIndex(), Eq(0));
-    ASSERT_THAT(ringbuffers.at(1)->getParameterIndex(), Eq(1));
-}
-
-TEST_F(AParameterChanges, IsNotEmptyIfThereHasParameterChangePoint) {
-    auto param_changes =
-        ParameterChanges{{0, 0, 0.1}, {0, 0, 0.1}, {1, 0, 0.2}, {1, 0, 0.2}};
-
-    ASSERT_FALSE(param_changes.empty());
-}
-
-TEST_F(AParameterChanges, InsertIncreaseTheNumberOfParameterChangePoint) {
-    auto param_changes = ParameterChanges{};
-
-    param_changes.insert({0, 0, 0.5});
-    ASSERT_THAT(param_changes.getNumChanges(), Eq(1));
-
-    param_changes.insert({0, 0, 0.5});
-    ASSERT_THAT(param_changes.getNumChanges(), Eq(2));
+    ASSERT_FALSE(ok);
 }

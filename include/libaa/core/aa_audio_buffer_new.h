@@ -10,15 +10,15 @@
 #include <list>
 #include <vector>
 namespace libaa {
-template <typename T> class AudioBufferNew {
+template <typename T> class AudioBufferX {
 public:
-    explicit AudioBufferNew() : AudioBufferNew(0, 0) {}
-    explicit AudioBufferNew(size_t num_channels, size_t num_frames)
+    explicit AudioBufferX() : AudioBufferX(0, 0) {}
+    explicit AudioBufferX(size_t num_channels, size_t num_frames)
         : num_channels_(num_channels), num_frames_(num_frames) {
         allocateData();
     }
 
-    explicit AudioBufferNew(std::list<std::vector<T>> &&channel_data)
+    explicit AudioBufferX(std::list<std::vector<T>> &&channel_data)
         : num_channels_(channel_data.size()) {
         copyFromVectors(channel_data);
     }
@@ -35,7 +35,7 @@ public:
         return &data_[channel * num_frames_];
     }
 
-    void copyFrom(AudioBufferNew<T> *other) {
+    void copyFrom(AudioBufferX<T> *other) {
         for (auto c = 0u; c < getNumberChannels(); ++c) {
             std::copy_n(other->getReadPointer(c), getNumberFrames(),
                         this->getWriterPointer(c));
