@@ -6,11 +6,11 @@
 #include "libaa/audio_basics/aa_delay_line.h"
 
 namespace libaa {
-template <typename T> class DelayLineArray {
+template <typename T> class DelayLines {
 public:
-    DelayLineArray() = default;
+    DelayLines() = default;
 
-    DelayLineArray(size_t num_lines, size_t line_size) {
+    DelayLines(size_t num_lines, size_t line_size) {
         allocateDelayLines(num_lines, line_size);
     }
 

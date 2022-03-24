@@ -3,7 +3,7 @@
 //
 
 #include "libaa/audio_effect/aa_vibrato_effect.h"
-#include "libaa/audio_basics/aa_delay_line_array.h"
+#include "libaa/audio_basics/aa_delay_lines.h"
 
 namespace libaa {
 class VibratoEffect::Impl {
@@ -11,7 +11,7 @@ public:
     float phase_ = {0.0f};
     float invert_sample_rate_{0.0f};
     LFO lfo_;
-    DelayLineArray<float> dlines_;
+    DelayLines<float> dlines_;
 };
 
 void VibratoEffect::prepareToPlay(double sample_rate, int max_block_size) {

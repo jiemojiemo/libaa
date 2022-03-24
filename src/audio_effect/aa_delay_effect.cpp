@@ -3,13 +3,13 @@
 //
 
 #include "libaa/audio_effect/aa_delay_effect.h"
-#include "libaa/audio_basics/aa_delay_line_array.h"
+#include "libaa/audio_basics/aa_delay_lines.h"
 namespace libaa {
 class DelayEffect::Impl {
 public:
     //    std::vector<DelayLine<float>> dlines_;
     std::vector<size_t> delay_length_in_sample_;
-    DelayLineArray<float> dlines_;
+    DelayLines<float> dlines_;
 };
 
 void DelayEffect::prepareToPlay(double sample_rate, int max_block_size) {
