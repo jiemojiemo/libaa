@@ -10,7 +10,7 @@
 #include "libaa/core/aa_audio_processor_parameters.h"
 #include "libaa/core/aa_delay_lines.h"
 #include "libaa/processor/aa_audio_processor.h"
-#include "libaa/processor/ae_delay_processor_utilities.h"
+#include "libaa/processor/aa_delay_processor_utilities.h"
 namespace libaa {
 class DelayProcessor : public IAudioProcessor {
 public:

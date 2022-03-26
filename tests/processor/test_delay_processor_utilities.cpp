@@ -2,7 +2,7 @@
 // Created by William on 3/26/22.
 //
 #include "aa_testing_helper.h"
-#include "libaa/processor/ae_delay_processor_utilities.h"
+#include "libaa/processor/aa_delay_processor_utilities.h"
 #include <gmock/gmock.h>
 
 using namespace testing;

@@ -7,7 +7,6 @@
 #include "libaa/dsp/aa_dsp_utilities.h"
 
 namespace libaa {
-
 class LFOGenerator::Impl {
 public:
     Impl(LFOGenerator *parent) : parent_(parent) {}
@@ -54,6 +53,11 @@ public:
 
     double getPhaseIncrement() const { return phase_inc_; }
 
+    void updateFrequencyHz(float hz) {
+        parent_->frequency_hz = hz;
+        phase_inc_ = parent_->frequency_hz / sample_rate_;
+    }
+
     static void checkAndWrapModulo(double &mod_counter, double phase_inc) {
         if (phase_inc > 0 && mod_counter >= 1.0) {
             mod_counter -= 1.0;
@@ -82,7 +86,7 @@ public:
 
 LFOGenerator::LFOGenerator() : impl_(std::make_shared<Impl>(this)) {}
 
-void LFOGenerator::prepare(double sample_rate) {
+void LFOGenerator::prepare(float sample_rate) {
     return impl_->prepare(sample_rate);
 }
 
@@ -92,6 +96,12 @@ SignalGenData LFOGenerator::renderAudioOutput() {
 
 double LFOGenerator::getPhaseIncrement() const {
     return impl_->getPhaseIncrement();
+}
+
+float LFOGenerator::getSampleRate() const { return impl_->sample_rate_; }
+
+void LFOGenerator::updateFrequencyHz(float hz) {
+    return impl_->updateFrequencyHz(hz);
 }
 
 } // namespace libaa
