@@ -2,6 +2,7 @@ add_subdirectory(audio_effect)
 add_subdirectory(dsp)
 add_subdirectory(core)
 add_subdirectory(fileio)
+add_subdirectory(processor)
 set(GENERATOR_SRC audio_generator/aa_lfo_generator.cpp)
 
 message(STATUS "DSP_SRC:${DSP_SRC}")
@@ -10,8 +11,8 @@ add_library(libaa
         ${FILEIO_SRC}
         ${DSP_SRC}
         ${CORE_SRC}
-        ${AUDIO_EFFECT_DIR}
         ${GENERATOR_SRC}
+        ${PROCESSOR_SRC}
         )
 target_include_directories(libaa
         PUBLIC
