@@ -7,10 +7,10 @@
 #define LIBAA_SRC_AUDIO_EFFECT_AA_GAIN_PROCESSOR_H
 #pragma once
 #include "libaa/audio_effect/aa_audio_effect_processor.h"
-#include "libaa/audio_effect/aa_audio_processor.h"
 #include "libaa/core/aa_audio_block.h"
 #include "libaa/core/aa_audio_buffer_new.h"
 #include "libaa/core/aa_audio_processor_parameters.h"
+#include "libaa/processor/aa_audio_processor.h"
 namespace libaa {
 class GainProcessor : public IAudioProcessor {
 public:
