@@ -1,7 +1,7 @@
 //
 // Created by william on 2020/3/3.
 //
-#include "libaa/audio_basics/aa_delay_lines.h"
+#include "libaa/core/aa_delay_lines.h"
 #include <gmock/gmock.h>
 using namespace testing;
 using namespace libaa;
@@ -16,8 +16,8 @@ public:
 };
 
 TEST_F(ADelayLines, InitWithNumberDelayLineAndSize) {
-    ASSERT_THAT(dlines.getNumLines(), Eq(num_lines));
-    ASSERT_THAT(dlines.getSize(), Eq(line_size));
+    ASSERT_THAT(dlines.getNumDelayLines(), Eq(num_lines));
+    ASSERT_THAT(dlines.getMaxDelaySamples(), Eq(line_size));
 }
 
 TEST_F(ADelayLines, GetDelayLine) {
@@ -56,6 +56,7 @@ TEST_F(ADelayLines, AllocateNewLines) {
     size_t new_size = 10;
     dlines.allocateDelayLines(new_num_lines, new_size);
 
-    ASSERT_THAT(dlines.getNumLines(), Eq(new_num_lines));
-    ASSERT_THAT(dlines.getSize(), Eq(findNextPower2Number(new_size)));
+    ASSERT_THAT(dlines.getNumDelayLines(), Eq(new_num_lines));
+    ASSERT_THAT(dlines.getMaxDelaySamples(),
+                Eq(findNextPower2Number(new_size)));
 }
