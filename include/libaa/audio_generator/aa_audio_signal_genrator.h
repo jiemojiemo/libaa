@@ -18,7 +18,7 @@ struct SignalGenData {
 
 class AudioSignalGenerator {
 public:
-    virtual void prepare(double sample_rate) = 0;
+    virtual void prepare(float sample_rate) = 0;
 
     virtual SignalGenData renderAudioOutput() = 0;
 };

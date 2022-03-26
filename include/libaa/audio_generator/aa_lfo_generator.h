@@ -12,13 +12,17 @@ class LFOGenerator : public AudioSignalGenerator {
 public:
     LFOGenerator();
 
-    void prepare(double sample_rate) override;
+    void prepare(float sample_rate) override;
 
     SignalGenData renderAudioOutput() override;
 
     double getPhaseIncrement() const;
 
-    double frequency_hz = {0.0f};
+    float getSampleRate() const;
+
+    void updateFrequencyHz(float hz);
+
+    float frequency_hz = {0.0f};
     GeneratorWaveform waveform = {GeneratorWaveform::kTriangle};
 
 private:
