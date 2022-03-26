@@ -4,7 +4,7 @@
 
 #pragma once
 #include "aa_audio_effect_processor.h"
-#include "libaa/audio_basics/aa_delay_line.h"
+#include "libaa/core/aa_delay_line.h"
 #include <memory>
 namespace libaa {
 class DelayEffect : public AudioEffectProcessor {

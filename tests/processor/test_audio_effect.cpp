@@ -2,7 +2,6 @@
 // Created by william on 2020/2/28.
 //
 
-#include "libaa/audio_basics/aa_delay_lines.h"
 #include "libaa/audio_effect/aa_biquad_filter.h"
 #include "libaa/audio_effect/aa_chorus.h"
 #include "libaa/audio_effect/aa_compressor.h"
@@ -13,6 +12,7 @@
 #include "libaa/audio_effect/aa_robot.h"
 #include "libaa/audio_effect/aa_tremolo.h"
 #include "libaa/audio_effect/aa_vibrato_effect.h"
+#include "libaa/core/aa_delay_lines.h"
 #include <gmock/gmock.h>
 
 using namespace std;

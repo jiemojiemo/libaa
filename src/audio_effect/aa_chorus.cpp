@@ -3,7 +3,7 @@
 //
 
 #include "libaa/audio_effect/aa_chorus.h"
-#include "libaa/audio_basics/aa_delay_lines.h"
+#include "libaa/core/aa_delay_lines.h"
 #include "libaa/dsp/aa_lfo.h"
 
 namespace libaa {

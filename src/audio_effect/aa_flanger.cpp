@@ -3,7 +3,7 @@
 //
 
 #include "libaa/audio_effect/aa_flanger.h"
-#include "libaa/audio_basics/aa_delay_lines.h"
+#include "libaa/core/aa_delay_lines.h"
 #include "libaa/dsp/aa_lfo.h"
 #include <cassert>
 namespace libaa {
@@ -39,7 +39,8 @@ void Flanger::processBlock(AudioBuffer<float> &buffer) {
     float phase = 0.0f;
     float channel0EndPhase = impl_->phase_;
 
-    assert(static_cast<size_t>(num_channels) <= impl_->dlines_.getNumLines());
+    assert(static_cast<size_t>(num_channels) <=
+           impl_->dlines_.getNumDelayLines());
 
     for (int c = 0; c < num_channels; ++c) {
         phase = impl_->phase_;

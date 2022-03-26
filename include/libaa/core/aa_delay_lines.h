@@ -1,10 +1,12 @@
 //
-// Created by william on 2020/3/3.
+// Created by agen on 3/24/22.
 //
 
-#pragma once
-#include "libaa/audio_basics/aa_delay_line.h"
+#ifndef AUDIOEFFECT_AE_DELAY_LINES_H
+#define AUDIOEFFECT_AE_DELAY_LINES_H
 
+#pragma once
+#include "libaa/core/aa_delay_line.h"
 namespace libaa {
 template <typename T> class DelayLines {
 public:
@@ -14,7 +16,7 @@ public:
         allocateDelayLines(num_lines, line_size);
     }
 
-    size_t getNumLines() const { return dlines_.size(); }
+    size_t getNumDelayLines() const { return dlines_.size(); }
 
     void allocateDelayLines(size_t num_lines, size_t size) {
         dlines_.resize(num_lines);
@@ -24,7 +26,7 @@ public:
         }
     }
 
-    size_t getSize() const {
+    size_t getMaxDelaySamples() const {
         if (dlines_.empty())
             return 0;
 
@@ -32,7 +34,7 @@ public:
     }
 
     DelayLine<T> *getDelayLine(size_t num_of_dline) {
-        if (num_of_dline > getNumLines()) {
+        if (num_of_dline > getNumDelayLines()) {
             return nullptr;
         }
 
@@ -54,4 +56,7 @@ public:
 private:
     std::vector<DelayLine<T>> dlines_;
 };
+
 } // namespace libaa
+
+#endif // AUDIOEFFECT_AE_DELAY_LINES_H

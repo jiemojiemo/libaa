@@ -3,7 +3,7 @@
 // Created by William.Hua on 2021/7/25.
 //
 
-#include "aa_test_helper.h"
+#include "aa_testing_helper.h"
 #include "libaa/core/aa_audio_buffer_new.h"
 #include <gmock/gmock.h>
 using namespace testing;

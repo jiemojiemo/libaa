@@ -3,7 +3,7 @@
 //
 
 #include "libaa/audio_effect/aa_delay_effect.h"
-#include "libaa/audio_basics/aa_delay_lines.h"
+#include "libaa/core/aa_delay_lines.h"
 namespace libaa {
 class DelayEffect::Impl {
 public:
