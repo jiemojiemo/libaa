@@ -10,8 +10,8 @@ set(AUDIO_EFFECT_DIR
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_robot.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_biquad_filter.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_iir_filter.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/aa_gain_processor.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/aa_delay_processor_utilities.cpp
+        ../processor/aa_gain_processor.cpp
+        ../processor/aa_delay_processor_utilities.cpp
         #        ${CMAKE_CURRENT_SOURCE_DIR}/aa_audio_filter_processor.cpp
         )
 
