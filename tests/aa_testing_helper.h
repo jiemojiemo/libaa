@@ -21,8 +21,6 @@ MATCHER_P(NearWithPrecision, ferr, "") {
 MATCHER_P2(ComplexNearEqual, ferr, rhs, "") { return abs(arg - rhs) < ferr; }
 
 bool operator==(const AudioBufferX<float> &lhs, const AudioBufferX<float> &rhs);
-bool operator==(const ParameterChangePoint &lhs,
-                const ParameterChangePoint &rhs);
 
 class ScopeFile {
 public:

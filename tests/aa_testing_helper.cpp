@@ -23,10 +23,4 @@ bool operator==(const AudioBufferX<float> &lhs,
     return true;
 }
 
-bool operator==(const ParameterChangePoint &lhs,
-                const ParameterChangePoint &rhs) {
-    return fabs((lhs.time - rhs.time)) < 1e-5 &&
-           fabs((lhs.normalized_value - rhs.normalized_value)) < 1e-5;
-}
-
 } // namespace libaa
