@@ -5,6 +5,7 @@
 
 #include "libaa/fileio/aa_mp3_audio_format_reader.h"
 #include "dr_mp3.h"
+#include <memory>
 #include <vector>
 namespace libaa {
 class Mp3AudioFormatReader::Impl {
@@ -13,13 +14,35 @@ public:
         openMp3FromStream();
     }
 
+    ~Impl(){
+        close();
+    }
+
+    void close(){
+        if(isOpenOk()){
+            drmp3_uninit(mp3_.get());
+
+            parent_->sample_rate = -1;
+            parent_->num_channels = -1;
+            parent_->num_bits = -1;
+        }
+    }
+
+    bool isOpenOk() const{
+        return mp3_ != nullptr;
+    }
+
     void openMp3FromStream() {
-        if (drmp3_init(&mp3_, readCallback, seekCallback, this, nullptr,
+        mp3_ = std::make_unique<drmp3>();
+        if (drmp3_init(mp3_.get(), readCallback, seekCallback, this, nullptr,
                        nullptr)) {
-            parent_->sample_rate = mp3_.sampleRate;
-            parent_->num_channels = mp3_.channels;
-            parent_->length_in_samples = drmp3_get_pcm_frame_count(&mp3_);
+            parent_->sample_rate = mp3_->sampleRate;
+            parent_->num_channels = mp3_->channels;
+            parent_->length_in_samples = drmp3_get_pcm_frame_count(mp3_.get());
             parent_->num_bits = 16;
+        }else{
+            mp3_ = nullptr;
+            close();
         }
     }
 
@@ -27,7 +50,7 @@ public:
                      int start_offset_of_dest, int64_t start_offset_of_file,
                      int num_samples) {
         if (parent_->pos_ != start_offset_of_file) {
-            if (drmp3_seek_to_pcm_frame(&mp3_, start_offset_of_file)) {
+            if (drmp3_seek_to_pcm_frame(mp3_.get(), start_offset_of_file)) {
                 parent_->pos_ = start_offset_of_file;
             }
         }
@@ -35,7 +58,7 @@ public:
         num_dest_channels = std::min(num_dest_channels, parent_->num_channels);
         interleave_buffer_.resize(num_dest_channels * num_samples);
 
-        auto num_read = drmp3_read_pcm_frames_f32(&mp3_, num_samples,
+        auto num_read = drmp3_read_pcm_frames_f32(mp3_.get(), num_samples,
                                                   interleave_buffer_.data());
 
         // interleave to planar
@@ -74,7 +97,7 @@ public:
     }
 
     Mp3AudioFormatReader *parent_;
-    drmp3 mp3_;
+    std::unique_ptr<drmp3> mp3_{nullptr};
     std::vector<float> interleave_buffer_;
 };
 
@@ -84,7 +107,7 @@ Mp3AudioFormatReader::Mp3AudioFormatReader(
       impl_(std::make_shared<Impl>(this)) {}
 
 bool Mp3AudioFormatReader::isOpenOk() {
-    return sample_rate > 0 && num_channels > 0 && length_in_samples > 0;
+    return impl_->isOpenOk();
 }
 
 bool Mp3AudioFormatReader::readSamples(float **dest_channels,
