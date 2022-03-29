@@ -14,6 +14,8 @@ public:
         openLAME(rate, channels, bits);
     }
 
+    ~Impl() { close(); }
+
     void openLAME(int rate, int channels, int bits) {
         if (channels <= 0 || rate <= 0 || bits <= 0) {
             return;
