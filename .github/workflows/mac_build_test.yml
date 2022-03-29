@@ -1,4 +1,4 @@
-name: build
+name: mac_build_test
 
 on: [ push ]
 
