@@ -1,9 +1,9 @@
 name: build
 
-on: [push]
+on: [ push ]
 
 jobs:
-  build:
+  build_and_test:
     # The CMake configure and build commands are platform agnostic and should work equally
     # well on Windows or Mac.  You can convert this to a matrix build if you need
     # cross-platform coverage.
@@ -11,31 +11,20 @@ jobs:
     runs-on: macOS-latest
 
     steps:
-    - uses: actions/checkout@v2
-      with:
-        submodules: true
-
-    - name: Configure CMake
-      shell: bash
-      run: cmake -S . -B build
-
-    - name: Build
-      shell: bash
-      # Execute the build.  You can specify a specific target with "--target <NAME>"
-      run: cmake --build build -- -j 8
-
-  asan_check:
-    runs-on: macOS-latest
-    steps:
       - uses: actions/checkout@v2
         with:
-            submodules: true
+          submodules: true
 
-      - name: build
+      - name: Configure CMake
         shell: bash
-        run: bash ./ci/mac_build_with_asan.sh
+        run: cmake -S . -B build -DENABLE_ASAN=ON
 
-      - name: run unit test
+      - name: Build
+        shell: bash
+        # Execute the build.  You can specify a specific target with "--target <NAME>"
+        run: cmake --build build -- -j 10
+
+      - name: Run Unit Tests
         shell: bash
         run: |
           cd build
