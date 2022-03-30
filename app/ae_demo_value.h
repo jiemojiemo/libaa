@@ -10,6 +10,7 @@
 
 class DemoValue {
 public:
+    virtual ~DemoValue() = default;
     virtual void invoke(DemoContext &context) {
         process(context);
         if (next != nullptr) {

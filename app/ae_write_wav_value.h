@@ -12,6 +12,8 @@
 #include "ae_read_wav_value.h"
 #include "libaa/fileio/aa_file_output_stream.h"
 #include "libaa/fileio/aa_wav_audio_format_writer.h"
+#include <cassert>
+#include <filesystem>
 
 class WriteWavValue : public DemoValue {
 public:
