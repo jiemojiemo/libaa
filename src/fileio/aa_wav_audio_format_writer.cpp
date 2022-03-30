@@ -5,7 +5,7 @@
 
 #include "libaa/fileio/aa_wav_audio_format_writer.h"
 #include "dr_wav.h"
-
+#include <memory>
 namespace libaa {
 class WavFormatWriter::Impl {
 public:
@@ -29,13 +29,15 @@ public:
         format.sampleRate = rate;
         format.bitsPerSample = 32; // only support float now
 
-        auto ret = drwav_init_write(&wav_, &format, writeCallback, seekCallback,
-                                    this, nullptr);
+        wav_ = std::make_unique<drwav>();
+        auto ret = drwav_init_write(wav_.get(), &format, writeCallback,
+                                    seekCallback, this, nullptr);
         if (ret) {
             parent_->sample_rate = rate;
             parent_->num_channels = channels;
             parent_->num_bits = 32;
         } else {
+            wav_ = nullptr;
             close();
         }
     }
@@ -61,25 +63,25 @@ public:
             return false;
         }
 
-        auto num_written = drwav_write_pcm_frames(&wav_, num_samples, samples);
+        auto num_written =
+            drwav_write_pcm_frames(wav_.get(), num_samples, samples);
 
         return num_written > 0;
     }
 
-    bool isOpen() const {
-        return parent_->sample_rate > 0 && parent_->num_channels > 0 &&
-               parent_->num_bits > 0;
-    }
+    bool isOpen() const { return wav_ != nullptr; }
 
     void flush() {}
 
     void close() {
-        flush();
-        drwav_uninit(&wav_);
+        if (isOpen()) {
+            flush();
+            drwav_uninit(wav_.get());
 
-        parent_->sample_rate = -1;
-        parent_->num_channels = -1;
-        parent_->num_bits = -1;
+            parent_->sample_rate = -1;
+            parent_->num_channels = -1;
+            parent_->num_bits = -1;
+        }
     }
 
     static size_t writeCallback(void *pUserData, const void *pData,
@@ -111,7 +113,7 @@ public:
     }
 
     WavFormatWriter *parent_;
-    drwav wav_;
+    std::unique_ptr<drwav> wav_{nullptr};
     std::vector<float> buff_;
 };
 
