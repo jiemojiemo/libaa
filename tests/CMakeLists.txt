@@ -17,6 +17,7 @@ function(add_libaa_test unit_test_name)
     )
 endfunction()
 
+add_subdirectory(app)
 add_subdirectory(fileio)
 add_subdirectory(core)
 add_subdirectory(dsp)

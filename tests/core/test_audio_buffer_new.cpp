@@ -96,3 +96,35 @@ TEST_F(AAudioBufferNew, CanResize) {
     ASSERT_THAT(audio_buffer.getNumberChannels(), Eq(new_channels));
     ASSERT_THAT(audio_buffer.getNumberFrames(), Eq(new_num_frames));
 }
+
+TEST_F(AAudioBufferNew, CanCopyFromFloatArrays) {
+    AudioBufferX<float> audio_buffer(2, 3);
+    float samples[2][3]{{1, 1, 1},
+                        {
+                            2,
+                            2,
+                            2,
+                        }};
+    float *data_refer_to[2] = {samples[0], samples[1]};
+
+    audio_buffer.copyFrom(data_refer_to, 2, 3, 0, 0);
+
+    ASSERT_THAT(audio_buffer.getReadPointer(0)[0], Eq(1));
+    ASSERT_THAT(audio_buffer.getReadPointer(1)[0], Eq(2));
+}
+
+TEST_F(AAudioBufferNew, CanCopyToOtherFloatArrays) {
+    AudioBufferX<float> audio_buffer{{{1, 1, 1},
+                                      {
+                                          2,
+                                          2,
+                                          2,
+                                      }}};
+    float samples[2][3];
+    float *data_refer_to[2] = {samples[0], samples[1]};
+
+    audio_buffer.copyTo(data_refer_to, 2, 3, 0, 0);
+
+    ASSERT_THAT(samples[0][0], Eq(1));
+    ASSERT_THAT(samples[1][0], Eq(2));
+}

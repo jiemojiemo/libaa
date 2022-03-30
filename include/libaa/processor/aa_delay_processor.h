@@ -1,5 +1,5 @@
 //
-// Created by agen on 3/24/22.
+// Created by William on 3/24/22.
 //
 
 #ifndef AUDIOEFFECT_AE_DELAY_PROCESSOR_H

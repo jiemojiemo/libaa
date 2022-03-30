@@ -35,6 +35,7 @@ add_subdirectory(src)
 add_subdirectory(examples)
 
 if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTING)
+    add_subdirectory(app)
     enable_testing()
     add_subdirectory(tests)
 endif ()
