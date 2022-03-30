@@ -26,7 +26,7 @@ target_link_libraries(libaa
         PUBLIC fdk-aac mp3lame Ring-Buffer)
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    target_compile_options(libaa PUBLIC
+    target_compile_options(libaa PRIVATE
             -Wall -Wextra -pedantic -Werror)
 
     # ignore some error

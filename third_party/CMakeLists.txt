@@ -7,6 +7,14 @@ if (BUILD_TESTING)
     add_subdirectory(googletest EXCLUDE_FROM_ALL)
 endif ()
 
+if (NOT EXISTS yaml-cpp)
+    set(YAML_CPP_BUILD_TESTS OFF)
+    set(YAML_CPP_BUILD_TOOLS OFF)
+    set(YAML_CPP_CLANG_FORMAT_EXE OFF)
+    set(YAML_CPP_INSTALL OFF)
+    add_subdirectory(yaml-cpp EXCLUDE_FROM_ALL)
+endif ()
+
 add_library(Ring-Buffer INTERFACE)
 target_include_directories(Ring-Buffer INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/Ring-Buffer/")
 

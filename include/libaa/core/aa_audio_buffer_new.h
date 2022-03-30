@@ -42,6 +42,24 @@ public:
         }
     }
 
+    void copyFrom(T **source, int num_channels, int num_frames,
+                  int src_frame_offset, int dest_frame_offset) {
+        for (auto c = 0; c < num_channels; ++c) {
+            T *s = source[c] + src_frame_offset;
+            T *d = getWriterPointer(c) + dest_frame_offset;
+            std::copy_n(s, num_frames, d);
+        }
+    }
+
+    void copyTo(T **dest, int num_channels, int num_frames,
+                int src_frame_offset, int dest_frame_offset) {
+        for (auto c = 0; c < num_channels; ++c) {
+            T *s = getWriterPointer(c) + src_frame_offset;
+            T *d = dest[c] + dest_frame_offset;
+            std::copy_n(s, num_frames, d);
+        }
+    }
+
     void resize(size_t num_channels, size_t num_frames) {
         num_channels_ = num_channels;
         num_frames_ = num_frames;

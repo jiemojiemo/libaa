@@ -14,6 +14,8 @@ class AudioBlock {
 public:
     explicit AudioBlock();
 
+    explicit AudioBlock(int num_channels, int num_frames, int num_param);
+
     explicit AudioBlock(std::list<std::vector<float>> &&init_list,
                         int num_params);
 

@@ -1,5 +1,5 @@
 //
-// Created by agen on 3/26/22.
+// Created by William on 3/26/22.
 //
 
 #ifndef AUDIOEFFECT_AE_VIBRATOR_PROCESSOR_UTILITIES_H
