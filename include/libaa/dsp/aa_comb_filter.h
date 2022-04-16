@@ -8,6 +8,7 @@
 #pragma once
 #include "libaa/core/aa_math_tools.h"
 #include "libaa/dsp/aa_simple_delay.h"
+#include <cmath>
 namespace libaa {
 class CombFilter {
 public:
@@ -29,7 +30,7 @@ public:
             params_.simple_delay_params.delay_ms !=
                 params.simple_delay_params.delay_ms) {
             float exponent = -3.0f * params.simple_delay_params.delay_ms;
-            comb_g_ = std::powf(10.0f, exponent / params.rt_60_ms);
+            comb_g_ = std::pow(10.0f, exponent / params.rt_60_ms);
         }
         g2 = params.lpf_g * (1.0f - comb_g_);
         delay_.updateParameters(params.simple_delay_params);
