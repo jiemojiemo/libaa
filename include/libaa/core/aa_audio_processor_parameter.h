@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 namespace libaa {
-enum class ParameterType { kFloat = 0, kChoice };
+enum class ParameterType { kFloat = 0, kChoice, kBool };
 
 class AudioProcessorParameter {
 public:
@@ -17,6 +17,9 @@ public:
         ParameterType type, int param_id, std::string param_name,
         float default_val, float min_plain_value, float max_plain_value,
         std::vector<std::string> choices_strings = {});
+
+    explicit AudioProcessorParameter(int param_id, std::string param_name,
+                                     bool init_bool);
 
     float getDefaultPlainValue() const;
 
@@ -34,9 +37,13 @@ public:
 
     std::string convertNormalizedValueToChoiceString(float norm_value) const;
 
+    bool convertNormalizedValueToBool(float norm_value) const;
+
     float getPlainValue() const;
 
     float getNormalizedValue() const;
+
+    bool getBool() const;
 
     std::string getPlainValueString() const;
 

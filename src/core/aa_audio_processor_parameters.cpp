@@ -37,4 +37,13 @@ int AudioProcessorParameters::pushChoiceParameter(
     return new_param_index;
 }
 
+int AudioProcessorParameters::pushBoolParameter(std::string param_name,
+                                                bool default_val) {
+    int new_param_index = parameters_.size();
+    parameters_.emplace_back(new_param_index, std::move(param_name),
+                             default_val);
+
+    return new_param_index;
+}
+
 } // namespace libaa

@@ -13,13 +13,17 @@ class AudioProcessorParameters {
 public:
     AudioProcessorParameters() = default;
 
-    size_t size() const { return parameters_.size(); }
+    size_t size() const {
+        return parameters_.size();
+    }
 
     int pushFloatParameter(std::string param_name, float default_val,
                            float min_plain_value, float max_plain_value);
 
     int pushChoiceParameter(std::string param_name, int default_index,
                             std::vector<std::string> choice_strings);
+
+    int pushBoolParameter(std::string param_name, bool default_val);
 
     const AudioProcessorParameter &get(int param_id) const;
     AudioProcessorParameter &get(int param_id);

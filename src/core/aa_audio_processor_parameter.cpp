@@ -5,6 +5,15 @@
 #include "libaa/core/aa_audio_processor_parameter.h"
 
 namespace libaa {
+
+namespace
+{
+inline float convertBoolToFloat(bool b)
+{
+    return b ? 1.0f : 0.0f;
+}
+}
+
 AudioProcessorParameter::AudioProcessorParameter(
     ParameterType type, int param_id, std::string param_name, float default_val,
     float min_plain_value, float max_plain_value,
@@ -25,11 +34,19 @@ AudioProcessorParameter::AudioProcessorParameter(
         convertPlainValueToNormalizedValue(plain_value_);
 }
 
+AudioProcessorParameter::AudioProcessorParameter(int param_id,
+                                                 std::string param_name,
+                                                 bool init_bool)
+    : AudioProcessorParameter(ParameterType::kBool, param_id, param_name, convertBoolToFloat(init_bool), 0.0f, 1.0f)
+{}
+
 float AudioProcessorParameter::getDefaultPlainValue() const {
     return plain_value_;
 }
 
-int AudioProcessorParameter::getParameterID() const { return id_; }
+int AudioProcessorParameter::getParameterID() const {
+    return id_;
+}
 
 float AudioProcessorParameter::getMinPlainValue() const {
     return min_plain_value_;
@@ -65,12 +82,21 @@ std::string AudioProcessorParameter::convertNormalizedValueToChoiceString(
     return choice_strings_[choice_index];
 }
 
+bool AudioProcessorParameter::convertNormalizedValueToBool(
+    float norm_value) const {
+    return norm_value > 0.5f;
+}
+
 float AudioProcessorParameter::getPlainValue() const {
     return convertNormalizedValueToPlainValue(current_normalized_value_);
 }
 
 float AudioProcessorParameter::getNormalizedValue() const {
     return current_normalized_value_;
+}
+
+bool AudioProcessorParameter::getBool() const {
+    return convertNormalizedValueToBool(current_normalized_value_);
 }
 
 std::string AudioProcessorParameter::getPlainValueString() const {

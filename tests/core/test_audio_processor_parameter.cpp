@@ -241,3 +241,41 @@ TEST_F(AAudioProcessorParameter, CanGetChoiceStrings) {
 
     ASSERT_THAT(param->getChoiceStrings(), Eq(choices_strings));
 }
+
+TEST_F(AAudioProcessorParameter, CanConstructWithBoolType) {
+    param = std::make_unique<AudioProcessorParameter>(
+        ParameterType::kBool, param_id, "bool", 0, 0, 1.0);
+
+    ASSERT_THAT(param->getParameterType(), Eq(ParameterType::kBool));
+}
+
+TEST_F(AAudioProcessorParameter, GetBoolReturnsTrueIfNormValueLargerThanHalf) {
+    float true_value = 0.6;
+    param = std::make_unique<AudioProcessorParameter>(
+        ParameterType::kBool, param_id, "bool", true_value, 0, 1.0);
+
+    ASSERT_THAT(param->getNormalizedValue(), Gt(0.5f));
+    ASSERT_TRUE(param->getBool());
+}
+
+TEST_F(AAudioProcessorParameter, GetBoolReturnsFalseIfNormValueLessThanHalf) {
+    float true_value = 0.3;
+    param = std::make_unique<AudioProcessorParameter>(
+        ParameterType::kBool, param_id, "bool", true_value, 0, 1.0);
+
+    ASSERT_THAT(param->getNormalizedValue(), Lt(0.5f));
+    ASSERT_FALSE(param->getBool());
+}
+
+TEST_F(AAudioProcessorParameter, ConverNormValueToFalseIfInputLessThanHalf) {
+    param = std::make_unique<AudioProcessorParameter>(
+        ParameterType::kBool, param_id, "bool", 0, 0, 1.0);
+
+    ASSERT_FALSE(param->convertNormalizedValueToBool(0.2));
+}
+
+TEST_F(AAudioProcessorParameter, CanBoolParameterConstructInASimpleWay) {
+    param = std::make_unique<AudioProcessorParameter>(param_id, "bool", true);
+
+    ASSERT_THAT(param->getParameterType(), Eq(ParameterType::kBool));
+}
