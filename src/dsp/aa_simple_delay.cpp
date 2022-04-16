@@ -29,6 +29,14 @@ const SimpleDelay::SimpleDelayParameters &SimpleDelay::getParameters() const {
     return parameters;
 }
 
+void SimpleDelay::writeSample(float in) {
+    dline_.push(in);
+}
+
+float SimpleDelay::readDelay() const {
+    return dline_.getInterpolation(num_delay_samples_);
+}
+
 float SimpleDelay::processSample(float in) {
     dline_.push(in);
 

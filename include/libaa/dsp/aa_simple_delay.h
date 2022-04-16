@@ -21,14 +21,19 @@ public:
     size_t getSize() const;
 
     struct SimpleDelayParameters {
-        float delay_ms;
-        bool interpolate;
+        float delay_ms{0.0f};
+        bool interpolate{false};
     };
     void updateParameters(SimpleDelayParameters param);
 
     const SimpleDelayParameters &getParameters() const;
 
+    void writeSample(float in);
+
+    float readDelay() const;
+
     float processSample(float in);
+
 private:
     SimpleDelayParameters parameters;
 

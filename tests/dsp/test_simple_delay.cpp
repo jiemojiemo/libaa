@@ -46,6 +46,40 @@ TEST_F(ASimpleDelay, CanUpdateParameters) {
     ASSERT_THAT(d.getParameters().interpolate, Eq(parameters.interpolate));
 }
 
+TEST_F(ASimpleDelay, CanReadDelaySamples) {
+    sample_rate = 10;
+    d.resize(delay_line_size);
+    d.prepare(sample_rate);
+    SimpleDelay::SimpleDelayParameters parameters{};
+    parameters.delay_ms = 300.0f;
+    parameters.interpolate = false;
+    d.updateParameters(parameters);
+
+    d.processSample(1);
+    d.processSample(2);
+    d.processSample(3);
+    d.processSample(4);
+
+    ASSERT_THAT(d.readDelay(), Eq(1));
+}
+
+TEST_F(ASimpleDelay, CanWriteSample){
+    sample_rate = 10;
+    d.resize(delay_line_size);
+    d.prepare(sample_rate);
+    SimpleDelay::SimpleDelayParameters parameters{};
+    parameters.delay_ms = 300.0f;
+    parameters.interpolate = false;
+    d.updateParameters(parameters);
+
+    d.writeSample(1);
+    d.writeSample(2);
+    d.writeSample(3);
+    d.writeSample(4);
+
+    ASSERT_THAT(d.readDelay(), Eq(1));
+}
+
 TEST_F(ASimpleDelay, ProcessGetDelaySample) {
     sample_rate = 10;
     d.resize(delay_line_size);
