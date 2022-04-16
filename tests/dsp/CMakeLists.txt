@@ -12,4 +12,5 @@ add_libaa_test(aa_dsp_unit_test
         test_exponential_smoother.cpp
         test_level_detector.cpp
         test_simple_delay.cpp
+        test_simple_LPF.cpp
         )
