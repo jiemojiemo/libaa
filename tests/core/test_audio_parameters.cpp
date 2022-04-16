@@ -62,3 +62,13 @@ TEST_F(AParameters, CanAddChoiceParameter) {
 
     ASSERT_THAT(p, Eq(expected));
 }
+
+TEST_F(AParameters, CanAddBoolParameter) {
+    params.pushBoolParameter("bool", true);
+
+    AudioProcessorParameter &p = params.get(0);
+    AudioProcessorParameter expected{
+        ParameterType::kFloat, 0, "bool", 1.0f, 0, 1.0f};
+
+    ASSERT_THAT(p, Eq(expected));
+}
