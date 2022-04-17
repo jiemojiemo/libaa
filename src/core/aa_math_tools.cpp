@@ -9,4 +9,13 @@ bool approximatelyEqual(float a, float b, float epsilon) {
 
     return abs(a - b) <= (max(abs(a), abs(b)) * epsilon);
 }
+
+float bipolarToUnipolar(float v) {
+    return 0.5f * v + 0.5f;
+}
+
+float unipolarMapTo(float unipolar_v, float min_v, float max_v) {
+    return min_v + (max_v - min_v) * unipolar_v;
+}
+
 } // namespace libaa

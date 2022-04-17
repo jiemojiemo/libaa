@@ -32,6 +32,8 @@ public:
 
     float readDelay() const;
 
+    float readDelayAt(float delay_ms) const;
+
     float processSample(float in);
 
 private:

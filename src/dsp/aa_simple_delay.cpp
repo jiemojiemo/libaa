@@ -37,6 +37,10 @@ float SimpleDelay::readDelay() const {
     return dline_.getInterpolation(num_delay_samples_);
 }
 
+float SimpleDelay::readDelayAt(float delay_ms) const {
+    return dline_.getInterpolation(delay_ms / 1000.0f * sample_rate_);
+}
+
 float SimpleDelay::processSample(float in) {
     dline_.push(in);
 
