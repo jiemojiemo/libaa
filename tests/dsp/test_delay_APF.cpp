@@ -95,6 +95,6 @@ TEST_F(ADelayAPF, ProcessWithLFO) {
     f.updateParameters(parameters);
 
     ASSERT_THAT(f.processSample(1.0), FloatEq(-0.5));
-    ASSERT_THAT(f.processSample(0.0), FloatEq(0.375));
-    ASSERT_THAT(f.processSample(0.0), FloatEq(0.46875));
+    ASSERT_THAT(f.processSample(0.0), FloatEq(0.1875));
+    ASSERT_THAT(f.processSample(0.0), FloatNear(0.585938, 1e-4));
 }
