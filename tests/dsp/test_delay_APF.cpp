@@ -89,12 +89,12 @@ TEST_F(ADelayAPF, ProcessWithLFO) {
     parameters.delay_params.delay_ms = 1000;
     parameters.enable_LFO = true;
     parameters.lfo_rate_hz = 1;
-    parameters.lfo_depth = 0.5;
+    parameters.lfo_depth = 1.0;
     parameters.lfo_max_modulation_ms = 0.5;
 
     f.updateParameters(parameters);
 
     ASSERT_THAT(f.processSample(1.0), FloatEq(-0.5));
-    ASSERT_THAT(f.processSample(0.0), FloatEq(0.1875));
-    ASSERT_THAT(f.processSample(0.0), FloatNear(0.585938, 1e-4));
+    ASSERT_THAT(f.processSample(0.0), FloatEq(0));
+    ASSERT_THAT(f.processSample(0.0), FloatEq(0.75));
 }

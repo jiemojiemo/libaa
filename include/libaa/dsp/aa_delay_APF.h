@@ -27,7 +27,7 @@ public:
             auto lfo_output = lfo_.renderAudioOutput();
             float max_delay = params_.delay_params.delay_ms;
             float min_delay = max_delay - params_.lfo_max_modulation_ms;
-            min_delay = std::min(0.0f, min_delay);
+            min_delay = std::fmax(0.0f, min_delay);
 
             float mod_delay_ms = unipolarMapTo(
                 bipolarToUnipolar(lfo_output.normal_output * params_.lfo_depth),
