@@ -29,9 +29,9 @@ public:
             float min_delay = max_delay - params_.lfo_max_modulation_ms;
             min_delay = std::min(0.0f, min_delay);
 
-            float mod_delay_ms =
-                unipolarMapTo(lfo_output.normal_output * params_.lfo_depth,
-                              min_delay, max_delay);
+            float mod_delay_ms = unipolarMapTo(
+                bipolarToUnipolar(lfo_output.normal_output * params_.lfo_depth),
+                min_delay, max_delay);
 
             wnD = delay_.readDelayAt(mod_delay_ms);
         } else {
