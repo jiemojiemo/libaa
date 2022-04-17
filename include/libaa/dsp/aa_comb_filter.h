@@ -13,27 +13,25 @@ namespace libaa {
 class CombFilter {
 public:
     struct CombFilterParameters {
-        SimpleDelay::SimpleDelayParameters simple_delay_params{};
+        SimpleDelay::SimpleDelayParameters delay_params{};
         float lpf_g{0.0f};
         bool enable_LPF{false};
         float rt_60_ms{0.0f};
     };
 
-    void prepare(float sample_rate) {
+    void prepare(float sample_rate, size_t max_delay_line_size) {
         delay_.prepare(sample_rate);
-        const int kMaxDelaySize = 2.0f * sample_rate; // 2s
-        delay_.resize(kMaxDelaySize);
+        delay_.resize(max_delay_line_size);
     }
 
     void updateParameters(CombFilterParameters params) {
         if (params_.rt_60_ms != params.rt_60_ms ||
-            params_.simple_delay_params.delay_ms !=
-                params.simple_delay_params.delay_ms) {
-            float exponent = -3.0f * params.simple_delay_params.delay_ms;
+            params_.delay_params.delay_ms != params.delay_params.delay_ms) {
+            float exponent = -3.0f * params.delay_params.delay_ms;
             comb_g_ = std::pow(10.0f, exponent / params.rt_60_ms);
         }
         g2 = params.lpf_g * (1.0f - comb_g_);
-        delay_.updateParameters(params.simple_delay_params);
+        delay_.updateParameters(params.delay_params);
 
         params_ = params;
     }
@@ -61,6 +59,10 @@ public:
 
     float getCombFilterFeedback() const {
         return comb_g_;
+    }
+
+    const SimpleDelay &getSimpleDelay() const {
+        return delay_;
     }
 
 private:

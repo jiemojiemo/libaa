@@ -21,6 +21,16 @@ template <typename T> T findNextPower2Number(T v) {
 
 bool approximatelyEqual(float a, float b, float epsilon);
 
+/**
+ * map [-1, 1] -> [0, 1]
+ */
+float bipolarToUnipolar(float v);
+
+/**
+ * map [0, 1] -> [min_v, max_v]
+ */
+float unipolarMapTo(float unipolar_v, float min_v, float max_v);
+
 } // namespace libaa
 
 #endif // AUDIOEFFECT_AE_MATH_TOOLS_H

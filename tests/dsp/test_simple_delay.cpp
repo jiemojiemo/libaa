@@ -63,7 +63,23 @@ TEST_F(ASimpleDelay, CanReadDelaySamples) {
     ASSERT_THAT(d.readDelay(), Eq(1));
 }
 
-TEST_F(ASimpleDelay, CanWriteSample){
+TEST_F(ASimpleDelay, CanReadAtMs) {
+    sample_rate = 2;
+    d.resize(delay_line_size);
+    d.prepare(sample_rate);
+    SimpleDelay::SimpleDelayParameters parameters{};
+    parameters.delay_ms = 1000.0f;
+    d.updateParameters(parameters);
+
+    d.writeSample(1);
+    d.writeSample(2);
+    d.writeSample(3);
+    d.writeSample(4);
+
+    ASSERT_THAT(d.readDelayAt(1000), Eq(2));
+}
+
+TEST_F(ASimpleDelay, CanWriteSample) {
     sample_rate = 10;
     d.resize(delay_line_size);
     d.prepare(sample_rate);
