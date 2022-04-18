@@ -16,4 +16,6 @@ add_libaa_test(aa_dsp_unit_test
         test_comb_filter.cpp
         test_delay_APF.cpp
         test_nested_delay_APF.cpp
+        test_two_band_shelving_filter.cpp
+        test_iir_filter.cpp
         )
