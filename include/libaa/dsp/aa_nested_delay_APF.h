@@ -18,29 +18,26 @@ public:
         delay_.resize(max_delay_line_size);
     }
 
-    struct NestedDelayAPFParameters {
-        DelayAPF::DelayAPFParameters outer_apf_params;
+    struct NestedDelayAPFParameters : DelayAPF::DelayAPFParameters {
         float inner_apf_delay_ms{0.0f};
         float inner_apf_g{0.0f};
     };
     void updateParameters(NestedDelayAPFParameters params) {
-        delay_.updateParameters(params.outer_apf_params);
-        lpf_.updateParameters(params.outer_apf_params);
+        delay_.updateParameters(params);
+        lpf_.updateParameters(params);
         params_ = params;
     }
 
     float processSample(float in) {
         float wnD = 0.0f;
-        if (params_.outer_apf_params.enable_LFO) {
+        if (params_.enable_LFO) {
             auto lfo_output = lfo_.renderAudioOutput();
-            float max_delay = params_.outer_apf_params.delay_ms;
-            float min_delay =
-                max_delay - params_.outer_apf_params.lfo_max_modulation_ms;
+            float max_delay = params_.delay_ms;
+            float min_delay = max_delay - params_.lfo_max_modulation_ms;
             min_delay = std::fmax(0.0f, min_delay);
 
             float mod_delay_ms = unipolarMapTo(
-                bipolarToUnipolar(lfo_output.normal_output *
-                                  params_.outer_apf_params.lfo_depth),
+                bipolarToUnipolar(lfo_output.normal_output * params_.lfo_depth),
                 min_delay, max_delay);
 
             wnD = delay_.readDelayAt(mod_delay_ms);
@@ -48,11 +45,11 @@ public:
             wnD = delay_.readDelay();
         }
 
-        if (params_.outer_apf_params.enable_LPF) {
+        if (params_.enable_LPF) {
             wnD = lpf_.processSample(wnD);
         }
 
-        const float &apf_g = params_.outer_apf_params.apf_g;
+        const float &apf_g = params_.apf_g;
 
         float wn = in + apf_g * wnD;
         float inner_y = inner_apf_.processSample(wn);

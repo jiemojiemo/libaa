@@ -27,20 +27,19 @@ TEST_F(ANestedDelayAPF, PrepareWillResizeOuterDelaySize) {
 TEST_F(ANestedDelayAPF, CanUpdateParameters) {
     parameters.inner_apf_delay_ms = 10;
     parameters.inner_apf_g = 0.3;
-    parameters.outer_apf_params.enable_LFO = true;
+    parameters.enable_LFO = true;
 
     f.updateParameters(parameters);
 
     ASSERT_THAT(f.getParameters().inner_apf_delay_ms,
                 Eq(parameters.inner_apf_delay_ms));
     ASSERT_THAT(f.getParameters().inner_apf_g, Eq(parameters.inner_apf_g));
-    ASSERT_THAT(f.getParameters().outer_apf_params.enable_LFO,
-                Eq(parameters.outer_apf_params.enable_LFO));
+    ASSERT_THAT(f.getParameters().enable_LFO, Eq(parameters.enable_LFO));
 }
 
 TEST_F(ANestedDelayAPF, UpdateParametersAlsoUpdateDelayParameters) {
     float delay_ms = 10;
-    parameters.outer_apf_params.delay_ms = delay_ms;
+    parameters.delay_ms = delay_ms;
 
     f.updateParameters(parameters);
 
@@ -49,7 +48,7 @@ TEST_F(ANestedDelayAPF, UpdateParametersAlsoUpdateDelayParameters) {
 
 TEST_F(ANestedDelayAPF, UpdateParametersAlsoUpdateLPFParameters) {
     float g = 0.5;
-    parameters.outer_apf_params.lpf_g = g;
+    parameters.lpf_g = g;
 
     f.updateParameters(parameters);
 
@@ -58,8 +57,8 @@ TEST_F(ANestedDelayAPF, UpdateParametersAlsoUpdateLPFParameters) {
 
 TEST_F(ANestedDelayAPF, ProcessGetFilteredSample) {
     f.prepare(sample_rate, max_delay_size);
-    parameters.outer_apf_params.apf_g = 0.5;
-    parameters.outer_apf_params.delay_ms = 1000;
+    parameters.apf_g = 0.5;
+    parameters.delay_ms = 1000;
     parameters.inner_apf_g = 0.5;
     parameters.inner_apf_delay_ms = 1000;
 
@@ -74,10 +73,10 @@ TEST_F(ANestedDelayAPF, ProcessGetFilteredSample) {
 
 TEST_F(ANestedDelayAPF, ProcessWithLPF) {
     f.prepare(sample_rate, max_delay_size);
-    parameters.outer_apf_params.apf_g = 0.5;
-    parameters.outer_apf_params.delay_ms = 1000;
-    parameters.outer_apf_params.enable_LPF = true;
-    parameters.outer_apf_params.lpf_g = 0.5;
+    parameters.apf_g = 0.5;
+    parameters.delay_ms = 1000;
+    parameters.enable_LPF = true;
+    parameters.lpf_g = 0.5;
     parameters.inner_apf_g = 0.5;
     parameters.inner_apf_delay_ms = 1000;
 
@@ -91,13 +90,13 @@ TEST_F(ANestedDelayAPF, ProcessWithLPF) {
 
 TEST_F(ANestedDelayAPF, ProcessWithLFO) {
     f.prepare(sample_rate, max_delay_size);
-    parameters.outer_apf_params.apf_g = 0.5;
-    parameters.outer_apf_params.delay_ms = 1000;
-    parameters.outer_apf_params.enable_LFO = true;
-    parameters.outer_apf_params.lfo_rate_hz = 1;
-    parameters.outer_apf_params.lfo_depth = 1.0;
-    parameters.outer_apf_params.lfo_max_modulation_ms = 0.5;
-    parameters.outer_apf_params.lpf_g = 0.5;
+    parameters.apf_g = 0.5;
+    parameters.delay_ms = 1000;
+    parameters.enable_LFO = true;
+    parameters.lfo_rate_hz = 1;
+    parameters.lfo_depth = 1.0;
+    parameters.lfo_max_modulation_ms = 0.5;
+    parameters.lpf_g = 0.5;
     parameters.inner_apf_g = 0.5;
     parameters.inner_apf_delay_ms = 1000;
 
