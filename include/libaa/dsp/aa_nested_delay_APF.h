@@ -24,8 +24,8 @@ public:
         float inner_apf_g{0.0f};
     };
     void updateParameters(NestedDelayAPFParameters params) {
-        delay_.updateParameters(params.outer_apf_params.delay_params);
-        lpf_.updateParameters(params.outer_apf_params.lpf_params);
+        delay_.updateParameters(params.outer_apf_params);
+        lpf_.updateParameters(params.outer_apf_params);
         params_ = params;
     }
 
@@ -33,7 +33,7 @@ public:
         float wnD = 0.0f;
         if (params_.outer_apf_params.enable_LFO) {
             auto lfo_output = lfo_.renderAudioOutput();
-            float max_delay = params_.outer_apf_params.delay_params.delay_ms;
+            float max_delay = params_.outer_apf_params.delay_ms;
             float min_delay =
                 max_delay - params_.outer_apf_params.lfo_max_modulation_ms;
             min_delay = std::fmax(0.0f, min_delay);

@@ -35,29 +35,29 @@ TEST_F(ADelayAPF, CanUpdateParameters) {
 }
 
 TEST_F(ADelayAPF, UpdateParametersAlsoUpdateDelayParameters) {
-    parameters.delay_params.delay_ms = 10;
-    parameters.delay_params.interpolate = true;
+    parameters.delay_ms = 10;
+    parameters.interpolate = true;
 
     f.updateParameters(parameters);
 
     ASSERT_THAT(f.getSimpleDelay().getParameters().delay_ms,
-                Eq(parameters.delay_params.delay_ms));
+                Eq(parameters.delay_ms));
     ASSERT_THAT(f.getSimpleDelay().getParameters().interpolate,
-                Eq(parameters.delay_params.interpolate));
+                Eq(parameters.interpolate));
 }
 
 TEST_F(ADelayAPF, UpdateParametersAlsoUpdateLPFParameters) {
-    parameters.lpf_params.g = 0.5;
+    parameters.lpf_g = 0.5;
 
     f.updateParameters(parameters);
 
-    ASSERT_THAT(f.getLPF().getParameters().g, Eq(parameters.lpf_params.g));
+    ASSERT_THAT(f.getLPF().getParameters().lpf_g, Eq(parameters.lpf_g));
 }
 
 TEST_F(ADelayAPF, ProcessGetFilteredSample) {
     f.prepare(sample_rate, max_delay_size);
     parameters.apf_g = 0.5;
-    parameters.delay_params.delay_ms = 1000;
+    parameters.delay_ms = 1000;
 
     f.updateParameters(parameters);
 
@@ -71,9 +71,9 @@ TEST_F(ADelayAPF, ProcessGetFilteredSample) {
 TEST_F(ADelayAPF, ProcessWithLPF) {
     f.prepare(sample_rate, max_delay_size);
     parameters.apf_g = 0.5;
-    parameters.delay_params.delay_ms = 1000;
+    parameters.delay_ms = 1000;
     parameters.enable_LPF = true;
-    parameters.lpf_params.g = 0.5;
+    parameters.lpf_g = 0.5;
 
     f.updateParameters(parameters);
 
@@ -86,7 +86,7 @@ TEST_F(ADelayAPF, ProcessWithLPF) {
 TEST_F(ADelayAPF, ProcessWithLFO) {
     f.prepare(sample_rate, max_delay_size);
     parameters.apf_g = 0.5;
-    parameters.delay_params.delay_ms = 1000;
+    parameters.delay_ms = 1000;
     parameters.enable_LFO = true;
     parameters.lfo_rate_hz = 1;
     parameters.lfo_depth = 1.0;

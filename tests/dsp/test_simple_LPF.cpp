@@ -14,16 +14,16 @@ public:
 
 TEST_F(ASimpleLPF, CanUpdateParameters) {
     SimpleLPF::SimpleLPFParameters parameters{};
-    parameters.g = 1.0f;
+    parameters.lpf_g = 1.0f;
 
     f.updateParameters(parameters);
 
-    ASSERT_THAT(f.getParameters().g, Eq(parameters.g));
+    ASSERT_THAT(f.getParameters().lpf_g, Eq(parameters.lpf_g));
 }
 
 TEST_F(ASimpleLPF, ProcessGetFilteredSample) {
     SimpleLPF::SimpleLPFParameters parameters{};
-    parameters.g = 0.5f;
+    parameters.lpf_g = 0.5f;
     f.updateParameters(parameters);
 
     ASSERT_THAT(f.processSample(1.0f), Eq(0.5));

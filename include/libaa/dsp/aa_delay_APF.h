@@ -25,7 +25,7 @@ public:
 
         if (params_.enable_LFO) {
             auto lfo_output = lfo_.renderAudioOutput();
-            float max_delay = params_.delay_params.delay_ms;
+            float max_delay = params_.delay_ms;
             float min_delay = max_delay - params_.lfo_max_modulation_ms;
             min_delay = std::fmax(0.0f, min_delay);
 
@@ -50,9 +50,8 @@ public:
         return y;
     }
 
-    struct DelayAPFParameters {
-        SimpleDelay::SimpleDelayParameters delay_params;
-        SimpleLPF::SimpleLPFParameters lpf_params;
+    struct DelayAPFParameters : SimpleDelay::SimpleDelayParameters,
+                                SimpleLPF::SimpleLPFParameters {
         float apf_g{0.0f};
         bool enable_LPF = {false};
         bool enable_LFO = {false};
@@ -61,8 +60,8 @@ public:
         float lfo_max_modulation_ms{0.0f};
     };
     void updateParameters(DelayAPFParameters params) {
-        delay_.updateParameters(params.delay_params);
-        lpf_.updateParameters(params.lpf_params);
+        delay_.updateParameters(params);
+        lpf_.updateParameters(params);
         params_ = params;
     }
 
