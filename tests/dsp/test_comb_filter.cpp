@@ -37,12 +37,12 @@ TEST_F(ACombFilter, UpdateRT60ChangeCombFilterFeedback) {
     f.prepare(sample_rate, max_delay_size);
     CombFilter::CombFilterParameters parameters{};
     parameters.rt_60_ms = 200;
-    parameters.delay_params.delay_ms = 100;
+    parameters.delay_ms = 100;
     ASSERT_THAT(f.getCombFilterFeedback(), Eq(0));
 
     f.updateParameters(parameters);
 
-    float exponent = -3.0f * parameters.delay_params.delay_ms;
+    float exponent = -3.0f * parameters.delay_ms;
     float expected_value = powf(10.0f, exponent / parameters.rt_60_ms);
     ASSERT_THAT(f.getCombFilterFeedback(), Eq(expected_value));
 }
@@ -51,7 +51,7 @@ TEST_F(ACombFilter, ProcessGetFilteredSample) {
     f.prepare(sample_rate, max_delay_size);
     CombFilter::CombFilterParameters parameters{};
     parameters.rt_60_ms = 2000;
-    parameters.delay_params.delay_ms = 1000;
+    parameters.delay_ms = 1000;
     parameters.lpf_g = 0.5;
 
     f.updateParameters(parameters);
@@ -67,7 +67,7 @@ TEST_F(ACombFilter, ProcessGetFilteredSampleWithLPF) {
     f.prepare(sample_rate, max_delay_size);
     CombFilter::CombFilterParameters parameters{};
     parameters.rt_60_ms = 1000;
-    parameters.delay_params.delay_ms = 1000;
+    parameters.delay_ms = 1000;
     parameters.lpf_g = 0.8;
     parameters.enable_LPF = true;
 
