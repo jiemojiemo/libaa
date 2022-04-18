@@ -14,6 +14,7 @@
 #include "libaa/dsp/aa_comb_filter.h"
 #include "libaa/dsp/aa_delay_APF.h"
 #include "libaa/dsp/aa_nested_delay_APF.h"
+#include "libaa/dsp/aa_two_band_shelving_filter.h"
 #include "libaa/fileio/aa_audio_file.h"
 #include "libaa/fileio/aa_file_input_stream.h"
 #include "libaa/fileio/aa_file_output_stream.h"
@@ -24,8 +25,8 @@ using namespace std;
 using namespace libaa;
 
 int main() {
-    const string input_filename = "/Users/user/Downloads/impulse.wav";
-    string output_filename = "nested_apf_output.wav";
+    const string input_filename = "/Users/user/Downloads/test_test.wav";
+    string output_filename = "xxx.wav";
 
     auto in_stream = std::make_unique<FileInputStream>(input_filename);
     if (!in_stream->isOpen()) {
@@ -69,19 +70,29 @@ int main() {
     //    f.prepare(audio_file.getSampleRate(), 2 * audio_file.getSampleRate());
     //    f.updateParameters(parameters);
 
-    NestedDelayAPF::NestedDelayAPFParameters parameters;
-    parameters.outer_apf_params.delay_params.delay_ms = 20;
-    parameters.outer_apf_params.apf_g = 0.95;
-    parameters.outer_apf_params.enable_LPF = false;
-    parameters.outer_apf_params.lpf_params.g = 0.5;
-    parameters.outer_apf_params.enable_LFO = true;
-    parameters.outer_apf_params.lfo_depth = 1.0f;
-    parameters.outer_apf_params.lfo_max_modulation_ms = 0.3;
-    parameters.outer_apf_params.lfo_rate_hz = 10.0f;
-    parameters.inner_apf_delay_ms = 13;
-    parameters.inner_apf_g = 0.8;
-    NestedDelayAPF f;
-    f.prepare(sample_rate, 2 * sample_rate);
+    //    NestedDelayAPF::NestedDelayAPFParameters parameters;
+    //    parameters.delay_ms = 20;
+    //    parameters.apf_g = 0.95;
+    //    parameters.enable_LPF = false;
+    //    parameters.lpf_g = 0.5;
+    //    parameters.enable_LFO = true;
+    //    parameters.lfo_depth = 1.0f;
+    //    parameters.lfo_max_modulation_ms = 0.3;
+    //    parameters.lfo_rate_hz = 10.0f;
+    //    parameters.inner_apf_delay_ms = 13;
+    //    parameters.inner_apf_g = 0.8;
+    //    NestedDelayAPF f;
+    //    f.prepare(sample_rate, 2 * sample_rate);
+    //    f.updateParameters(parameters);
+
+    TwoBandShelvingFilter f;
+    f.prepare(sample_rate);
+
+    TwoBandShelvingFilter::TwoBandShelvingFilterParameters parameters;
+    parameters.low_shelf_fc = 500;
+    parameters.low_shelf_boost_db = 0;
+    parameters.high_shelf_fc = 6000;
+    parameters.high_shelf_boost_db = 15;
     f.updateParameters(parameters);
 
     int processed_index = 0;
@@ -98,6 +109,9 @@ int main() {
             if (processed_index >= 51200) {
                 output = f.processSample(in);
                 sample_buffer[i] = output;
+            } else {
+                output = f.processSample(in);
+                sample_buffer[i] = output;
             }
 
             if (fabs(output) > 1e-3) {
@@ -105,6 +119,17 @@ int main() {
             }
             ++processed_index;
         }
+
+        //        for (int i = 0; i < acctual_block_size; ++i) {
+        //            float in = sample_buffer[i];
+        //            float output = f.processSample(in);
+        //            sample_buffer[i] = output;
+        //
+        //            if (fabs(output) > 1e-2) {
+        //                cout << processed_index << "," << output << endl;
+        //            }
+        //            ++processed_index;
+        //        }
 
         writer.writePlanar(reinterpret_cast<const float **>(&dest_chan),
                            acctual_block_size);
