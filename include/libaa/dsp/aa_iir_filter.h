@@ -37,17 +37,19 @@ class IIRFilter {
 public:
     void prepare(float sample_rate) {
         sample_rate_ = sample_rate;
+        updateBiquadCoeffs(params_, sample_rate_);
     }
 
     float processSample(float in) {
-        return biquad_.processSample(in);
+        // dry + wet
+        return coeffs_[d0] * in + coeffs_[c0] * biquad_.processSample(in);
     }
 
     struct IIRFilterParameters {
     public:
         FilterType type{FilterType::kLPF1};
-        float fc{0.0f};
-        float Q{0.0f};
+        float fc{100.0f};
+        float Q{.707f};
         float boost_or_cut_db{0.0f};
 
         IIRFilterParameters() = default;
@@ -68,8 +70,7 @@ public:
     };
     void updateParameters(IIRFilterParameters params) {
         if (params_ != params) {
-            auto new_coeffs = calcFilterCoefficients(params, sample_rate_);
-            biquad_.updateCoeffs(new_coeffs);
+            updateBiquadCoeffs(params, sample_rate_);
         }
 
         params_ = params;
@@ -278,7 +279,7 @@ public:
         } else if (type == FilterType::kHighShelf) {
             const auto theta_c = 2 * M_PI * fc / sample_rate;
             const auto mu = pow(10, boost_cut_db / 20.0f);
-            const auto beta = 4.0 / (1 + mu);
+            const auto beta = (1 + mu) / 4.0;
             const auto delta = beta * tan(theta_c / 2);
             const auto gamma = (1 - delta) / (1 + delta);
 
@@ -335,8 +336,14 @@ public:
     }
 
 private:
+    void updateBiquadCoeffs(const IIRFilterParameters &params,
+                            float sample_rate) {
+        coeffs_ = calcFilterCoefficients(params, sample_rate_);
+        biquad_.updateCoeffs(coeffs_);
+    }
     IIRFilterParameters params_;
     Biquad biquad_;
+    FilterCoeffs coeffs_;
     float sample_rate_{0.0f};
 };
 } // namespace libaa

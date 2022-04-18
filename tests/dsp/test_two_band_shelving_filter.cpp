@@ -74,6 +74,6 @@ TEST_F(ATwoBandShelvingFilter, ProcessGetFilterdSample) {
     parameters.high_shelf_boost_db = 1;
     f.updateParameters(parameters);
 
-    ASSERT_THAT(f.processSample(1.0f), FloatNear(0.0104303f, 1e-6));
-    ASSERT_THAT(f.processSample(1.0f), FloatNear(0.0265744, 1e-6));
+    ASSERT_THAT(f.processSample(1.0f), FloatNear(1.11519, 1e-4));
+    ASSERT_THAT(f.processSample(1.0f), FloatNear(1.10268, 1e-4));
 }

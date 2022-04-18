@@ -46,6 +46,5 @@ TEST_F(AIIRFilter, ProcessGetFilteredSample) {
     f.prepare(sample_rate);
     f.updateParameters(parameters);
 
-    ASSERT_THAT(f.processSample(1.0f), FloatEq(0.00707352));
-    ASSERT_THAT(f.processSample(1.0f), FloatEq(0.0211205));
+    ASSERT_THAT(f.processSample(1.0f), FloatEq(0.00707352f));
 }
