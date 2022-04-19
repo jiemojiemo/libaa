@@ -23,5 +23,8 @@ target_link_libraries(audio_writer libaa)
 add_executable(wav_diff wav_diff.cpp)
 target_link_libraries(wav_diff libaa)
 
+add_executable(audio_processor audio_processor.cpp)
+target_link_libraries(audio_processor libaa)
+
 
 
