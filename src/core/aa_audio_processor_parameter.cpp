@@ -6,13 +6,11 @@
 
 namespace libaa {
 
-namespace
-{
-inline float convertBoolToFloat(bool b)
-{
+namespace {
+inline float convertBoolToFloat(bool b) {
     return b ? 1.0f : 0.0f;
 }
-}
+} // namespace
 
 AudioProcessorParameter::AudioProcessorParameter(
     ParameterType type, int param_id, std::string param_name, float default_val,
@@ -37,8 +35,8 @@ AudioProcessorParameter::AudioProcessorParameter(
 AudioProcessorParameter::AudioProcessorParameter(int param_id,
                                                  std::string param_name,
                                                  bool init_bool)
-    : AudioProcessorParameter(ParameterType::kBool, param_id, param_name, convertBoolToFloat(init_bool), 0.0f, 1.0f)
-{}
+    : AudioProcessorParameter(ParameterType::kBool, param_id, param_name,
+                              convertBoolToFloat(init_bool), 0.0f, 1.0f) {}
 
 float AudioProcessorParameter::getDefaultPlainValue() const {
     return plain_value_;
@@ -97,6 +95,10 @@ float AudioProcessorParameter::getNormalizedValue() const {
 
 bool AudioProcessorParameter::getBool() const {
     return convertNormalizedValueToBool(current_normalized_value_);
+}
+
+int AudioProcessorParameter::getInt() const {
+    return static_cast<int>(getPlainValue());
 }
 
 std::string AudioProcessorParameter::getPlainValueString() const {

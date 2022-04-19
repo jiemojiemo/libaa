@@ -15,6 +15,7 @@ public:
     explicit SimpleDelay(size_t delay_line_size = 0);
 
     void prepare(float sample_rate);
+    void prepare(float sample_rate, size_t delay_size);
 
     void resize(size_t new_size);
 
@@ -33,6 +34,8 @@ public:
     float readDelay() const;
 
     float readDelayAt(float delay_ms) const;
+
+    float readDelayAtPercentage(float p) const;
 
     float processSample(float in);
 

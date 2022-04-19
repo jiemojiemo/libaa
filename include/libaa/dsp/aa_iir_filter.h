@@ -338,6 +338,7 @@ public:
 private:
     void updateBiquadCoeffs(const IIRFilterParameters &params,
                             float sample_rate) {
+        (void)(sample_rate);
         coeffs_ = calcFilterCoefficients(params, sample_rate_);
         biquad_.updateCoeffs(coeffs_);
     }
