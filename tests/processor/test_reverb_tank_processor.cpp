@@ -6,6 +6,7 @@
 #include <gmock/gmock.h>
 
 using namespace testing;
+
 using namespace libaa;
 class AReverbProcessorTank : public Test {
 public:
