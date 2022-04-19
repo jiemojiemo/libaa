@@ -10,7 +10,9 @@ DelayProcessor::DelayProcessor() {
     param_.pushFloatParameter("Dry", 0.5, 0, 1);
     param_.pushFloatParameter("Wet", 0.5, 0, 1);
 }
-std::string DelayProcessor::getName() const { return {"Delay"}; }
+std::string DelayProcessor::getName() const {
+    return {"Delay"};
+}
 void DelayProcessor::prepareToPlay(float sample_rate, int max_block_size) {
     IAudioProcessor::prepareToPlay(sample_rate, max_block_size);
 

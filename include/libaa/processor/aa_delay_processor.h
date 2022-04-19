@@ -15,7 +15,7 @@ namespace libaa {
 class DelayProcessor : public IAudioProcessor {
 public:
     DelayProcessor();
-
+    ~DelayProcessor() override = default;
     std::string getName() const override;
 
     void prepareToPlay(float sample_rate, int max_block_size) override;

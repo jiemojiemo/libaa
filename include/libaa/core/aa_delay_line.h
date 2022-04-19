@@ -17,7 +17,9 @@ public:
     /**
      * return the size of delay line
      */
-    size_t size() const noexcept { return buffer_size_; }
+    size_t size() const noexcept {
+        return buffer_size_;
+    }
 
     /**
      * resize the delay line
@@ -54,7 +56,7 @@ public:
      * returns value with delay
      */
     T get(size_t delay_in_samples) const noexcept {
-        size_t read_index = (write_index_ - 1 - delay_in_samples) & mask_;
+        int read_index = (int(write_index_ - 1 - delay_in_samples)) & mask_;
         return raw_data_[read_index];
     }
 

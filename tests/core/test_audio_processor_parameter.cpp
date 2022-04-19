@@ -279,3 +279,7 @@ TEST_F(AAudioProcessorParameter, CanBoolParameterConstructInASimpleWay) {
 
     ASSERT_THAT(param->getParameterType(), Eq(ParameterType::kBool));
 }
+
+TEST_F(AAudioProcessorParameter, CanGetIntFromPlainValue) {
+    ASSERT_THAT(param->getInt(), Eq(int(param->getPlainValue())));
+}

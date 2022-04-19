@@ -45,6 +45,8 @@ public:
 
     bool getBool() const;
 
+    int getInt() const;
+
     std::string getPlainValueString() const;
 
     void setPlainValue(float plain_value);

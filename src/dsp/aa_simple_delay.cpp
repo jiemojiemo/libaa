@@ -11,6 +11,10 @@ SimpleDelay::SimpleDelay(size_t delay_line_size) {
 void SimpleDelay::prepare(float sample_rate) {
     sample_rate_ = sample_rate;
 }
+void SimpleDelay::prepare(float sample_rate, size_t delay_size) {
+    sample_rate_ = sample_rate;
+    resize(delay_size);
+}
 
 void SimpleDelay::resize(size_t new_size) {
     dline_.resize(new_size);
@@ -39,6 +43,10 @@ float SimpleDelay::readDelay() const {
 
 float SimpleDelay::readDelayAt(float delay_ms) const {
     return dline_.getInterpolation(delay_ms / 1000.0f * sample_rate_);
+}
+
+float SimpleDelay::readDelayAtPercentage(float p) const {
+    return dline_.getInterpolation(p * num_delay_samples_);
 }
 
 float SimpleDelay::processSample(float in) {
