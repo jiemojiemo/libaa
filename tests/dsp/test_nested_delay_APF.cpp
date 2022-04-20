@@ -80,8 +80,8 @@ TEST_F(ANestedDelayAPF, ProcessGetFilteredSample) {
     ASSERT_THAT(f.processSample(1.0), FloatEq(-0.5));
     ASSERT_THAT(f.processSample(0.0), FloatEq(0.0));
     ASSERT_THAT(f.processSample(0.0), FloatEq(-0.375));
-    ASSERT_THAT(f.processSample(0.0), FloatEq(0.5625));
-    ASSERT_THAT(f.processSample(0.0), FloatEq(0.09375));
+    ASSERT_THAT(f.processSample(0.0), FloatEq(0.0f));
+    ASSERT_THAT(f.processSample(0.0), FloatEq(0.65625));
 }
 
 TEST_F(ANestedDelayAPF, ProcessWithLPF) {
@@ -97,8 +97,8 @@ TEST_F(ANestedDelayAPF, ProcessWithLPF) {
 
     ASSERT_THAT(f.processSample(1.0), FloatEq(-0.5));
     ASSERT_THAT(f.processSample(0.0), FloatEq(0));
-    ASSERT_THAT(f.processSample(0.0), FloatEq(0.0));
-    ASSERT_THAT(f.processSample(0.0), FloatEq(0.375));
+    ASSERT_THAT(f.processSample(0.0), FloatEq(-0.1875));
+    ASSERT_THAT(f.processSample(0.0), FloatEq(-0.09375));
 }
 
 TEST_F(ANestedDelayAPF, ProcessWithLFO) {
@@ -117,6 +117,6 @@ TEST_F(ANestedDelayAPF, ProcessWithLFO) {
 
     ASSERT_THAT(f.processSample(1.0), FloatEq(-0.5));
     ASSERT_THAT(f.processSample(0.0), FloatEq(0));
+    ASSERT_THAT(f.processSample(0.0), FloatEq(-0.375));
     ASSERT_THAT(f.processSample(0.0), FloatEq(0.0));
-    ASSERT_THAT(f.processSample(0.0), FloatEq(0.75));
 }

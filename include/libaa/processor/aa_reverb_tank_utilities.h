@@ -77,7 +77,7 @@ public:
 
         updatePreDelayParameters();
         updateBranchNestedAPFParameters();
-        updateBranchLFPParameters();
+        updateBranchLPFParameters();
         updateBranchDelayParameters();
         updateShelvingFilterParameters();
     }
@@ -95,10 +95,6 @@ public:
         float *right_channel =
             num_channels > 1 ? block->buffer.getWriterPointer(1) : left_channel;
         for (size_t i = 0; i < block->buffer.getNumberFrames(); ++i) {
-            //            if (processed_index == 55507) {
-            //                float global_fb = branch_delays[kNumBranch -
-            //                1].readDelay(); (void)(global_fb);
-            //            }
             float global_fb = branch_delays[kNumBranch - 1].readDelay();
             float fb = kRT * global_fb;
 
@@ -154,18 +150,6 @@ public:
                 right_channel[i] =
                     dry_scale * xn_R + wet_scale * shelving_out_R;
             }
-            //            if (fabs(left_channel[i]) > 1e-3) {
-            //                std::cout << processed_index << "," <<
-            //                left_channel[i]
-            //                          << std::endl;
-            //            }
-            //            if (processed_index >= 0 && processed_index <= 0 +
-            //            5000) {
-            //                std::cout << processed_index << "," <<
-            //                left_channel[i]
-            //                          << std::endl;
-            //            }
-            ++processed_index;
         }
     }
 
@@ -229,7 +213,7 @@ public:
         }
     }
 
-    void updateBranchLFPParameters() {
+    void updateBranchLPFParameters() {
         SimpleLPF::SimpleLPFParameters parameters{};
         parameters.lpf_g = params.get(kDamping).getPlainValue();
         for (int i = 0; i < kNumBranch; ++i) {
@@ -256,7 +240,7 @@ public:
                         updateBranchNestedAPFParameters();
                         break;
                     case kDamping:
-                        updateBranchLFPParameters();
+                        updateBranchLPFParameters();
                         break;
                     case kLowShelfFc:
                     case kLowShelfGainDB:
@@ -286,8 +270,6 @@ public:
                                               0.993, 0.757, 0.179, 0.575};
     float apf_lfo_hz[kNumBranch] = {0.15, 0.33, 0.57, 0.73};
     float fixed_delay_weight[kNumBranch] = {1.0, 0.873, 0.707, 0.667};
-
-    int processed_index = 0;
 };
 } // namespace libaa
 

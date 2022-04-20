@@ -85,7 +85,7 @@ TEST_F(AReverbProcessorTank, HighShelfGainParameterAsExpect) {
 
     ASSERT_THAT(param.getParameterID(), Eq(p_index));
     ASSERT_THAT(param.getParameterName(), Eq("High Shelf Gain dB"));
-    ASSERT_THAT(param.getPlainValue(), Eq(-20.0f));
+    ASSERT_THAT(param.getPlainValue(), Eq(-6.0f));
     ASSERT_THAT(param.getMinPlainValue(), Eq(-35.0f));
     ASSERT_THAT(param.getMaxPlainValue(), Eq(35.0f));
 }
@@ -151,7 +151,7 @@ TEST_F(AReverbProcessorTank, APFDelayWeightDbParameterAsExpect) {
 
     ASSERT_THAT(param.getParameterID(), Eq(p_index));
     ASSERT_THAT(param.getParameterName(), Eq("APF Delay Weight"));
-    ASSERT_THAT(param.getPlainValue(), Eq(1.0f));
+    ASSERT_THAT(param.getPlainValue(), Eq(0.85f));
     ASSERT_THAT(param.getMinPlainValue(), Eq(0.0f));
     ASSERT_THAT(param.getMaxPlainValue(), Eq(1.0f));
 }
@@ -189,16 +189,10 @@ TEST_F(AReverbProcessorTank, CanProcess) {
     proc.prepareToPlay(sample_rate, max_block_size);
     proc.processBlock(&block, &block);
 
-    ASSERT_THAT(block.buffer.getWriterPointer(0)[0], FloatNear(0.998401, 1e-5));
-    ASSERT_THAT(block.buffer.getWriterPointer(0)[1],
-                FloatNear(-0.00174133, 1e-5));
-    ASSERT_THAT(block.buffer.getWriterPointer(0)[2],
-                FloatNear(-0.00169252, 1e-5));
-    ASSERT_THAT(block.buffer.getWriterPointer(0)[3],
-                FloatNear(-0.00170218, 1e-5));
+    ASSERT_THAT(block.buffer.getWriterPointer(0)[0], FloatNear(0.995172, 1e-5));
+    ASSERT_THAT(block.buffer.getWriterPointer(0)[1], FloatNear(0.010529, 1e-5));
 
-    ASSERT_THAT(block.buffer.getWriterPointer(1)[0], FloatNear(1.0, 1e-5));
-    ASSERT_THAT(block.buffer.getWriterPointer(1)[1], FloatNear(0.0f, 1e-5));
-    ASSERT_THAT(block.buffer.getWriterPointer(1)[2], FloatNear(0.0f, 1e-5));
-    ASSERT_THAT(block.buffer.getWriterPointer(1)[3], FloatNear(0.0f, 1e-5));
+    ASSERT_THAT(block.buffer.getWriterPointer(1)[0], FloatNear(1.00483, 1e-5));
+    ASSERT_THAT(block.buffer.getWriterPointer(1)[1],
+                FloatNear(-0.010529f, 1e-5));
 }
