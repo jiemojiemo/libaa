@@ -302,16 +302,10 @@ TEST_F(AReverbTankProcessorUtilities, CanProcess) {
     u.prepareToPlay(sample_rate, max_block_size);
     u.process(&block);
 
-    ASSERT_THAT(block.buffer.getWriterPointer(0)[0], FloatNear(0.998401, 1e-5));
-    ASSERT_THAT(block.buffer.getWriterPointer(0)[1],
-                FloatNear(-0.00174133, 1e-5));
-    ASSERT_THAT(block.buffer.getWriterPointer(0)[2],
-                FloatNear(-0.00169252, 1e-5));
-    ASSERT_THAT(block.buffer.getWriterPointer(0)[3],
-                FloatNear(-0.00170218, 1e-5));
+    ASSERT_THAT(block.buffer.getWriterPointer(0)[0], FloatNear(0.995172, 1e-5));
+    ASSERT_THAT(block.buffer.getWriterPointer(0)[1], FloatNear(0.010529, 1e-5));
 
-    ASSERT_THAT(block.buffer.getWriterPointer(1)[0], FloatNear(1.0, 1e-5));
-    ASSERT_THAT(block.buffer.getWriterPointer(1)[1], FloatNear(0.0f, 1e-5));
-    ASSERT_THAT(block.buffer.getWriterPointer(1)[2], FloatNear(0.0f, 1e-5));
-    ASSERT_THAT(block.buffer.getWriterPointer(1)[3], FloatNear(0.0f, 1e-5));
+    ASSERT_THAT(block.buffer.getWriterPointer(1)[0], FloatNear(1.00483, 1e-5));
+    ASSERT_THAT(block.buffer.getWriterPointer(1)[1],
+                FloatNear(-0.010529f, 1e-5));
 }
