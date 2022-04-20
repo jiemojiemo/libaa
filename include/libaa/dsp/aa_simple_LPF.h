@@ -11,7 +11,7 @@ namespace libaa {
 class SimpleLPF {
 public:
     struct SimpleLPFParameters {
-        float lpf_g;
+        float lpf_g{0};
     };
     void updateParameters(SimpleLPFParameters param) {
         param_ = param;

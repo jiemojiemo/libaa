@@ -62,6 +62,7 @@ public:
     void updateParameters(DelayAPFParameters params) {
         delay_.updateParameters(params);
         lpf_.updateParameters(params);
+        lfo_.updateFrequencyHz(params.lfo_rate_hz);
         params_ = params;
     }
 

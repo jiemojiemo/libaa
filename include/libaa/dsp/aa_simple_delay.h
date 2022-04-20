@@ -35,7 +35,7 @@ public:
 
     float readDelayAt(float delay_ms) const;
 
-    float readDelayAtPercentage(float p) const;
+    float readDelayAtPercentage(float percentage) const;
 
     float processSample(float in);
 
