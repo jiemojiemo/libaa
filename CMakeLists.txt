@@ -32,10 +32,10 @@ set(LIBAA_INC_DRI ${LIBAA_DIR}/include)
 
 add_subdirectory(third_party)
 add_subdirectory(src)
-add_subdirectory(examples)
 
 if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTING)
     add_subdirectory(app)
+    add_subdirectory(examples)
     enable_testing()
     add_subdirectory(tests)
 endif ()
