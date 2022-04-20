@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
     int num_channels = reader.num_channels;
     int sample_index = 0;
     int acctual_block_size = 0;
-    int predefine_block_size = 1;
+    int predefine_block_size = 512;
     int num_frames = reader.length_in_samples;
     assert(num_channels == 1);
 
@@ -70,15 +70,16 @@ int main(int argc, char *argv[]) {
             proc.processBlock(&block, &block);
         };
 
-        for (int i = 0; i < acctual_block_size; ++i) {
-            float output = block.buffer.getWriterPointer(0)[i];
-            //            if (fabs(output) > 1e-2) {
-            //                cout << processed_index << "," << output << endl;
-            //            }
-            if (processed_index >= 0 && processed_index <= 0 + 5000) {
-                cout << processed_index << "," << output << endl;
-            }
-        }
+        //        for (int i = 0; i < acctual_block_size; ++i) {
+        //            float output = block.buffer.getWriterPointer(0)[i];
+        //            //            if (fabs(output) > 1e-2) {
+        //            //                cout << processed_index << "," << output
+        //            << endl;
+        //            //            }
+        //            if (processed_index >= 0 && processed_index <= 0 + 5000) {
+        //                cout << processed_index << "," << output << endl;
+        //            }
+        //        }
 
         writer.writePlanar(reinterpret_cast<const float **>(&dest_chan),
                            acctual_block_size);
