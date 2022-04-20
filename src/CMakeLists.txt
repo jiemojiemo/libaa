@@ -22,8 +22,7 @@ target_include_directories(libaa
         )
 
 target_link_libraries(libaa
-        PRIVATE dr_libs kissfft farbot
-        PUBLIC fdk-aac mp3lame Ring-Buffer)
+        PRIVATE dr_libs kissfft farbot fdk-aac mp3lame Ring-Buffer)
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     target_compile_options(libaa PRIVATE
@@ -32,15 +31,13 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     # ignore some error
     target_compile_options(libaa PUBLIC -Wno-missing-braces -Wno-deprecated-copy -Wno-unknown-warning-option)
 endif ()
-#add_compile_options( -Wno-unused-function -Wno-unused-parameter -Wno-missing-braces )
 
 if (LIBAA_INSTALL)
     install(TARGETS libaa
-            EXPORT libaaTargets
+            EXPORT libaa
             LIBRARY DESTINATION lib  # 动态库安装路径
             ARCHIVE DESTINATION lib  # 静态库安装路径
             )
-
     install(
             DIRECTORY ${LIBAA_INC_DRI}/
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
