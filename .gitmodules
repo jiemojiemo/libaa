@@ -4,7 +4,7 @@
 	url = https://github.com/PortAudio/portaudio
 [submodule "third_party/fdk-aac"]
 	path = third_party/fdk-aac
-	url = https://github.com/mstorsjo/fdk-aac
+	url = https://github.com/jiemojiemo/fdk-aac
 [submodule "third_party/libmp3lame"]
 	path = third_party/libmp3lame
 	url = https://github.com/Iunusov/libmp3lame-CMAKE
