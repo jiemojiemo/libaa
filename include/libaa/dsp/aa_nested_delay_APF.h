@@ -61,21 +61,10 @@ public:
         const float &apf_g = params_.apf_g;
 
         float wn = in + apf_g * wnD;
-        //        if (process_index == 1) {
-        //            float inner_y = inner_apf_.processSample(wn);
-        //            inner_y = 0.0f;
-        //        }
         float inner_y = inner_apf_.processSample(wn);
         float y = -apf_g * wn + wnD;
 
         delay_.writeSample(inner_y);
-
-        //        if (process_index < 1000) {
-        //            printf("wnD %lf, wn %lf, inner_y %lf, y %lf\n", wnD, wn,
-        //            inner_y,
-        //                   y);
-        //        }
-        ++process_index;
         return y;
     }
 
@@ -101,7 +90,6 @@ private:
     SimpleDelay delay_;
     SimpleLPF lpf_;
     LFOGenerator lfo_;
-    int process_index = 0;
 };
 } // namespace libaa
 
