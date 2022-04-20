@@ -13,6 +13,7 @@
 #include "libaa/dsp/aa_two_band_shelving_filter.h"
 #include "libaa/processor/aa_audio_processor.h"
 #include <array>
+#include <iostream>
 
 namespace libaa {
 class ReverbTankUtilities {
@@ -40,13 +41,13 @@ public:
         params.pushFloatParameter("Low Shelf Fc", 150.0f, 20.0f, 2000.0f);
         params.pushFloatParameter("Low Shelf Gain dB", -20.0f, -35.0f, 35.0f);
         params.pushFloatParameter("High Shelf Fc", 4000.0f, 1000.0f, 5000.0f);
-        params.pushFloatParameter("High Shelf Gain dB", -20.0f, -35.0f, 35.0f);
+        params.pushFloatParameter("High Shelf Gain dB", -6.0f, -35.0f, 35.0f);
         params.pushChoiceParameter("Density", 0, {"Thick", "Thin"});
         params.pushFloatParameter("PreDelay(ms)", 25.0f, 0.0f, 100.0f);
         params.pushFloatParameter("Wet dB", -12.0f, -60.0f, 20.0f);
         params.pushFloatParameter("Dry dB", 0.0f, -60.0f, 20.0f);
         params.pushFloatParameter("Max APF Delay(ms)", 33.0f, 0.0f, 100.0f);
-        params.pushFloatParameter("APF Delay Weight", 1.0f, 0.0f, 1.0f);
+        params.pushFloatParameter("APF Delay Weight", 0.85f, 0.0f, 1.0f);
         params.pushFloatParameter("Max Fixed Delay(ms)", 81.0f, 0.0f, 100.0f);
         params.pushFloatParameter("Fixed Delay Weight", 1.0f, 0.0f, 1.0f);
     }
@@ -120,10 +121,10 @@ public:
             out_L -= w * branch_delays[3].readDelayAtPercentage(73.0f);
 
             float out_R = 0.0f;
-            out_R += w * branch_delays[0].readDelayAtPercentage(29.0f);
-            out_R -= w * branch_delays[1].readDelayAtPercentage(43.0f);
-            out_R += w * branch_delays[2].readDelayAtPercentage(61.0f);
-            out_R -= w * branch_delays[3].readDelayAtPercentage(79.0f);
+            out_R -= w * branch_delays[0].readDelayAtPercentage(29.0f);
+            out_R += w * branch_delays[1].readDelayAtPercentage(43.0f);
+            out_R -= w * branch_delays[2].readDelayAtPercentage(61.0f);
+            out_R += w * branch_delays[3].readDelayAtPercentage(79.0f);
 
             if (thick) {
                 out_L += w * branch_delays[0].readDelayAtPercentage(31.0f);
@@ -131,10 +132,10 @@ public:
                 out_L += w * branch_delays[2].readDelayAtPercentage(67.0f);
                 out_L -= w * branch_delays[3].readDelayAtPercentage(83.0f);
 
-                out_R += w * branch_delays[0].readDelayAtPercentage(37.0f);
-                out_R -= w * branch_delays[1].readDelayAtPercentage(53.0f);
-                out_R += w * branch_delays[2].readDelayAtPercentage(71.0f);
-                out_R -= w * branch_delays[3].readDelayAtPercentage(89.0f);
+                out_R -= w * branch_delays[0].readDelayAtPercentage(37.0f);
+                out_R += w * branch_delays[1].readDelayAtPercentage(53.0f);
+                out_R -= w * branch_delays[2].readDelayAtPercentage(71.0f);
+                out_R += w * branch_delays[3].readDelayAtPercentage(89.0f);
             }
 
             float shelving_out_L = shelving_filters[0].processSample(out_L);
@@ -269,6 +270,8 @@ public:
                                               0.993, 0.757, 0.179, 0.575};
     float apf_lfo_hz[kNumBranch] = {0.15, 0.33, 0.57, 0.73};
     float fixed_delay_weight[kNumBranch] = {1.0, 0.873, 0.707, 0.667};
+
+    int processed_index = 0;
 };
 } // namespace libaa
 

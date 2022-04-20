@@ -46,6 +46,19 @@ TEST_F(ANestedDelayAPF, UpdateParametersAlsoUpdateDelayParameters) {
     ASSERT_THAT(f.getOuterSimpleDelay().getParameters().delay_ms, Eq(delay_ms));
 }
 
+TEST_F(ANestedDelayAPF, UpdateParametersAlsoInnerAPFParameters) {
+    parameters.inner_apf_delay_ms = 10;
+    parameters.inner_apf_g = 0.3;
+    parameters.enable_LFO = true;
+
+    f.updateParameters(parameters);
+
+    ASSERT_THAT(f.getInnerAPF().getParameters().apf_g,
+                Eq(parameters.inner_apf_g));
+    ASSERT_THAT(f.getInnerAPF().getParameters().delay_ms,
+                Eq(parameters.inner_apf_delay_ms));
+}
+
 TEST_F(ANestedDelayAPF, UpdateParametersAlsoUpdateLPFParameters) {
     float g = 0.5;
     parameters.lpf_g = g;
@@ -66,9 +79,9 @@ TEST_F(ANestedDelayAPF, ProcessGetFilteredSample) {
 
     ASSERT_THAT(f.processSample(1.0), FloatEq(-0.5));
     ASSERT_THAT(f.processSample(0.0), FloatEq(0.0));
-    ASSERT_THAT(f.processSample(0.0), FloatEq(0.0));
-    ASSERT_THAT(f.processSample(0.0), FloatEq(0.75));
-    ASSERT_THAT(f.processSample(0.0), FloatEq(0.0));
+    ASSERT_THAT(f.processSample(0.0), FloatEq(-0.375));
+    ASSERT_THAT(f.processSample(0.0), FloatEq(0.5625));
+    ASSERT_THAT(f.processSample(0.0), FloatEq(0.09375));
 }
 
 TEST_F(ANestedDelayAPF, ProcessWithLPF) {

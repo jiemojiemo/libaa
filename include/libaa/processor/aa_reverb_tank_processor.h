@@ -22,7 +22,6 @@ public:
 
     const AudioProcessorParameters *getParameters() const override;
 
-private:
     ReverbTankUtilities utilities_;
 };
 } // namespace libaa
