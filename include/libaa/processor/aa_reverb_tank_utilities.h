@@ -95,6 +95,10 @@ public:
         float *right_channel =
             num_channels > 1 ? block->buffer.getWriterPointer(1) : left_channel;
         for (size_t i = 0; i < block->buffer.getNumberFrames(); ++i) {
+            //            if (processed_index == 55507) {
+            //                float global_fb = branch_delays[kNumBranch -
+            //                1].readDelay(); (void)(global_fb);
+            //            }
             float global_fb = branch_delays[kNumBranch - 1].readDelay();
             float fb = kRT * global_fb;
 
@@ -106,10 +110,10 @@ public:
             float in = pre_delay_output + fb;
 
             for (int b = 0; b < kNumBranch; ++b) {
-                auto apf_output = branch_nested_apfs[i].processSample(in);
-                auto lpf_output = branch_lpfs[i].processSample(apf_output);
+                auto apf_output = branch_nested_apfs[b].processSample(in);
+                auto lpf_output = branch_lpfs[b].processSample(apf_output);
                 auto delay_output =
-                    kRT * branch_delays[i].processSample(lpf_output);
+                    kRT * branch_delays[b].processSample(lpf_output);
                 in = delay_output + pre_delay_output;
             }
 
@@ -150,6 +154,18 @@ public:
                 right_channel[i] =
                     dry_scale * xn_R + wet_scale * shelving_out_R;
             }
+            //            if (fabs(left_channel[i]) > 1e-3) {
+            //                std::cout << processed_index << "," <<
+            //                left_channel[i]
+            //                          << std::endl;
+            //            }
+            //            if (processed_index >= 0 && processed_index <= 0 +
+            //            5000) {
+            //                std::cout << processed_index << "," <<
+            //                left_channel[i]
+            //                          << std::endl;
+            //            }
+            ++processed_index;
         }
     }
 

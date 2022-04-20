@@ -42,7 +42,8 @@ float SimpleDelay::readDelay() const {
 }
 
 float SimpleDelay::readDelayAt(float delay_ms) const {
-    return dline_.getInterpolation(delay_ms / 1000.0f * sample_rate_);
+    //    return dline_.getInterpolation(delay_ms / 1000.0f * sample_rate_);
+    return dline_.get(delay_ms / 1000.0f * sample_rate_);
 }
 
 float SimpleDelay::readDelayAtPercentage(float percentage) const {
