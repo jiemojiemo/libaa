@@ -20,6 +20,7 @@
 #include "libaa/fileio/aa_file_output_stream.h"
 #include "libaa/fileio/aa_wav_audio_format_reader.h"
 #include "libaa/fileio/aa_wav_audio_format_writer.h"
+#include <iomanip> // std::setprecision
 #include <iostream>
 using namespace std;
 using namespace libaa;
@@ -85,6 +86,17 @@ int main() {
     f.prepare(sample_rate, 8192);
     f.updateParameters(parameters);
 
+    //    SimpleDelay::SimpleDelayParameters parameters;
+    //    parameters.delay_ms = 81;
+    //    SimpleDelay f;
+    //    f.prepare(sample_rate, 4410);
+    //    f.updateParameters(parameters);
+
+    //    SimpleLPF::SimpleLPFParameters parameters;
+    //    parameters.lpf_g = 0.3;
+    //    SimpleLPF f;
+    //    f.updateParameters(parameters);
+
     //    TwoBandShelvingFilter f;
     //    f.prepare(sample_rate);
     //
@@ -106,7 +118,7 @@ int main() {
         for (int i = 0; i < acctual_block_size; ++i) {
             float in = sample_buffer[i];
             float output = 0.0f;
-            if (processed_index >= 394) {
+            if (processed_index == 394) {
                 output = f.processSample(in);
                 sample_buffer[i] = output;
             } else {
@@ -114,10 +126,10 @@ int main() {
                 sample_buffer[i] = output;
             }
 
-            //            if (processed_index >= 0 && processed_index <= 0 +
-            //            5000) {
-            //                cout << processed_index << "," << output << endl;
-            //            }
+            if (processed_index >= 0 && processed_index <= 5000) {
+                cout << std::setprecision(15) << processed_index << ","
+                     << output << endl;
+            }
 
             ++processed_index;
         }
