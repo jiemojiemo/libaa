@@ -38,7 +38,7 @@ void SimpleDelay::writeSample(float in) {
 }
 
 float SimpleDelay::readDelay() const {
-    return dline_.getInterpolation(num_delay_samples_);
+    return dline_.get((int)num_delay_samples_);
 }
 
 float SimpleDelay::readDelayAt(float delay_ms) const {
@@ -51,11 +51,11 @@ float SimpleDelay::readDelayAtPercentage(float percentage) const {
 }
 
 float SimpleDelay::processSample(float in) {
+    dline_.push(in);
+
     float d_y = parameters.interpolate
                     ? dline_.getInterpolation(num_delay_samples_)
                     : dline_.get(int(num_delay_samples_));
-
-    dline_.push(in);
 
     return d_y;
 }
