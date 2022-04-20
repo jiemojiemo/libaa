@@ -1,19 +1,18 @@
 //
 // Created by user on 4/19/22.
 //
-#include "libaa/processor/aa_reverb_tank_utilities.h"
 #include "libaa/fileio/aa_file_input_stream.h"
 #include "libaa/fileio/aa_file_output_stream.h"
 #include "libaa/fileio/aa_wav_audio_format_reader.h"
 #include "libaa/fileio/aa_wav_audio_format_writer.h"
 #include "libaa/processor/aa_reverb_tank_processor.h"
+#include "libaa/processor/aa_reverb_tank_utilities.h"
 
 #include <iostream>
 using namespace std;
 using namespace libaa;
-int main(int argc, char* argv[])
-{
-    if(argc != 3){
+int main(int argc, char *argv[]) {
+    if (argc != 3) {
         return -1;
     }
 
@@ -37,7 +36,7 @@ int main(int argc, char* argv[])
     int num_channels = reader.num_channels;
     int sample_index = 0;
     int acctual_block_size = 0;
-    int predefine_block_size = 512;
+    int predefine_block_size = 1;
     int num_frames = reader.length_in_samples;
     assert(num_channels == 1);
 
@@ -56,21 +55,36 @@ int main(int argc, char* argv[])
     }
 
     proc.prepareToPlay(sample_rate, predefine_block_size);
-    for(;sample_index < num_frames;)
-    {
+    int processed_index = 0;
+    for (; sample_index < num_frames;) {
         acctual_block_size = (sample_index + predefine_block_size >= num_frames)
                                  ? (num_frames - sample_index)
                                  : (predefine_block_size);
 
         reader.readSamples(dest_chan, num_channels, 0, 0, acctual_block_size);
 
-        proc.processBlock(&block, &block);
+        //        auto &processed_index = proc.utilities_.processed_index;
+        if (processed_index >= 51200) {
+            proc.processBlock(&block, &block);
+        } else {
+            proc.processBlock(&block, &block);
+        };
+
+        for (int i = 0; i < acctual_block_size; ++i) {
+            float output = block.buffer.getWriterPointer(0)[i];
+            //            if (fabs(output) > 1e-2) {
+            //                cout << processed_index << "," << output << endl;
+            //            }
+            if (processed_index >= 0 && processed_index <= 0 + 5000) {
+                cout << processed_index << "," << output << endl;
+            }
+        }
 
         writer.writePlanar(reinterpret_cast<const float **>(&dest_chan),
                            acctual_block_size);
         sample_index += acctual_block_size;
+        processed_index += acctual_block_size;
     }
-
 
     writer.flush();
     writer.close();

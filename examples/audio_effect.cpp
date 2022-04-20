@@ -25,7 +25,7 @@ using namespace std;
 using namespace libaa;
 
 int main() {
-    const string input_filename = "/Users/user/Downloads/test_test.wav";
+    const string input_filename = "/Users/user/Downloads/test_sin440.wav";
     string output_filename = "xxx.wav";
 
     auto in_stream = std::make_unique<FileInputStream>(input_filename);
@@ -70,30 +70,30 @@ int main() {
     //    f.prepare(audio_file.getSampleRate(), 2 * audio_file.getSampleRate());
     //    f.updateParameters(parameters);
 
-    //    NestedDelayAPF::NestedDelayAPFParameters parameters;
-    //    parameters.delay_ms = 20;
-    //    parameters.apf_g = 0.95;
-    //    parameters.enable_LPF = false;
-    //    parameters.lpf_g = 0.5;
-    //    parameters.enable_LFO = true;
-    //    parameters.lfo_depth = 1.0f;
-    //    parameters.lfo_max_modulation_ms = 0.3;
-    //    parameters.lfo_rate_hz = 10.0f;
-    //    parameters.inner_apf_delay_ms = 13;
-    //    parameters.inner_apf_g = 0.8;
-    //    NestedDelayAPF f;
-    //    f.prepare(sample_rate, 2 * sample_rate);
-    //    f.updateParameters(parameters);
-
-    TwoBandShelvingFilter f;
-    f.prepare(sample_rate);
-
-    TwoBandShelvingFilter::TwoBandShelvingFilterParameters parameters;
-    parameters.low_shelf_fc = 500;
-    parameters.low_shelf_boost_db = 0;
-    parameters.high_shelf_fc = 6000;
-    parameters.high_shelf_boost_db = 15;
+    NestedDelayAPF::NestedDelayAPFParameters parameters;
+    parameters.delay_ms = 8.89185047;
+    parameters.apf_g = 0.5;
+    parameters.enable_LPF = false;
+    parameters.lpf_g = 0.5;
+    parameters.enable_LFO = true;
+    parameters.lfo_depth = 1.0f;
+    parameters.lfo_max_modulation_ms = 0.3;
+    parameters.lfo_rate_hz = 0.15f;
+    parameters.inner_apf_delay_ms = 24.4876518;
+    parameters.inner_apf_g = -0.5;
+    NestedDelayAPF f;
+    f.prepare(sample_rate, 8192);
     f.updateParameters(parameters);
+
+    //    TwoBandShelvingFilter f;
+    //    f.prepare(sample_rate);
+    //
+    //    TwoBandShelvingFilter::TwoBandShelvingFilterParameters parameters;
+    //    parameters.low_shelf_fc = 500;
+    //    parameters.low_shelf_boost_db = 0;
+    //    parameters.high_shelf_fc = 6000;
+    //    parameters.high_shelf_boost_db = 15;
+    //    f.updateParameters(parameters);
 
     int processed_index = 0;
     for (; sample_index < num_frames;) {
@@ -106,7 +106,7 @@ int main() {
         for (int i = 0; i < acctual_block_size; ++i) {
             float in = sample_buffer[i];
             float output = 0.0f;
-            if (processed_index >= 51200) {
+            if (processed_index >= 394) {
                 output = f.processSample(in);
                 sample_buffer[i] = output;
             } else {
@@ -114,22 +114,13 @@ int main() {
                 sample_buffer[i] = output;
             }
 
-            if (fabs(output) > 1e-3) {
-                cout << processed_index << "," << output << endl;
-            }
+            //            if (processed_index >= 0 && processed_index <= 0 +
+            //            5000) {
+            //                cout << processed_index << "," << output << endl;
+            //            }
+
             ++processed_index;
         }
-
-        //        for (int i = 0; i < acctual_block_size; ++i) {
-        //            float in = sample_buffer[i];
-        //            float output = f.processSample(in);
-        //            sample_buffer[i] = output;
-        //
-        //            if (fabs(output) > 1e-2) {
-        //                cout << processed_index << "," << output << endl;
-        //            }
-        //            ++processed_index;
-        //        }
 
         writer.writePlanar(reinterpret_cast<const float **>(&dest_chan),
                            acctual_block_size);
