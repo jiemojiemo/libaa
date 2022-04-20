@@ -7,7 +7,7 @@
 #include "libaa/fileio/aa_wav_audio_format_writer.h"
 #include "libaa/processor/aa_reverb_tank_processor.h"
 #include "libaa/processor/aa_reverb_tank_utilities.h"
-
+#include <cassert>
 #include <iostream>
 using namespace std;
 using namespace libaa;

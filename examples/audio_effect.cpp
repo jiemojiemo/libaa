@@ -20,6 +20,7 @@
 #include "libaa/fileio/aa_file_output_stream.h"
 #include "libaa/fileio/aa_wav_audio_format_reader.h"
 #include "libaa/fileio/aa_wav_audio_format_writer.h"
+#include <cassert>
 #include <iomanip> // std::setprecision
 #include <iostream>
 using namespace std;
