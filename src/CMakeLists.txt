@@ -16,13 +16,17 @@ add_library(libaa
         )
 target_include_directories(libaa
         PUBLIC
-        $<INSTALL_INTERFACE:include>
+        $<INSTALL_INTERFACE:include/libaa>
         $<BUILD_INTERFACE:${LIBAA_INC_DRI}>
-        ${LIBAA_3RD_DIR}/Eigen3.3.7
+        PRIVATE
+        $<BUILD_INTERFACE:${LIBAA_3RD_DIR}/Eigen3.3.7>
+        $<BUILD_INTERFACE:${LIBAA_3RD_DIR}/farbot/include>
+        $<BUILD_INTERFACE:${LIBAA_3RD_DIR}/Ring-Buffer>
+        $<BUILD_INTERFACE:${LIBAA_3RD_DIR}/dr_libs>
         )
 
 target_link_libraries(libaa
-        PRIVATE dr_libs kissfft farbot fdk-aac mp3lame Ring-Buffer)
+        PRIVATE kissfft fdk-aac mp3lame)
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     target_compile_options(libaa PRIVATE
@@ -33,14 +37,47 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif ()
 
 if (LIBAA_INSTALL)
-    install(TARGETS libaa
-            EXPORT libaa
+    install(TARGETS kissfft
+            EXPORT kissfft
             LIBRARY DESTINATION lib  # 动态库安装路径
             ARCHIVE DESTINATION lib  # 静态库安装路径
+            )
+    install(EXPORT kissfft DESTINATION lib/cmake/kissfft)
+
+    #    install(TARGETS dr_libs
+    #            EXPORT dr_libs
+    #            LIBRARY DESTINATION lib
+    #            ARCHIVE DESTINATION lib
+    #            )
+    #    install(EXPORT dr_libs DESTINATION lib/cmake/dr_libs)
+
+    #    install(TARGETS fdk-aac
+    #            EXPORT fdk-aac
+    #            LIBRARY DESTINATION lib
+    #            ARCHIVE DESTINATION lib
+    #            )
+    #    install(EXPORT fdk-aac DESTINATION lib/cmake/fdk-aac)
+
+    install(TARGETS mp3lame
+            EXPORT mp3lame
+            LIBRARY DESTINATION lib
+            ARCHIVE DESTINATION lib
+            )
+    install(EXPORT mp3lame DESTINATION lib/cmake/mp3lame)
+
+    install(TARGETS libaa
+            EXPORT libaa
+            LIBRARY DESTINATION lib
+            ARCHIVE DESTINATION lib
             )
     install(
             DIRECTORY ${LIBAA_INC_DRI}/
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
             FILES_MATCHING PATTERN "*.h"
     )
+
+
+    install(EXPORT libaa DESTINATION lib/cmake/libaa)
+
+
 endif ()
