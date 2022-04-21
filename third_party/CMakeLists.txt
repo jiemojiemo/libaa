@@ -2,7 +2,7 @@ add_subdirectory(kissfft)
 add_subdirectory(fdk-aac)
 add_subdirectory(portaudio EXCLUDE_FROM_ALL)
 add_subdirectory(libmp3lame)
-if (BUILD_TESTING)
+if (LIBAA_BUILD_TESTING)
     add_subdirectory(googletest EXCLUDE_FROM_ALL)
 endif ()
 

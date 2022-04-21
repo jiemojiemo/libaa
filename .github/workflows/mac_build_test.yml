@@ -30,7 +30,7 @@ jobs:
           cd build
           ctest --verbose
 
-  android_build:
+  android_armeabi-v7a:
     runs-on: macOS-latest
     steps:
       - uses: actions/checkout@v2
@@ -43,6 +43,6 @@ jobs:
           add-to-path: false
       - name: Build
         shell: bash
-        run: bash ./scripts/android_build.sh
+        run: bash ./scripts/android_build.sh -a armeabi-v7a -b build-android-armv7
         env:
           ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
