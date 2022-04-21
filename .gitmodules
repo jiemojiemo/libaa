@@ -7,7 +7,7 @@
 	url = https://github.com/jiemojiemo/fdk-aac
 [submodule "third_party/libmp3lame"]
 	path = third_party/libmp3lame
-	url = https://github.com/Iunusov/libmp3lame-CMAKE
+	url = https://github.com/jiemojiemo/libmp3lame-CMAKE
 [submodule "third_party/yaml-cpp"]
 	path = third_party/yaml-cpp
 	url = https://github.com/jbeder/yaml-cpp
