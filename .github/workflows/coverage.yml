@@ -1,5 +1,5 @@
 name: coverage
-on: [push]
+on: [ push ]
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -36,3 +36,4 @@ jobs:
       - uses: codecov/codecov-action@v1
         with:
           file: build/final.info
+          token: ${{ secrets.CODECOV_TOKEN }}
