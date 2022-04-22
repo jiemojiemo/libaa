@@ -30,7 +30,9 @@ public:
             std::unique_ptr<InputStream>(new FileInputStream(test_file_name));
     }
 
-    void TearDown() override { test_file = nullptr; }
+    void TearDown() override {
+        test_file = nullptr;
+    }
 
     const size_t sample_rate = 44100;
     const size_t num_channels = 2;
@@ -57,13 +59,17 @@ public:
         (void)size;
         return 0;
     }
-    int64_t tellg() override { return 0; }
+    int64_t tellg() override {
+        return 0;
+    }
     int seekg(int64_t pos, int mode) override {
         (void)pos;
         (void)mode;
         return 0;
     }
-    int64_t length() const override { return 0; }
+    int64_t length() const override {
+        return 0;
+    }
 };
 
 TEST_F(AWaveAudioFormatReader, InitWithInputStream) {

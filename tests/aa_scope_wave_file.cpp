@@ -12,7 +12,9 @@ namespace libaa {
 ScopeFile::ScopeFile(std::string output_path)
     : output_path_(std::move(output_path)) {}
 
-ScopeFile::~ScopeFile() { std::remove(output_path_.c_str()); }
+ScopeFile::~ScopeFile() {
+    std::remove(output_path_.c_str());
+}
 
 ScopeWaveFile::ScopeWaveFile(std::string output_path, size_t sample_rate,
                              size_t num_channel, size_t num_frames,

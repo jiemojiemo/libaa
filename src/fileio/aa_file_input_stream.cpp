@@ -7,11 +7,17 @@
 #include <iostream>
 
 namespace libaa {
-FileInputStream::FileInputStream(const std::string &path) { open(path); }
+FileInputStream::FileInputStream(const std::string &path) {
+    open(path);
+}
 
-FileInputStream::~FileInputStream() { close(); }
+FileInputStream::~FileInputStream() {
+    close();
+}
 
-bool FileInputStream::isOpen() const { return fp_ != nullptr; }
+bool FileInputStream::isOpen() const {
+    return fp_ != nullptr;
+}
 
 int FileInputStream::open(const std::string &path) {
     // close first if open a file already.
@@ -62,5 +68,7 @@ int FileInputStream::seekg(int64_t pos, int mode) {
 
     return fseek(fp_, pos, mode);
 }
-int64_t FileInputStream::length() const { return length_; }
+int64_t FileInputStream::length() const {
+    return length_;
+}
 } // namespace libaa

@@ -63,8 +63,7 @@ TEST_F(ASimpleDelay, CanReadDelaySamples) {
     ASSERT_THAT(d.readDelay(), Eq(1));
 }
 
-TEST_F(ASimpleDelay, CanReadAtPercentange)
-{
+TEST_F(ASimpleDelay, CanReadAtPercentange) {
     sample_rate = 10;
     d.resize(delay_line_size);
     d.prepare(sample_rate);
@@ -80,7 +79,7 @@ TEST_F(ASimpleDelay, CanReadAtPercentange)
     d.writeSample(5);
 
     float p = 50;
-    auto expected_delay_samples = int(p/100 * parameters.delay_ms);
+    auto expected_delay_samples = int(p / 100 * parameters.delay_ms);
     auto expected = d.readDelayAt(expected_delay_samples);
     ASSERT_THAT(d.readDelayAtPercentage(50), Eq(expected));
 }

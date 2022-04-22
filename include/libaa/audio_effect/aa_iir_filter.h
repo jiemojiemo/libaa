@@ -55,7 +55,9 @@ public:
 
     IIRFilter();
 
-    std::string getName() const override { return std::string("IIRFilter"); }
+    std::string getName() const override {
+        return std::string("IIRFilter");
+    }
 
     void prepareToPlay(double sample_rate, int max_block_size) override;
     void reset() override;

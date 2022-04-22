@@ -117,8 +117,12 @@ public:
         }
     }
 
-    size_t getNumFrames() const { return size_; }
-    size_t getNumChannels() const { return num_channels_; }
+    size_t getNumFrames() const {
+        return size_;
+    }
+    size_t getNumChannels() const {
+        return num_channels_;
+    }
 
     T *getWritePointer(size_t channel_number) const noexcept {
         return channels_[channel_number];

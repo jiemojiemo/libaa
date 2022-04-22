@@ -35,7 +35,9 @@ public:
     int max_block_size = 100;
 };
 
-TEST_F(AAudioFilterProcessor, CanConstruct) { AudioFilterProcessor p{}; }
+TEST_F(AAudioFilterProcessor, CanConstruct) {
+    AudioFilterProcessor p{};
+}
 
 TEST_F(AAudioFilterProcessor, CanReportCorrectName) {
     ASSERT_THAT(p.getName(), Eq("Filter"));

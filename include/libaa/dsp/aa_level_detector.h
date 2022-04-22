@@ -37,7 +37,9 @@ public:
         updateReleaseAlpha(param_.release_time_ms);
     }
 
-    float getSampleRate() const { return sample_rate_; }
+    float getSampleRate() const {
+        return sample_rate_;
+    }
 
     void setAttackTime(float attack_time_ms) {
         if (attack_time_ms == param_.attack_time_ms) {
@@ -57,13 +59,21 @@ public:
         updateReleaseAlpha(param_.release_time_ms);
     }
 
-    float getAttackTime() const { return param_.attack_time_ms; }
+    float getAttackTime() const {
+        return param_.attack_time_ms;
+    }
 
-    float getReleaseTime() const { return param_.release_time_ms; }
+    float getReleaseTime() const {
+        return param_.release_time_ms;
+    }
 
-    float getAttackAlpha() const { return attack_alpha_; }
+    float getAttackAlpha() const {
+        return attack_alpha_;
+    }
 
-    float getReleaseAlpha() const { return release_alpha_; }
+    float getReleaseAlpha() const {
+        return release_alpha_;
+    }
 
     void setParameters(LevelDetectorParameters param) {
         param_ = std::move(param);
@@ -71,7 +81,9 @@ public:
         updateReleaseAlpha(param_.release_time_ms);
     }
 
-    const LevelDetectorParameters &getParameters() const { return param_; }
+    const LevelDetectorParameters &getParameters() const {
+        return param_;
+    }
 
     float process(float xn);
 

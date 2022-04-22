@@ -31,7 +31,9 @@ void Flanger::prepareToPlay(double sample_rate, int max_block_size) {
     impl_->dlines_.allocateDelayLines(num_supported_channel,
                                       max_delay_length_sample);
 }
-void Flanger::reset() { impl_->dlines_.clear(); }
+void Flanger::reset() {
+    impl_->dlines_.clear();
+}
 void Flanger::releaseResources() {}
 void Flanger::processBlock(AudioBuffer<float> &buffer) {
     const int num_channels = buffer.getNumChannels();

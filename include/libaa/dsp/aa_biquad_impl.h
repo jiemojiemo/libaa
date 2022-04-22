@@ -13,7 +13,9 @@ using FilterCoeffs = std::array<float, num_coeffs>;
 
 template <typename T> class BiquadImpl {
 public:
-    T processSample(T in) { return processSampleWithDirectForm(in); }
+    T processSample(T in) {
+        return processSampleWithDirectForm(in);
+    }
 
     T processSampleWithDirectForm(T in) {
         T out = coeff_array[a0] * in + coeff_array[a1] * state_array[z0] +
@@ -65,7 +67,9 @@ public:
         return out;
     }
 
-    T operator()(T in) { return processSampleWithTransposedCanonicalForm(in); }
+    T operator()(T in) {
+        return processSampleWithTransposedCanonicalForm(in);
+    }
 
     void reset() {
         std::fill(coeff_array.begin(), coeff_array.end(), 0.0f);

@@ -15,7 +15,9 @@ class AACAudioFormatReader::Impl {
 public:
     Impl(AACAudioFormatReader *parent) : parent_(parent) {}
 
-    bool isOpenOk() { return handle_ != nullptr; }
+    bool isOpenOk() {
+        return handle_ != nullptr;
+    }
 
     void seekToPCMFrame(int64_t start_offset_of_file) {
         (void)(start_offset_of_file);
@@ -248,7 +250,9 @@ AACAudioFormatReader::AACAudioFormatReader(
     }
 }
 
-bool AACAudioFormatReader::isOpenOk() { return impl_->isOpenOk(); }
+bool AACAudioFormatReader::isOpenOk() {
+    return impl_->isOpenOk();
+}
 
 bool AACAudioFormatReader::readSamples(float **dest_channels,
                                        int num_dest_channels,

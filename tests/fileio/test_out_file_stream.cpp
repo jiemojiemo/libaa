@@ -18,7 +18,9 @@ public:
         scope_file = std::make_unique<ScopeTextFile>(test_out_path, "");
     }
 
-    void TearDown() override { scope_file = nullptr; }
+    void TearDown() override {
+        scope_file = nullptr;
+    }
     const string test_out_path = "ostream_test.txt";
     const string test_txt = "abcdefg";
 

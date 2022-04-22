@@ -9,7 +9,9 @@ namespace libaa {
 class Flanger : public AudioEffectProcessor {
 public:
     Flanger();
-    std::string getName() const override { return std::string("flanger"); }
+    std::string getName() const override {
+        return std::string("flanger");
+    }
     void prepareToPlay(double sample_rate, int max_block_size) override;
     void reset() override;
     void releaseResources() override;

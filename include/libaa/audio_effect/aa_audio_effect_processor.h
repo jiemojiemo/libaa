@@ -48,7 +48,9 @@ public:
     /**
      * Returns number of samples, the processor's latency
      */
-    int getLatency() const noexcept { return 0; }
+    int getLatency() const noexcept {
+        return 0;
+    }
 
 private:
     double sample_rate_{0.0};

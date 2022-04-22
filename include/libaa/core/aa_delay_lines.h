@@ -16,7 +16,9 @@ public:
         allocateDelayLines(num_lines, line_size);
     }
 
-    size_t getNumDelayLines() const { return dlines_.size(); }
+    size_t getNumDelayLines() const {
+        return dlines_.size();
+    }
 
     void allocateDelayLines(size_t num_lines, size_t size) {
         dlines_.resize(num_lines);

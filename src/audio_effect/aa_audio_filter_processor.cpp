@@ -7,7 +7,9 @@
 namespace libaa {
 class AudioFilterProcessor::Impl {
 public:
-    Impl() { createParameters(); }
+    Impl() {
+        createParameters();
+    }
     void createParameters() {
         param_.pushChoiceParameter("Filter Type", 0,
                                    {
@@ -89,7 +91,9 @@ int AudioFilterProcessor::prepareToPlay(ProcessorPrepareConfig config) {
     return impl_->prepareToPlay(config);
 }
 
-std::string AudioFilterProcessor::getName() { return {"Filter"}; }
+std::string AudioFilterProcessor::getName() {
+    return {"Filter"};
+}
 
 std::vector<uint8_t> AudioFilterProcessor::getState() {
     return std::vector<uint8_t>();
@@ -101,9 +105,13 @@ int AudioFilterProcessor::setState(const uint8_t *data, int data_size) {
     return 0;
 }
 
-int AudioFilterProcessor::getLatencySamples() { return 0; }
+int AudioFilterProcessor::getLatencySamples() {
+    return 0;
+}
 
-int AudioFilterProcessor::getTailLengthSamples() const { return 0; }
+int AudioFilterProcessor::getTailLengthSamples() const {
+    return 0;
+}
 
 void AudioFilterProcessor::reset() {}
 

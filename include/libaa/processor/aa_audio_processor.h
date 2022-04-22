@@ -10,7 +10,7 @@
 #include "libaa/core/aa_audio_block.h"
 #include "libaa/core/aa_audio_processor_parameters.h"
 #include <vector>
-namespace libaa{
+namespace libaa {
 class AudioProcessorParameters;
 class AudioBlock;
 class IAudioProcessor {
@@ -72,6 +72,6 @@ protected:
     float sample_rate_{0.0f};
     int max_block_size_{0};
 };
-}
+} // namespace libaa
 
 #endif // LIBAA_AA_AUDIO_PROCESSOR_H

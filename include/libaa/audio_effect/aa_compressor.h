@@ -13,7 +13,9 @@ public:
 
     ~Compressor() override = default;
 
-    std::string getName() const override { return std::string("Compressor"); }
+    std::string getName() const override {
+        return std::string("Compressor");
+    }
     void prepareToPlay(double sample_rate, int max_block_size) override;
 
     void reset() override;
