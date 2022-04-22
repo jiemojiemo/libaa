@@ -12,7 +12,9 @@ class Distortion : public AudioEffectProcessor {
 public:
     Distortion();
 
-    std::string getName() const override { return std::string("Distortion"); }
+    std::string getName() const override {
+        return std::string("Distortion");
+    }
 
     void prepareToPlay(double sample_rate, int max_block_size) override;
     void reset() override;

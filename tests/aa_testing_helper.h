@@ -18,7 +18,9 @@ MATCHER_P(NearWithPrecision, ferr, "") {
     return abs(get<0>(arg) - get<1>(arg)) < ferr;
 }
 
-MATCHER_P2(ComplexNearEqual, ferr, rhs, "") { return abs(arg - rhs) < ferr; }
+MATCHER_P2(ComplexNearEqual, ferr, rhs, "") {
+    return abs(arg - rhs) < ferr;
+}
 
 bool operator==(const AudioBufferX<float> &lhs, const AudioBufferX<float> &rhs);
 

@@ -8,5 +8,7 @@ namespace libaa {
 double AudioEffectProcessor::getSampleRate() const noexcept {
     return sample_rate_;
 }
-int AudioEffectProcessor::getBlockSize() const noexcept { return block_size_; }
+int AudioEffectProcessor::getBlockSize() const noexcept {
+    return block_size_;
+}
 } // namespace libaa

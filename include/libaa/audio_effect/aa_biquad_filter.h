@@ -10,7 +10,9 @@
 namespace libaa {
 class BiquadFilter : public AudioEffectProcessor {
 public:
-    std::string getName() const override { return std::string("BiquadFilter"); }
+    std::string getName() const override {
+        return std::string("BiquadFilter");
+    }
     void prepareToPlay(double sample_rate, int max_block_size) override {
         (void)max_block_size;
         (void)sample_rate;

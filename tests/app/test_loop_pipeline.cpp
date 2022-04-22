@@ -9,7 +9,9 @@ using namespace testing;
 
 class MockCounterValue : public DemoValue {
 public:
-    void process(DemoContext &context) override { counter += 1; }
+    void process(DemoContext &context) override {
+        counter += 1;
+    }
     int counter = 0;
 };
 

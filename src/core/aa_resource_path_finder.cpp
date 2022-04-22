@@ -6,8 +6,12 @@
 #include <filesystem>
 using namespace std;
 namespace libaa {
-ResourcePathFinder::ResourcePathFinder() { paths_.emplace_back("./"); }
-void ResourcePathFinder::append(std::string p) { paths_.push_back(p); }
+ResourcePathFinder::ResourcePathFinder() {
+    paths_.emplace_back("./");
+}
+void ResourcePathFinder::append(std::string p) {
+    paths_.push_back(p);
+}
 
 const std::vector<std::string> &ResourcePathFinder::getSearchPaths() const {
     return paths_;

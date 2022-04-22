@@ -271,8 +271,12 @@ IIRFilter::IIRFilter() : impl_(std::make_shared<Impl>()) {}
 void IIRFilter::prepareToPlay(double sample_rate, int max_block_size) {
     impl_->biquad_filter_.prepareToPlay(sample_rate, max_block_size);
 }
-void IIRFilter::reset() { impl_->reset(); }
-void IIRFilter::releaseResources() { impl_->biquad_filter_.releaseResources(); }
+void IIRFilter::reset() {
+    impl_->reset();
+}
+void IIRFilter::releaseResources() {
+    impl_->biquad_filter_.releaseResources();
+}
 void IIRFilter::processBlock(AudioBuffer<float> &buffer) {
     impl_->biquad_filter_.processBlock(buffer);
 }

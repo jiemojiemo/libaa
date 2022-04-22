@@ -12,7 +12,9 @@ public:
 
     virtual ~Chorus() = default;
 
-    std::string getName() const override { return std::string("chorus"); }
+    std::string getName() const override {
+        return std::string("chorus");
+    }
     void prepareToPlay(double sample_rate, int max_block_size) override;
 
     void reset() override;

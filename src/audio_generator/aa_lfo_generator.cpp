@@ -51,7 +51,9 @@ public:
         return output;
     }
 
-    double getPhaseIncrement() const { return phase_inc_; }
+    double getPhaseIncrement() const {
+        return phase_inc_;
+    }
 
     void updateFrequencyHz(float hz) {
         parent_->frequency_hz = hz;
@@ -98,7 +100,9 @@ double LFOGenerator::getPhaseIncrement() const {
     return impl_->getPhaseIncrement();
 }
 
-float LFOGenerator::getSampleRate() const { return impl_->sample_rate_; }
+float LFOGenerator::getSampleRate() const {
+    return impl_->sample_rate_;
+}
 
 void LFOGenerator::updateFrequencyHz(float hz) {
     return impl_->updateFrequencyHz(hz);

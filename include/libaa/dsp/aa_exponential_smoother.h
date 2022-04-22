@@ -12,9 +12,13 @@ class ExponentialSmoother {
 public:
     explicit ExponentialSmoother(float alpha) : alpha_(alpha) {}
 
-    float getAlpha() const { return alpha_; }
+    float getAlpha() const {
+        return alpha_;
+    }
 
-    void setAlpha(float new_alpha) { alpha_ = new_alpha; }
+    void setAlpha(float new_alpha) {
+        alpha_ = new_alpha;
+    }
 
     float process(float input_val) {
         float result =

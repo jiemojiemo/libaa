@@ -11,7 +11,9 @@ class Robotisation : public AudioEffectProcessor {
 public:
     Robotisation();
 
-    std::string getName() const override { return std::string("Robot"); }
+    std::string getName() const override {
+        return std::string("Robot");
+    }
     void prepareToPlay(double sample_rate, int max_block_size) override;
 
     void reset() override;

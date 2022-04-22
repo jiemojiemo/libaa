@@ -50,13 +50,12 @@ int main(int argc, char *argv[]) {
 
     for (int i = 0; i < length; ++i) {
         float diff = abs(samples[i] - samples1[i]);
-        if(diff != 0){
+        if (diff != 0) {
             float db = 20 * log10(diff);
-            if(db > -60){
+            if (db > -60) {
                 cout << i << "," << db << endl;
             }
         }
-
     }
 
     return 0;

@@ -30,7 +30,9 @@ void writeAFakeWave(const string &output_name, size_t num_frames = 1024,
 
 class AAudioFile : public Test {
 public:
-    void SetUp() override { writeAFakeWave(fake_wave_path); }
+    void SetUp() override {
+        writeAFakeWave(fake_wave_path);
+    }
 
     AudioFile in_file;
     string fake_wave_path = "fake_wav.wav";

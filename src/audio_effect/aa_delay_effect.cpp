@@ -24,9 +24,13 @@ void DelayEffect::prepareToPlay(double sample_rate, int max_block_size) {
         num_new_channel, static_cast<size_t>(delay_length_ * sample_rate));
 }
 
-void DelayEffect::reset() { impl_->dlines_.clear(); }
+void DelayEffect::reset() {
+    impl_->dlines_.clear();
+}
 
-void DelayEffect::releaseResources() { impl_->dlines_.clear(); }
+void DelayEffect::releaseResources() {
+    impl_->dlines_.clear();
+}
 
 void DelayEffect::processBlock(AudioBuffer<float> &buffer) {
     const int num_channels = buffer.getNumChannels();

@@ -69,7 +69,9 @@ public:
         return out;
     }
 
-    static float fullWaveRectifier(const float in) { return fabs(in); }
+    static float fullWaveRectifier(const float in) {
+        return fabs(in);
+    }
 
     static float halfWaveRectifier(const float in) {
         if (in > 0)

@@ -7,7 +7,9 @@
 #include <cmath>
 #include <limits>
 namespace libaa {
-float dbToScale(float db) { return powf(10.0f, db / 20.0f); }
+float dbToScale(float db) {
+    return powf(10.0f, db / 20.0f);
+}
 
 float scaleToDb(float scale) {
     if (scale < std::numeric_limits<float>::min()) {

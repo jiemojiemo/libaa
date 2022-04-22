@@ -16,7 +16,9 @@ void VibratorProcessor::prepareToPlay(float sample_rate, int max_block_size) {
     utility_.prepare(sample_rate, max_block_size);
 }
 
-std::string VibratorProcessor::getName() const { return {"Vibrator"}; }
+std::string VibratorProcessor::getName() const {
+    return {"Vibrator"};
+}
 void VibratorProcessor::processBlock(AudioBlock *input, AudioBlock *output) {
     output->buffer.copyFrom(&input->buffer);
     ProcessorUtilities::updateParameterFromParameterChanges(

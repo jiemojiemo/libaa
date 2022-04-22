@@ -27,7 +27,9 @@ public:
 ParameterChange::ParameterChange(size_t size)
     : impl_(std::make_shared<Impl>(size)) {}
 
-size_t ParameterChange::getSize() const { return impl_->size_; }
+size_t ParameterChange::getSize() const {
+    return impl_->size_;
+}
 
 bool ParameterChange::push(ParameterChangePoint result) {
     return impl_->points_.push(std::move(result));

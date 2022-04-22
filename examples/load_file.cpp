@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
 
     AudioFile audio_file;
     audio_file.load("/Users/user/Downloads/test_test_re.wav");
-    
+
     audio_file.setSampleRate(44100);
     audio_file.setNumBits(32);
     audio_file.setNumChannles(1);

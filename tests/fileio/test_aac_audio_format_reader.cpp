@@ -18,13 +18,17 @@ public:
         (void)size;
         return 0;
     }
-    int64_t tellg() override { return 0; }
+    int64_t tellg() override {
+        return 0;
+    }
     int seekg(int64_t pos, int mode) override {
         (void)pos;
         (void)mode;
         return 0;
     }
-    int64_t length() const override { return 0; }
+    int64_t length() const override {
+        return 0;
+    }
 };
 
 class AAACAudioFormatReader : public Test {

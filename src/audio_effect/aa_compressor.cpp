@@ -101,12 +101,20 @@ void Compressor::releaseResources() {}
 void Compressor::processBlock(AudioBuffer<float> &buffer) {
     impl_->processBlock(buffer, getBlockSize(), getSampleRate());
 }
-void Compressor::setThreshold(float v) { impl_->threshold_ = v; }
-void Compressor::setAttackTime(float time_ms) { impl_->attack_time_ = time_ms; }
+void Compressor::setThreshold(float v) {
+    impl_->threshold_ = v;
+}
+void Compressor::setAttackTime(float time_ms) {
+    impl_->attack_time_ = time_ms;
+}
 void Compressor::setReleaseTime(float time_ms) {
     impl_->release_time_ = time_ms;
 }
-void Compressor::setRatio(float r) { impl_->ratio_ = r; }
-void Compressor::setMakeupGain(float g) { impl_->makeup_gain_ = g; }
+void Compressor::setRatio(float r) {
+    impl_->ratio_ = r;
+}
+void Compressor::setMakeupGain(float g) {
+    impl_->makeup_gain_ = g;
+}
 
 } // namespace libaa

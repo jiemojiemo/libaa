@@ -6,11 +6,17 @@
 #include "libaa/fileio/aa_file_output_stream.h"
 
 namespace libaa {
-FileOutputStream::FileOutputStream(const std::string &path) { open(path); }
+FileOutputStream::FileOutputStream(const std::string &path) {
+    open(path);
+}
 
-FileOutputStream::~FileOutputStream() { close(); }
+FileOutputStream::~FileOutputStream() {
+    close();
+}
 
-bool FileOutputStream::isOpen() const { return fp_ != nullptr; }
+bool FileOutputStream::isOpen() const {
+    return fp_ != nullptr;
+}
 
 int FileOutputStream::open(const std::string &path) {
     fp_ = fopen(path.c_str(), "wb");

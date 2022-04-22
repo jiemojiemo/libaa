@@ -20,7 +20,9 @@ public:
 
     virtual void process(DemoContext &context){};
 
-    virtual void setNext(DemoValue *n) { next = n; }
+    virtual void setNext(DemoValue *n) {
+        next = n;
+    }
 
     DemoValue *next{nullptr};
 };

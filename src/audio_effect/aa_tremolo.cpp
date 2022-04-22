@@ -14,7 +14,9 @@ public:
 
 Tremolo::Tremolo() : impl_(std::make_shared<Impl>()) {}
 
-std::string Tremolo::getName() const { return std::string("tremolo"); }
+std::string Tremolo::getName() const {
+    return std::string("tremolo");
+}
 void Tremolo::prepareToPlay(double sample_rate, int max_block_size) {
     (void)max_block_size;
 

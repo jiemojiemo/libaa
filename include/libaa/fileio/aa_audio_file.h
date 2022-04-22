@@ -25,12 +25,18 @@ public:
     std::vector<std::vector<float>> samples;
 
 public:
-    inline size_t getNumChannels() const { return num_channels_; }
-    inline size_t getSampleRate() const { return sample_rate_; }
+    inline size_t getNumChannels() const {
+        return num_channels_;
+    }
+    inline size_t getSampleRate() const {
+        return sample_rate_;
+    }
     inline size_t getNumFrames() const {
         return samples.size() > 0 ? samples[0].size() : 0;
     }
-    inline size_t getNumBits() const { return num_bits_; }
+    inline size_t getNumBits() const {
+        return num_bits_;
+    }
 
     inline void setNumChannles(size_t channels) {
         num_channels_ = channels;
@@ -44,7 +50,9 @@ public:
             x.resize(num_frames);
         }
     }
-    inline void setNumBits(size_t bits) { num_bits_ = bits; }
+    inline void setNumBits(size_t bits) {
+        num_bits_ = bits;
+    }
 
 protected:
     size_t num_channels_{0};

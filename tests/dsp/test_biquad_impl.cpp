@@ -50,8 +50,7 @@ TEST_F(ABiquad, ProcessSampleWithDirectForm) {
     ASSERT_THAT(b.processSampleWithDirectForm(1.0f), Eq(0.1f));
 }
 
-TEST_F(ABiquad, DefaultProcessUseDirectForm)
-{
+TEST_F(ABiquad, DefaultProcessUseDirectForm) {
     Biquad b0;
 
     b.updateCoeffs(coeffs);
@@ -60,32 +59,32 @@ TEST_F(ABiquad, DefaultProcessUseDirectForm)
     ASSERT_THAT(b.processSample(1.0), Eq(b0.processSampleWithDirectForm(1.0)));
 }
 
-TEST_F(ABiquad, ProcessSampleWithCanonicalForm)
-{
+TEST_F(ABiquad, ProcessSampleWithCanonicalForm) {
     Biquad b0;
 
     b.updateCoeffs(coeffs);
     b0.updateCoeffs(coeffs);
 
-    ASSERT_THAT(b.processSample(1.0), Eq(b0.processSampleWithCanonicalForm(1.0)));
+    ASSERT_THAT(b.processSample(1.0),
+                Eq(b0.processSampleWithCanonicalForm(1.0)));
 }
 
-TEST_F(ABiquad, ProcessSampleWithTransposedCanonicalForm)
-{
+TEST_F(ABiquad, ProcessSampleWithTransposedCanonicalForm) {
     Biquad b0;
 
     b.updateCoeffs(coeffs);
     b0.updateCoeffs(coeffs);
 
-    ASSERT_THAT(b.processSample(1.0), Eq(b0.processSampleWithTransposedCanonicalForm(1.0)));
+    ASSERT_THAT(b.processSample(1.0),
+                Eq(b0.processSampleWithTransposedCanonicalForm(1.0)));
 }
 
-TEST_F(ABiquad, ProcessSampleWithTransposedDirectForm)
-{
+TEST_F(ABiquad, ProcessSampleWithTransposedDirectForm) {
     Biquad b0;
 
     b.updateCoeffs(coeffs);
     b0.updateCoeffs(coeffs);
 
-    ASSERT_THAT(b.processSample(1.0), Eq(b0.processSampleWithTransposedDirectForm(1.0)));
+    ASSERT_THAT(b.processSample(1.0),
+                Eq(b0.processSampleWithTransposedDirectForm(1.0)));
 }

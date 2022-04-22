@@ -13,7 +13,9 @@ public:
     DelayLine<float> dline;
 };
 
-TEST_F(ADelayLine, SizeIsZeroAfterCreate) { ASSERT_THAT(dline.size(), Eq(0)); }
+TEST_F(ADelayLine, SizeIsZeroAfterCreate) {
+    ASSERT_THAT(dline.size(), Eq(0));
+}
 
 TEST_F(ADelayLine, SizeChangedToPower2AfterResize) {
     int input_size = 10;

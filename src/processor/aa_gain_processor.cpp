@@ -10,7 +10,9 @@ namespace libaa {
 GainProcessor::GainProcessor(float gain_db) {
     parameters.pushFloatParameter("Gain dB", gain_db, -96.0f, 35.0f);
 }
-std::string GainProcessor::getName() const { return {"Gain"}; }
+std::string GainProcessor::getName() const {
+    return {"Gain"};
+}
 
 void GainProcessor::processBlock(AudioBlock *input, AudioBlock *output) {
     output->buffer.copyFrom(&input->buffer);

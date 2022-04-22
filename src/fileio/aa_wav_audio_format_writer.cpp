@@ -69,7 +69,9 @@ public:
         return num_written > 0;
     }
 
-    bool isOpen() const { return wav_ != nullptr; }
+    bool isOpen() const {
+        return wav_ != nullptr;
+    }
 
     void flush() {}
 
@@ -130,9 +132,15 @@ bool WavFormatWriter::writeInterleave(const float *samples, int num_samples) {
     return impl_->writeInterleave(samples, num_samples);
 }
 
-bool WavFormatWriter::isOpen() const { return impl_->isOpen(); }
+bool WavFormatWriter::isOpen() const {
+    return impl_->isOpen();
+}
 
-void WavFormatWriter::close() { return impl_->close(); }
-void WavFormatWriter::flush() { return impl_->flush(); }
+void WavFormatWriter::close() {
+    return impl_->close();
+}
+void WavFormatWriter::flush() {
+    return impl_->flush();
+}
 
 } // namespace libaa

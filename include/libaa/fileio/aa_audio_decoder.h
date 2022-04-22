@@ -38,10 +38,18 @@ public:
         return result;
     }
 
-    inline size_t getNumChannels() { return num_channels_; }
-    inline size_t getSampleRate() { return sample_rate_; }
-    inline size_t getNumFrames() { return num_frames_; }
-    inline size_t getBits() { return num_bits_; }
+    inline size_t getNumChannels() {
+        return num_channels_;
+    }
+    inline size_t getSampleRate() {
+        return sample_rate_;
+    }
+    inline size_t getNumFrames() {
+        return num_frames_;
+    }
+    inline size_t getBits() {
+        return num_bits_;
+    }
 
 protected:
     size_t num_channels_{0};

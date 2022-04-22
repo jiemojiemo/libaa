@@ -14,12 +14,12 @@ public:
         openMp3FromStream();
     }
 
-    ~Impl(){
+    ~Impl() {
         close();
     }
 
-    void close(){
-        if(isOpenOk()){
+    void close() {
+        if (isOpenOk()) {
             drmp3_uninit(mp3_.get());
 
             parent_->sample_rate = -1;
@@ -28,7 +28,7 @@ public:
         }
     }
 
-    bool isOpenOk() const{
+    bool isOpenOk() const {
         return mp3_ != nullptr;
     }
 
@@ -40,7 +40,7 @@ public:
             parent_->num_channels = mp3_->channels;
             parent_->length_in_samples = drmp3_get_pcm_frame_count(mp3_.get());
             parent_->num_bits = 16;
-        }else{
+        } else {
             mp3_ = nullptr;
             close();
         }

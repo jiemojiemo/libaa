@@ -14,7 +14,9 @@ public:
         openLAME(rate, channels, bits);
     }
 
-    ~Impl() { close(); }
+    ~Impl() {
+        close();
+    }
 
     void openLAME(int rate, int channels, int bits) {
         if (channels <= 0 || rate <= 0 || bits <= 0) {
@@ -118,7 +120,9 @@ public:
         }
     }
 
-    bool isOpen() const { return gfp_ != nullptr; }
+    bool isOpen() const {
+        return gfp_ != nullptr;
+    }
 
     MP3FormatWriter *parent_ = nullptr;
     lame_global_flags *gfp_ = nullptr;
@@ -136,9 +140,15 @@ bool MP3FormatWriter::writePlanar(const float **samples, int num_samples) {
 bool MP3FormatWriter::writeInterleave(const float *samples, int num_samples) {
     return impl_->writeInterleave(samples, num_samples);
 }
-void MP3FormatWriter::flush() { impl_->flush(); }
-void MP3FormatWriter::close() { return impl_->close(); }
+void MP3FormatWriter::flush() {
+    impl_->flush();
+}
+void MP3FormatWriter::close() {
+    return impl_->close();
+}
 
-bool MP3FormatWriter::isOpen() const { return impl_->isOpen(); }
+bool MP3FormatWriter::isOpen() const {
+    return impl_->isOpen();
+}
 
 } // namespace libaa

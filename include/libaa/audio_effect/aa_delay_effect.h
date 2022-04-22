@@ -11,7 +11,9 @@ class DelayEffect : public AudioEffectProcessor {
 public:
     DelayEffect();
 
-    std::string getName() const override { return "delay"; }
+    std::string getName() const override {
+        return "delay";
+    }
 
     void prepareToPlay(double sample_rate, int max_block_size) override;
 

@@ -23,9 +23,13 @@ public:
         copyFromVectors(channel_data);
     }
 
-    size_t getNumberChannels() const { return num_channels_; }
+    size_t getNumberChannels() const {
+        return num_channels_;
+    }
 
-    size_t getNumberFrames() const { return num_frames_; }
+    size_t getNumberFrames() const {
+        return num_frames_;
+    }
 
     const T *getReadPointer(size_t channel) const {
         return &data_[channel * num_frames_];
@@ -79,7 +83,9 @@ private:
         return max_frames_size;
     }
 
-    void allocateData() { data_.resize(num_channels_ * num_frames_, 0.0f); }
+    void allocateData() {
+        data_.resize(num_channels_ * num_frames_, 0.0f);
+    }
 
 private:
     void copyFromVectors(const std::list<std::vector<T>> &channel_data) {

@@ -13,7 +13,9 @@ namespace libaa {
 class VibratoEffect : public AudioEffectProcessor {
 public:
     VibratoEffect();
-    std::string getName() const override { return std::string("vibrato"); }
+    std::string getName() const override {
+        return std::string("vibrato");
+    }
     void prepareToPlay(double sample_rate, int max_block_size) override;
 
     void reset() override {}

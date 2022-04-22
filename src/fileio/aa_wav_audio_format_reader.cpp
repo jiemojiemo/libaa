@@ -14,7 +14,9 @@ public:
         openWaveFromStream();
     }
 
-    ~Impl() { drwav_uninit(&wav_); }
+    ~Impl() {
+        drwav_uninit(&wav_);
+    }
 
     bool readSamples(float **dest_channels, int num_dest_channels,
                      int start_offset_of_dest, int64_t start_offset_of_file,
