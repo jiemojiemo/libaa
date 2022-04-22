@@ -46,3 +46,20 @@ jobs:
         run: bash ./scripts/android_build.sh -a armeabi-v7a -b build-android-armv7
         env:
           ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+
+  android_arm64-v8a:
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - uses: nttld/setup-ndk@v1
+        id: setup-ndk
+        with:
+          ndk-version: r21e
+          add-to-path: false
+      - name: Build
+        shell: bash
+        run: bash ./scripts/android_build.sh -a arm64-v8a -b build-android-aarch64
+        env:
+          ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}

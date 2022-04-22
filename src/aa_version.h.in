@@ -1,0 +1,15 @@
+//
+// Created by user on 4/22/22.
+//
+
+#ifndef LIBAA_AA_VERSION_H
+#define LIBAA_AA_VERSION_H
+
+#pragma once
+
+#define LIBAA_VERSION "${libaa_GIT_SHORT_TAG}"
+#define LIBAA_RELEASE_DATA "${GIT_REPO_DATE}"
+#define LIBAA_RELEASE_COMMIT "${GIT_REPO_HASH}"
+#define LIBAA_PACKAGE_NAME "${AE_PACKAGE_NAME}"
+
+#endif // LIBAA_AA_VERSION_H

@@ -77,4 +77,21 @@ if (LIBAA_INSTALL)
             DESTINATION
             "lib/cmake/"
             )
+
+    # install version file
+    include(GitUtils)
+    include(git_revision)
+    get_git_revision_info(
+            libaa_GIT_SHORT_TAG
+            libaa_GIT_LONG_TAG
+            libaa_GIT_COMMIT_HASH)
+
+    configure_file(
+            ${CMAKE_CURRENT_SOURCE_DIR}/aa_version.h.in
+            ${CMAKE_BINARY_DIR}/aa_version.h)
+    install(
+            FILES ${CMAKE_BINARY_DIR}/aa_version.h
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    )
+
 endif ()

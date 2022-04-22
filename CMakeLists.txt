@@ -8,7 +8,7 @@ include(GNUInstallDirs)
 if (NOT DEFINED CMAKE_INSTALL_PREFIX)
     set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "Installation Directory")
 endif ()
-message(STATUS "CMAKE_INSTALL_PREFIX = ${CMAKE_INSTALL_PREFIX}")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 option(COVERAGE "Use coverage flag" OFF)
 option(LIBAA_BUILD_TESTING "Build unit test" ON)
