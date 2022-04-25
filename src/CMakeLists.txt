@@ -23,10 +23,12 @@ target_include_directories(libaa
         $<BUILD_INTERFACE:${LIBAA_3RD_DIR}/farbot/include>
         $<BUILD_INTERFACE:${LIBAA_3RD_DIR}/Ring-Buffer>
         $<BUILD_INTERFACE:${LIBAA_3RD_DIR}/dr_libs>
+        $<BUILD_INTERFACE:${LIBAA_3RD_DIR}/rubberband-2.0.2/rubberband>
+        $<BUILD_INTERFACE:${LIBAA_3RD_DIR}/rubberband-2.0.2/src>
         )
 
 target_link_libraries(libaa
-        PUBLIC kissfft fdk-aac mp3lame)
+        PUBLIC kissfft fdk-aac mp3lame rubberband)
 target_compile_features(libaa PUBLIC cxx_std_14)
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -57,6 +59,20 @@ if (LIBAA_INSTALL)
             ARCHIVE DESTINATION lib
             )
     install(EXPORT mp3lame DESTINATION lib/cmake)
+
+    install(TARGETS samplerate
+            EXPORT samplerate
+            LIBRARY DESTINATION lib
+            ARCHIVE DESTINATION lib
+            )
+    install(EXPORT samplerate DESTINATION lib/cmake)
+
+    install(TARGETS rubberband
+            EXPORT rubberband
+            LIBRARY DESTINATION lib
+            ARCHIVE DESTINATION lib
+            )
+    install(EXPORT rubberband DESTINATION lib/cmake)
 
     install(TARGETS libaa
             EXPORT libaa-targets

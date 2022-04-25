@@ -52,7 +52,7 @@ public:
     /**
      * Returns the processing latency in samples
      */
-    int getLatencySamples() const noexcept {
+    virtual int getLatencySamples() const noexcept {
         return 0;
     }
 
