@@ -2,8 +2,16 @@ add_subdirectory(kissfft)
 add_subdirectory(fdk-aac)
 add_subdirectory(portaudio EXCLUDE_FROM_ALL)
 add_subdirectory(libmp3lame)
-add_subdirectory(libsamplerate-0.2.2)
-add_subdirectory(rubberband-2.0.2)
+
+if (NOT EXISTS samplerate)
+    option(BUILD_TESTING OFF)
+    add_subdirectory(libsamplerate-0.2.2)
+endif ()
+# build rubberband after samplerate since it depends on samplerate
+if (NOT EXISTS rubberband)
+    add_subdirectory(rubberband-2.0.2)
+endif ()
+
 if (LIBAA_BUILD_TESTING)
     add_subdirectory(googletest EXCLUDE_FROM_ALL)
 endif ()
