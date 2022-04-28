@@ -21,5 +21,6 @@ add_subdirectory(app)
 add_subdirectory(fileio)
 add_subdirectory(core)
 add_subdirectory(dsp)
+add_subdirectory(graph)
 add_subdirectory(processor)
 
