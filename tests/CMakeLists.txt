@@ -9,6 +9,8 @@ function(add_libaa_test unit_test_name)
             libaa
             aa_test_helper
             )
+    target_include_directories(${unit_test_name} PRIVATE
+            ${LIBAA_DIR}/tests/common/include)
 
     add_test(
             NAME ${unit_test_name}
