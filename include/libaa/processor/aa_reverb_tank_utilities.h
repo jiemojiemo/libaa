@@ -20,19 +20,19 @@ class ReverbTankUtilities {
 public:
     enum ParameterIndex {
         kReverbTime = 0,
-        kDamping,
-        kLowShelfFc,
-        kLowShelfGainDB,
-        kHighShelfFc,
-        kHighShelfGainDB,
-        kDensity,
-        kPreDelay,
-        kWetDB,
-        kDryDB,
-        kMaxAPFDelay,
-        kAPFDelayWeight,
-        kMaxFixedDelay,
-        kFixedDelayWeight
+        kDamping = 1,
+        kLowShelfFc = 2,
+        kLowShelfGainDB = 3,
+        kHighShelfFc = 4,
+        kHighShelfGainDB = 5,
+        kDensity = 6,
+        kPreDelay = 7,
+        kWetDB = 8,
+        kDryDB = 9,
+        kMaxAPFDelay = 10,
+        kAPFDelayWeight = 11,
+        kMaxFixedDelay = 12,
+        kFixedDelayWeight = 13
     };
 
     ReverbTankUtilities() {

@@ -5,8 +5,10 @@
 #include "libaa/fileio/aa_file_output_stream.h"
 #include "libaa/fileio/aa_wav_audio_format_reader.h"
 #include "libaa/fileio/aa_wav_audio_format_writer.h"
+#include "libaa/processor/aa_moorer_reverb_processor.h"
 #include "libaa/processor/aa_reverb_tank_processor.h"
 #include "libaa/processor/aa_reverb_tank_utilities.h"
+#include "libaa/processor/aa_schroeder_reverb_processor.h"
 #include <cassert>
 #include <iostream>
 using namespace std;
@@ -41,9 +43,15 @@ int main(int argc, char *argv[]) {
     assert(num_channels == 1);
 
     std::vector<float> sample_buffer(predefine_block_size, 0.0f);
-    ReverbTankProcessor proc;
+    //    SchroederReverbProcessor proc;
+    MoorerReverbProcessor proc;
+    //    ReverbTankProcessor proc;
     int num_params = proc.getParameters()->size();
     AudioBlock block(num_channels, predefine_block_size, num_params);
+    block.param_changes.push(1, {0, 0, 1.0f});
+    //    block.param_changes.push(8, {1, 0, 1.0f});
+    //    block.param_changes.push(9, {1, 0, 0.0f});
+
     float *dest_chan[1] = {block.buffer.getWriterPointer(0)};
 
     WavFormatWriter writer(std::move(out_stream), reader.sample_rate,
@@ -63,23 +71,11 @@ int main(int argc, char *argv[]) {
 
         reader.readSamples(dest_chan, num_channels, 0, 0, acctual_block_size);
 
-        //        auto &processed_index = proc.utilities_.processed_index;
-        if (processed_index >= 51200) {
+        if (processed_index == 51200) {
             proc.processBlock(&block, &block);
         } else {
             proc.processBlock(&block, &block);
-        };
-
-        //        for (int i = 0; i < acctual_block_size; ++i) {
-        //            float output = block.buffer.getWriterPointer(0)[i];
-        //            //            if (fabs(output) > 1e-2) {
-        //            //                cout << processed_index << "," << output
-        //            << endl;
-        //            //            }
-        //            if (processed_index >= 0 && processed_index <= 0 + 5000) {
-        //                cout << processed_index << "," << output << endl;
-        //            }
-        //        }
+        }
 
         writer.writePlanar(reinterpret_cast<const float **>(&dest_chan),
                            acctual_block_size);
