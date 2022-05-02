@@ -19,6 +19,8 @@ public:
 
     size_t getNumParameters() const;
 
+    void resize(size_t num_params, size_t params_fifo_size);
+
     bool push(size_t param_index, const ParameterChangePoint &result);
 
     bool pop(size_t param_index, ParameterChangePoint &result);

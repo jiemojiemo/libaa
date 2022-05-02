@@ -3,7 +3,7 @@
 // Created by William.Hua on 2021/7/21.
 //
 
-#include "libaa/audio_effect/aa_gain_processor.h"
+#include "libaa/processor/aa_gain_processor.h"
 #include "libaa/dsp/aa_db_utils.h"
 #include <cmath>
 namespace libaa {
