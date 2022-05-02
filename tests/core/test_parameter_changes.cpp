@@ -71,3 +71,14 @@ TEST_F(AParameterChanges, PopFailedIfParamIndexOutOfSize) {
 
     ASSERT_FALSE(ok);
 }
+
+TEST_F(AParameterChanges, CanResize)
+{
+    ParameterChanges param_changes(num_param, fifo_size);
+
+    int new_num_param = 10;
+    int new_fifo_size = 20;
+    param_changes.resize(new_num_param, new_fifo_size);
+
+    ASSERT_THAT(param_changes.getNumParameters(), new_num_param);
+}
