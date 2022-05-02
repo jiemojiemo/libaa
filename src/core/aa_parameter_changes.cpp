@@ -16,6 +16,16 @@ size_t ParameterChanges::getNumParameters() const {
     return param_changes_.size();
 }
 
+void ParameterChanges::resize(size_t num_params, size_t params_fifo_size) {
+    if (num_params != getNumParameters()) {
+        param_changes_.resize(num_params, nullptr);
+        for (size_t i = 0; i < num_params; ++i) {
+            param_changes_[i] =
+                std::make_shared<ParameterChange>(params_fifo_size);
+        }
+    }
+}
+
 bool ParameterChanges::push(size_t param_index,
                             const ParameterChangePoint &result) {
     if (param_index >= param_changes_.size()) {

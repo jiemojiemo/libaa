@@ -13,14 +13,14 @@
 #include <array>
 
 namespace libaa {
-class SchroederProcessor : public IAudioProcessor {
+class SchroederReverbProcessor : public IAudioProcessor {
 public:
-    SchroederProcessor() {
-        params_.pushFloatParameter("Reverb Time", 0.3f, 0.0f, 2.0f);
+    SchroederReverbProcessor() {
+        params_.pushFloatParameter("Reverb Time(ms)", 50.0f, 0.0f, 2000.0f);
         params_.pushFloatParameter("Wet", 1.0f, 0.0f, 1.0f);
         params_.pushFloatParameter("Dry", 0.0f, 0.0f, 1.0f);
     }
-    ~SchroederProcessor() override = default;
+    ~SchroederReverbProcessor() override = default;
     std::string getName() const override {
         return {"SchroederReverb"};
     }
@@ -57,9 +57,10 @@ public:
             float mono_xn = (xn_L + xn_R) * 0.5f;
 
             float comb_output = 0.0f;
-            for (auto &cf : comb_filters_) {
-                comb_output += cf.processSample(mono_xn);
-            }
+            comb_output += comb_filters_[0].processSample(mono_xn);
+            comb_output -= comb_filters_[1].processSample(mono_xn);
+            comb_output += comb_filters_[2].processSample(mono_xn);
+            comb_output -= comb_filters_[3].processSample(mono_xn);
 
             float apf_output = comb_output;
             for (auto &apf : allpass_filters_) {

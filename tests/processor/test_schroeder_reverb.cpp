@@ -9,7 +9,7 @@ using namespace testing;
 using namespace libaa;
 class ASchroederProcessor : public Test {
 public:
-    SchroederProcessor proc;
+    SchroederReverbProcessor proc;
 };
 
 TEST_F(ASchroederProcessor, CanReportCorrectName) {
@@ -25,10 +25,10 @@ TEST_F(ASchroederProcessor, ReverbTimeParameterAsExpect) {
     auto param = proc.getParameters()->get(p_index);
 
     ASSERT_THAT(param.getParameterID(), Eq(p_index));
-    ASSERT_THAT(param.getParameterName(), Eq("Reverb Time"));
-    ASSERT_THAT(param.getPlainValue(), FloatEq(0.3f));
+    ASSERT_THAT(param.getParameterName(), Eq("Reverb Time(ms)"));
+    ASSERT_THAT(param.getPlainValue(), FloatEq(50.0f));
     ASSERT_THAT(param.getMinPlainValue(), FloatEq(0.0f));
-    ASSERT_THAT(param.getMaxPlainValue(), FloatEq(2.0f));
+    ASSERT_THAT(param.getMaxPlainValue(), FloatEq(2000.0f));
 }
 
 TEST_F(ASchroederProcessor, WetParameterAsExpect) {
@@ -53,19 +53,15 @@ TEST_F(ASchroederProcessor, DryParameterAsExpect) {
     ASSERT_THAT(param.getMaxPlainValue(), FloatEq(1.0f));
 }
 
-TEST_F(ASchroederProcessor, DISABLED_CanProcess) {
+TEST_F(ASchroederProcessor, CanProcess) {
     int num_params = proc.getParameters()->size();
-    AudioBlock block{{{1, 0, 0, 0}, {1, 0, 0, 0}}, num_params};
+    AudioBlock block{{{1, 1, 1, 1}, {1, 1, 1, 1}}, num_params};
 
     float sample_rate = 2;
     int max_block_size = 4;
     proc.prepareToPlay(sample_rate, max_block_size);
     proc.processBlock(&block, &block);
 
-    EXPECT_THAT(block.buffer.getWriterPointer(0)[0], FloatNear(0.995172, 1e-5));
-    EXPECT_THAT(block.buffer.getWriterPointer(0)[1], FloatNear(0.010529, 1e-5));
-
-    EXPECT_THAT(block.buffer.getWriterPointer(1)[0], FloatNear(1.00483, 1e-5));
-    EXPECT_THAT(block.buffer.getWriterPointer(1)[1],
-                FloatNear(-0.010529f, 1e-5));
+    EXPECT_THAT(block.buffer.getWriterPointer(0)[0], FloatEq(0.0f));
+    EXPECT_THAT(block.buffer.getWriterPointer(1)[0], FloatEq(0.0f));
 }
