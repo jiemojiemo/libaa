@@ -32,24 +32,36 @@ public:
     }
 
     const T *getReadPointer(size_t channel) const {
+        if (channel >= getNumberChannels()) {
+            return nullptr;
+        }
         return &data_[channel * num_frames_];
     }
 
     T *getWriterPointer(size_t channel) {
+        if (channel >= getNumberChannels()) {
+            return nullptr;
+        }
         return &data_[channel * num_frames_];
     }
 
     void copyFrom(AudioBufferX<T> *other) {
-        for (auto c = 0u; c < getNumberChannels(); ++c) {
-            std::copy_n(other->getReadPointer(c), getNumberFrames(),
-                        this->getWriterPointer(c));
+        copyFrom(other, getNumberChannels(), getNumberFrames(), 0, 0);
+    }
+
+    void copyFrom(AudioBufferX<T> *other, int num_channels, int num_frames,
+                  int src_frame_offset, int dest_frame_offset) {
+        for (auto c = 0; c < num_channels; ++c) {
+            const T *s = other->getReadPointer(c) + src_frame_offset;
+            T *d = getWriterPointer(c) + dest_frame_offset;
+            std::copy_n(s, num_frames, d);
         }
     }
 
     void copyFrom(T **source, int num_channels, int num_frames,
                   int src_frame_offset, int dest_frame_offset) {
         for (auto c = 0; c < num_channels; ++c) {
-            T *s = source[c] + src_frame_offset;
+            const T *s = source[c] + src_frame_offset;
             T *d = getWriterPointer(c) + dest_frame_offset;
             std::copy_n(s, num_frames, d);
         }
@@ -69,6 +81,10 @@ public:
         num_frames_ = num_frames;
 
         allocateData();
+    }
+
+    void resizeFrames(size_t num_frames) {
+        resize(getNumberChannels(), num_frames);
     }
 
 private:

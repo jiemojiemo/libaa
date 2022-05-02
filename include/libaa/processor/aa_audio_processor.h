@@ -59,8 +59,12 @@ public:
     /**
      * Returns the length of the processor's tail, in seconds.
      */
-    float getTailLengthSeconds() const {
+    virtual float getTailLengthSeconds() const {
         return 0.0f;
+    }
+
+    virtual int getTailLengthSamples() const{
+        return 0;
     }
 
     /**

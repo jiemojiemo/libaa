@@ -86,6 +86,18 @@ TEST_F(AAudioBufferNew, CanCopyFromOtherBuffer) {
     ASSERT_THAT(output_buffer, Eq(input_buffer));
 }
 
+TEST_F(AAudioBufferNew, CanCopyFromOtherBufferWithOffset)
+{
+    AudioBufferX<float> input_buffer({{1, 2, 3}, {4, 5, 6}});
+    AudioBufferX<float> output_buffer(input_buffer.getNumberChannels(),
+                                      input_buffer.getNumberFrames());
+
+    output_buffer.copyFrom(&input_buffer, 1, 2, 1, 1);
+
+    ASSERT_THAT(output_buffer.getReadPointer(0)[1], Eq(2));
+    ASSERT_THAT(output_buffer.getReadPointer(0)[2], Eq(3));
+}
+
 TEST_F(AAudioBufferNew, CanResize) {
     AudioBufferX<float> audio_buffer(2, 3);
 
@@ -114,17 +126,34 @@ TEST_F(AAudioBufferNew, CanCopyFromFloatArrays) {
 }
 
 TEST_F(AAudioBufferNew, CanCopyToOtherFloatArrays) {
-    AudioBufferX<float> audio_buffer{{{1, 1, 1},
-                                      {
-                                          2,
-                                          2,
-                                          2,
-                                      }}};
+    AudioBufferX<float> audio_buffer{{{1, 2, 3}, {4, 5, 6}}};
     float samples[2][3];
     float *data_refer_to[2] = {samples[0], samples[1]};
 
     audio_buffer.copyTo(data_refer_to, 2, 3, 0, 0);
 
     ASSERT_THAT(samples[0][0], Eq(1));
-    ASSERT_THAT(samples[1][0], Eq(2));
+    ASSERT_THAT(samples[1][0], Eq(4));
+}
+
+TEST_F(AAudioBufferNew, GetNullWriterPointerIfChannelsOutputOfRange) {
+    AudioBufferX<float> audio_buffer{{{1, 2, 3}, {4, 5, 6}}};
+
+    ASSERT_THAT(audio_buffer.getWriterPointer(3), Eq(nullptr));
+}
+
+TEST_F(AAudioBufferNew, GetNullReadPointerIfChannelsOutputOfRange) {
+    AudioBufferX<float> audio_buffer{{{1, 2, 3}, {4, 5, 6}}};
+    
+    ASSERT_THAT(audio_buffer.getReadPointer(3), Eq(nullptr));
+}
+
+TEST_F(AAudioBufferNew, ResizeFramesReallocateInternalBuffer)
+{
+    AudioBufferX<float> audio_buffer{{{1, 2, 3}, {4, 5, 6}}};
+    int new_frames = 10;
+
+    audio_buffer.resizeFrames(new_frames);
+
+    ASSERT_THAT(audio_buffer.getNumberFrames(), Eq(new_frames));
 }
