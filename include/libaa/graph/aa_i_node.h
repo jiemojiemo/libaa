@@ -20,6 +20,13 @@ public:
     virtual std::string getNodeID() const = 0;
 
     /**
+     * prepare to play
+     * @param sample_rate the playback sample rate
+     * @param max_block_size max number of samples during play
+     */
+    virtual void prepareToPlay(float sample_rate, int max_block_size) = 0;
+
+    /**
      * Adds upstream audio connection
      */
     virtual void addUpstreamAudioConnection(const AudioConnection &c) = 0;
@@ -41,6 +48,16 @@ public:
      * state
      */
     virtual void prepareForNextBlock() = 0;
+
+    /**
+     * Returns all input ports
+     */
+    virtual const std::vector<AudioPort> &getAudioInputPorts() const = 0;
+
+    /**
+     * Returns all output ports
+     */
+    virtual const std::vector<AudioPort> &getAudioOutputPorts() const = 0;
 };
 } // namespace libaa
 
