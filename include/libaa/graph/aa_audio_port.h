@@ -7,6 +7,7 @@
 
 #pragma once
 #include "libaa/core/aa_audio_block.h"
+#include <cassert>
 #include <memory>
 
 namespace libaa {
