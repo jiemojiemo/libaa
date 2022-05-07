@@ -3,32 +3,10 @@
 //
 
 #include "libaa/graph/aa_audio_processor_node.h"
+#include "libaa_testing/aa_mock_processor.h"
 #include <gmock/gmock.h>
 
 using namespace testing;
-
-namespace libaa {
-
-class MockProcessor : public IAudioProcessor {
-public:
-    ~MockProcessor() override = default;
-    MockProcessor() {
-        ON_CALL(*this, getName).WillByDefault(Return("MockProcessor"));
-        ON_CALL(*this, getLatencySamples).WillByDefault(Return(0));
-        ON_CALL(*this, getTailLengthSamples).WillByDefault(Return(0));
-    }
-
-    MOCK_METHOD(std::string, getName, (), (override, const));
-    MOCK_METHOD(void, processBlock, (AudioBlock *, AudioBlock *), (override));
-    MOCK_METHOD(const AudioProcessorParameters *, getParameters, (),
-                (override, const));
-    MOCK_METHOD(void, prepareToPlay, (float, int), (override));
-    MOCK_METHOD(int, getLatencySamples, (), (override, const, noexcept));
-    MOCK_METHOD(int, getTailLengthSamples, (), (override, const, noexcept));
-};
-
-} // namespace libaa
-
 using namespace libaa;
 
 class AProcessorNode : public Test {
@@ -106,15 +84,13 @@ TEST_F(AProcessorNode, HasDefalutOneStereoOutputAudioPort) {
     ASSERT_THAT(node.getAudioOutputPortChannels(0), Eq(2));
 }
 
-TEST_F(AProcessorNode, GetAudioInputPortChannelsThrowsIfOutofSize)
-{
+TEST_F(AProcessorNode, GetAudioInputPortChannelsThrowsIfOutofSize) {
     ProcessorNode node(proc);
 
     ASSERT_ANY_THROW(node.getAudioOutputPortChannels(1));
 }
 
-TEST_F(AProcessorNode, GetAudioOutputPortChannelsThrowsIfOutofSize)
-{
+TEST_F(AProcessorNode, GetAudioOutputPortChannelsThrowsIfOutofSize) {
     ProcessorNode node(proc);
 
     ASSERT_ANY_THROW(node.getAudioOutputPortChannels(1));

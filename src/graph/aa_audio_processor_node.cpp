@@ -10,6 +10,17 @@ auto getTotalChannels(const std::initializer_list<int> &input_channels) {
     return std::accumulate(input_channels.begin(), input_channels.end(), 0);
 }
 
+auto getNumberOfParameters(const std::shared_ptr<IAudioProcessor>& proc){
+    size_t num_params = 0;
+    if(proc != nullptr){
+        num_params = (proc->getParameters() == nullptr)
+                              ? 0
+                              : proc->getParameters()->size();
+    }
+
+    return num_params;
+}
+
 ProcessorNode::ProcessorNode(std::shared_ptr<IAudioProcessor> proc)
     : ProcessorNode(std::move(proc), {2}, {2}) {}
 
@@ -100,9 +111,7 @@ void ProcessorNode::initInputAndOutputBlock(
     const std::initializer_list<int> &output_channels) {
     auto total_input_channels = getTotalChannels(input_channels);
     auto total_output_channels = getTotalChannels(output_channels);
-    auto num_params = (proc_->getParameters() == nullptr)
-                          ? 0
-                          : proc_->getParameters()->size();
+    auto num_params = getNumberOfParameters(proc_);
 
     const int init_num_frames = 0;
     input_block_ = std::make_shared<AudioBlock>(total_input_channels,
