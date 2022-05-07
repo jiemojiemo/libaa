@@ -65,8 +65,13 @@ AudioPort &ProcessorNode::pullAudioPort(int output_audio_port) {
 bool ProcessorNode::hasProcessed() const {
     return has_processed_.load();
 }
+
+void ProcessorNode::setProcessedState(bool is_processed) {
+    has_processed_.store(is_processed);
+}
+
 void ProcessorNode::prepareForNextBlock() {
-    has_processed_.store(false);
+    setProcessedState(false);
 }
 
 void ProcessorNode::addAudioInputPort(int num_in_channel) {
@@ -75,14 +80,6 @@ void ProcessorNode::addAudioInputPort(int num_in_channel) {
     input_block_->buffer.resize(new_channel_size, 0);
     input_audio_ports_.emplace_back(input_block_, num_in_channel,
                                     old_channel_size);
-}
-
-const std::vector<AudioPort> &ProcessorNode::getAudioInputPorts() const {
-    return input_audio_ports_;
-}
-
-const std::vector<AudioPort> &ProcessorNode::getAudioOutputPorts() const {
-    return output_audio_ports_;
 }
 
 const std::vector<AudioConnection> &
@@ -135,18 +132,15 @@ void ProcessorNode::initAudioPorts(
 
 void ProcessorNode::checkConnectionValidAndThrow(
     const AudioConnection &c) const {
-    const auto &upstream_audio_output_ports =
-        c.upstream_node->getAudioOutputPorts();
-    const auto &downstream_audio_input_ports = getAudioInputPorts();
 
-    auto upstream_output_port_size = upstream_audio_output_ports.size();
+    auto upstream_output_port_size = c.upstream_node->getAudioOutputPortSize();
     if (c.upstream_audio_port_index >=
         static_cast<int>(upstream_output_port_size)) {
         throw std::invalid_argument(
             "invalid connection: upstream port output of range");
     }
 
-    auto downstream_input_port_size = downstream_audio_input_ports.size();
+    auto downstream_input_port_size = getAudioInputPortSize();
     if (c.downstream_audio_port_index >=
         static_cast<int>(downstream_input_port_size)) {
         throw std::invalid_argument(
@@ -154,15 +148,26 @@ void ProcessorNode::checkConnectionValidAndThrow(
     }
 
     auto upstream_port_num_channels =
-        upstream_audio_output_ports[c.upstream_audio_port_index]
-            .getNumberChannels();
+        c.upstream_node->getAudioOutputPortChannels(
+            c.upstream_audio_port_index);
     auto downstream_port_num_channels =
-        downstream_audio_input_ports[c.downstream_audio_port_index]
-            .getNumberChannels();
+        getAudioInputPortChannels(c.downstream_audio_port_index);
     if (upstream_port_num_channels != downstream_port_num_channels) {
         throw std::invalid_argument(
             "invalid connection: number of channels mismatch");
     }
+}
+int ProcessorNode::getAudioInputPortSize() const {
+    return input_audio_ports_.size();
+}
+int ProcessorNode::getAudioOutputPortSize() const {
+    return output_audio_ports_.size();
+}
+int ProcessorNode::getAudioInputPortChannels(int port_index) const {
+    return input_audio_ports_.at(port_index).getNumberChannels();
+}
+int ProcessorNode::getAudioOutputPortChannels(int port_index) const {
+    return output_audio_ports_.at(port_index).getNumberChannels();
 }
 
 } // namespace libaa

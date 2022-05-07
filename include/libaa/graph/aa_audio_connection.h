@@ -31,6 +31,9 @@ public:
     int upstream_audio_port_index{-1};
     int downstream_audio_port_index{-1};
 };
+
+bool operator==(const AudioConnection &lhs, const AudioConnection &rhs);
+
 } // namespace libaa
 
 #endif // LIBAA_AA_AUDIO_CONNECTION_H
