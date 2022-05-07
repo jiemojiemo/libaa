@@ -17,7 +17,8 @@ public:
     std::unique_ptr<PitchShifterUtilities> utilities_stereo{nullptr};
 };
 
-PitchShiftProcessor::PitchShiftProcessor() : impl_(std::make_shared<Impl>()) {
+PitchShiftProcessor::PitchShiftProcessor()
+    : impl_(std::make_shared<Impl>()) {
     impl_->params_.pushFloatParameter("Octaves", 0, -2.0f, 2.0f);
     impl_->params_.pushFloatParameter("Semitones", 0, -12.0f, 12.0f);
     impl_->params_.pushFloatParameter("Cents", 0, -100.0f, 100.0f);

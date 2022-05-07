@@ -148,7 +148,7 @@ private:
     std::array<float, kNumCombFilter> comb_filter_delays = {
         29.0f, 31.0f, 37.0f, 41.0f, 43.0f, 47.0f};
     std::array<float, kNumCombFilter> comb_filter_lpf_g = {0.41f, 0.51, 0.61f,
-                                                           0.67,  0.83, 0.91};
+                                                           0.67, 0.83, 0.91};
 
     std::array<DelayAPF, 1> allpass_filters_;
     std::array<float, 1> allpass_filters_delays = {5};

@@ -14,7 +14,8 @@ public:
     drwav wav;
 };
 
-WavDecoder::WavDecoder() : impl_(std::make_shared<Impl>()) {}
+WavDecoder::WavDecoder()
+    : impl_(std::make_shared<Impl>()) {}
 
 int WavDecoder::open(const std::string &filename) {
     if (!drwav_init_file(&impl_->wav, filename.c_str(), NULL)) {

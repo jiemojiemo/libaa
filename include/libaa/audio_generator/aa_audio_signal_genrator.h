@@ -7,7 +7,9 @@
 
 namespace libaa {
 
-enum class GeneratorWaveform { kTriangle = 0, kSin, kSaw };
+enum class GeneratorWaveform { kTriangle = 0,
+                               kSin,
+                               kSaw };
 
 struct SignalGenData {
     double normal_output = 0.0;

@@ -9,7 +9,9 @@
 #include <string>
 #include <vector>
 namespace libaa {
-enum class ParameterType { kFloat = 0, kChoice, kBool };
+enum class ParameterType { kFloat = 0,
+                           kChoice,
+                           kBool };
 
 class AudioProcessorParameter {
 public:

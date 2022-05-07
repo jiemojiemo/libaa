@@ -63,6 +63,7 @@ public:
     int getAudioInputPortChannels(int port_index) const override;
 
     int getAudioOutputPortChannels(int port_index) const override;
+
 private:
     std::vector<std::shared_ptr<INode>> nodes_;
     InputPortNodeConnections input_audio_port_connections_;

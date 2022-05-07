@@ -8,7 +8,8 @@
 #pragma once
 #include "libaa/core/aa_delay_line.h"
 namespace libaa {
-template <typename T> class DelayLines {
+template <typename T>
+class DelayLines {
 public:
     DelayLines() = default;
 

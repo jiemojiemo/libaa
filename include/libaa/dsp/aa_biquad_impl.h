@@ -7,11 +7,23 @@
 #include <array>
 
 namespace libaa {
-enum filter_coeff { a0, a1, a2, b1, b2, c0, d0, num_coeffs };
-enum state_registers { z0, z1, z2, z3, num_states };
+enum filter_coeff { a0,
+                    a1,
+                    a2,
+                    b1,
+                    b2,
+                    c0,
+                    d0,
+                    num_coeffs };
+enum state_registers { z0,
+                       z1,
+                       z2,
+                       z3,
+                       num_states };
 using FilterCoeffs = std::array<float, num_coeffs>;
 
-template <typename T> class BiquadImpl {
+template <typename T>
+class BiquadImpl {
 public:
     T processSample(T in) {
         return processSampleWithDirectForm(in);

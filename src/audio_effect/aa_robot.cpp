@@ -9,7 +9,8 @@ using namespace std;
 namespace libaa {
 class Robotisation::Impl {
 public:
-    Impl(Robotisation *parent) : parent_(parent) {}
+    Impl(Robotisation *parent)
+        : parent_(parent) {}
 
     void prepareToPlay(double sample_rate, int max_block_size) {
         (void)sample_rate;
@@ -157,7 +158,8 @@ public:
     Robotisation *parent_;
 };
 
-Robotisation::Robotisation() : impl_(std::make_shared<Impl>(this)) {}
+Robotisation::Robotisation()
+    : impl_(std::make_shared<Impl>(this)) {}
 void Robotisation::prepareToPlay(double sample_rate, int max_block_size) {
     impl_->prepareToPlay(sample_rate, max_block_size);
 }

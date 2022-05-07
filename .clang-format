@@ -1,6 +1,7 @@
 ---
-Language:	Cpp
+Language: Cpp
 IndentWidth: 4
 AccessModifierOffset: -4
 AllowShortFunctionsOnASingleLine: Empty
+ColumnLimit: 0
 ...

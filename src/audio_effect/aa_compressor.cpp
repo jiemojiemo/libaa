@@ -89,7 +89,8 @@ public:
     float makeup_gain_;
 };
 
-Compressor::Compressor() : impl_(std::make_shared<Impl>()) {}
+Compressor::Compressor()
+    : impl_(std::make_shared<Impl>()) {}
 
 void Compressor::prepareToPlay(double sample_rate, int max_block_size) {
     impl_->prepareToPlay(sample_rate, max_block_size);

@@ -266,7 +266,8 @@ public:
     BiquadFilter biquad_filter_;
 };
 
-IIRFilter::IIRFilter() : impl_(std::make_shared<Impl>()) {}
+IIRFilter::IIRFilter()
+    : impl_(std::make_shared<Impl>()) {}
 
 void IIRFilter::prepareToPlay(double sample_rate, int max_block_size) {
     impl_->biquad_filter_.prepareToPlay(sample_rate, max_block_size);

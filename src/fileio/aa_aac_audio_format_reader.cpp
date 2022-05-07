@@ -13,7 +13,8 @@
 namespace libaa {
 class AACAudioFormatReader::Impl {
 public:
-    Impl(AACAudioFormatReader *parent) : parent_(parent) {}
+    Impl(AACAudioFormatReader *parent)
+        : parent_(parent) {}
 
     bool isOpenOk() {
         return handle_ != nullptr;

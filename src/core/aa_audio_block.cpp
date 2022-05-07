@@ -6,7 +6,8 @@
 #include "libaa/core/aa_audio_block.h"
 
 namespace libaa {
-AudioBlock::AudioBlock() : param_changes(0, 1) {}
+AudioBlock::AudioBlock()
+    : param_changes(0, 1) {}
 
 AudioBlock::AudioBlock(int num_channels, int num_frames, int num_param)
     : buffer(num_channels, num_frames), param_changes(num_param, 1) {}

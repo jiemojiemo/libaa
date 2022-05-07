@@ -10,9 +10,11 @@
 #include <list>
 #include <vector>
 namespace libaa {
-template <typename T> class AudioBufferX {
+template <typename T>
+class AudioBufferX {
 public:
-    explicit AudioBufferX() : AudioBufferX(0, 0) {}
+    explicit AudioBufferX()
+        : AudioBufferX(0, 0) {}
     explicit AudioBufferX(size_t num_channels, size_t num_frames)
         : num_channels_(num_channels), num_frames_(num_frames) {
         allocateData();

@@ -29,7 +29,8 @@ struct LevelDetectorParameters {
 
 class LevelDetector {
 public:
-    LevelDetector(LevelDetectorParameters p) : param_(std::move(p)) {}
+    LevelDetector(LevelDetectorParameters p)
+        : param_(std::move(p)) {}
 
     void prepare(float sample_rate) {
         sample_rate_ = sample_rate;

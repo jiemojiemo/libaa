@@ -8,7 +8,8 @@ using namespace libaa;
 
 class ADelayLines : public Test {
 public:
-    ADelayLines() : dlines(num_lines, line_size) {}
+    ADelayLines()
+        : dlines(num_lines, line_size) {}
     int num_lines = 2;
     int line_size = 128;
 

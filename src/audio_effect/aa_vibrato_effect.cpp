@@ -63,6 +63,7 @@ void VibratoEffect::processBlock(AudioBuffer<float> &buffer) {
 
     impl_->phase_ = phase;
 }
-VibratoEffect::VibratoEffect() : impl_(std::make_shared<Impl>()) {}
+VibratoEffect::VibratoEffect()
+    : impl_(std::make_shared<Impl>()) {}
 
 } // namespace libaa

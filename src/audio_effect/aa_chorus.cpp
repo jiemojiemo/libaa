@@ -15,7 +15,8 @@ public:
     DelayLines<float> dlines_;
 };
 
-Chorus::Chorus() : impl_(std::make_shared<Impl>()) {}
+Chorus::Chorus()
+    : impl_(std::make_shared<Impl>()) {}
 
 void Chorus::prepareToPlay(double sample_rate, int max_block_size) {
     (void)max_block_size;

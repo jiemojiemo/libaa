@@ -10,7 +10,8 @@ namespace libaa {
 
 class ParameterChange::Impl {
 public:
-    Impl(size_t size) : size_(size), points_(size) {}
+    Impl(size_t size)
+        : size_(size), points_(size) {}
 
 public:
     size_t size_{0};

@@ -72,8 +72,7 @@ TEST_F(AParameterChanges, PopFailedIfParamIndexOutOfSize) {
     ASSERT_FALSE(ok);
 }
 
-TEST_F(AParameterChanges, CanResize)
-{
+TEST_F(AParameterChanges, CanResize) {
     ParameterChanges param_changes(num_param, fifo_size);
 
     int new_num_param = 10;

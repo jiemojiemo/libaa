@@ -8,7 +8,8 @@
 #pragma once
 #include <algorithm>
 namespace libaa {
-template <typename T> T findNextPower2Number(T v) {
+template <typename T>
+T findNextPower2Number(T v) {
     v--;
     v |= v >> 1;
     v |= v >> 2;

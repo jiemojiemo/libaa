@@ -10,7 +10,8 @@
 namespace libaa {
 class Mp3AudioFormatReader::Impl {
 public:
-    Impl(Mp3AudioFormatReader *parent) : parent_(parent) {
+    Impl(Mp3AudioFormatReader *parent)
+        : parent_(parent) {
         openMp3FromStream();
     }
 

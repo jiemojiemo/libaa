@@ -10,7 +10,8 @@
 namespace libaa {
 class ExponentialSmoother {
 public:
-    explicit ExponentialSmoother(float alpha) : alpha_(alpha) {}
+    explicit ExponentialSmoother(float alpha)
+        : alpha_(alpha) {}
 
     float getAlpha() const {
         return alpha_;

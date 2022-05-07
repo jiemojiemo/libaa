@@ -12,7 +12,8 @@ public:
     LFO lfo_;
 };
 
-Tremolo::Tremolo() : impl_(std::make_shared<Impl>()) {}
+Tremolo::Tremolo()
+    : impl_(std::make_shared<Impl>()) {}
 
 std::string Tremolo::getName() const {
     return std::string("tremolo");

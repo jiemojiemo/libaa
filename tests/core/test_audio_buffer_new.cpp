@@ -86,8 +86,7 @@ TEST_F(AAudioBufferNew, CanCopyFromOtherBuffer) {
     ASSERT_THAT(output_buffer, Eq(input_buffer));
 }
 
-TEST_F(AAudioBufferNew, CanCopyFromOtherBufferWithOffset)
-{
+TEST_F(AAudioBufferNew, CanCopyFromOtherBufferWithOffset) {
     AudioBufferX<float> input_buffer({{1, 2, 3}, {4, 5, 6}});
     AudioBufferX<float> output_buffer(input_buffer.getNumberChannels(),
                                       input_buffer.getNumberFrames());
@@ -144,12 +143,11 @@ TEST_F(AAudioBufferNew, GetNullWriterPointerIfChannelsOutputOfRange) {
 
 TEST_F(AAudioBufferNew, GetNullReadPointerIfChannelsOutputOfRange) {
     AudioBufferX<float> audio_buffer{{{1, 2, 3}, {4, 5, 6}}};
-    
+
     ASSERT_THAT(audio_buffer.getReadPointer(3), Eq(nullptr));
 }
 
-TEST_F(AAudioBufferNew, ResizeFramesReallocateInternalBuffer)
-{
+TEST_F(AAudioBufferNew, ResizeFramesReallocateInternalBuffer) {
     AudioBufferX<float> audio_buffer{{{1, 2, 3}, {4, 5, 6}}};
     int new_frames = 10;
 

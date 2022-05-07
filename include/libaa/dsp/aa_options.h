@@ -7,7 +7,8 @@
 
 namespace libaa {
 
-enum class DistanceType { kEuclidean = 0, kCosine };
+enum class DistanceType { kEuclidean = 0,
+                          kCosine };
 
 enum class WindowType {
     kRectangle = 0,

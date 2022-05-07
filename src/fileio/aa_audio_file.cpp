@@ -47,7 +47,8 @@ public:
     std::unique_ptr<AudioDecoder> decoder;
 };
 
-AudioFile::AudioFile() : impl_(std::make_shared<Impl>()) {}
+AudioFile::AudioFile()
+    : impl_(std::make_shared<Impl>()) {}
 
 int AudioFile::load(const std::string &filename) {
     impl_->decoder = AudioDecoderFactory::createDecoder(filename);

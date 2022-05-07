@@ -14,7 +14,8 @@ using namespace libaa;
 
 class AFFT : public Test {
 public:
-    AFFT() : fft(nfft) {}
+    AFFT()
+        : fft(nfft) {}
 
     const int nfft = 8;
     FFT fft;

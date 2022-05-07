@@ -10,7 +10,8 @@
 namespace libaa {
 class WaveAudioFormatReader::Impl {
 public:
-    Impl(WaveAudioFormatReader *parent) : parent_(parent) {
+    Impl(WaveAudioFormatReader *parent)
+        : parent_(parent) {
         openWaveFromStream();
     }
 

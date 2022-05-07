@@ -12,7 +12,8 @@ public:
     kiss_fftr_cfg inverse_cfg_{nullptr};
 };
 
-FFT::FFT(size_t nfft) : nfft_(nfft), impl_(std::make_shared<Impl>()) {
+FFT::FFT(size_t nfft)
+    : nfft_(nfft), impl_(std::make_shared<Impl>()) {
     impl_->forward_cfg_ = kiss_fftr_alloc(nfft_, 0, 0, 0);
     impl_->inverse_cfg_ = kiss_fftr_alloc(nfft_, 1, 0, 0);
 }

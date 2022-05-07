@@ -8,7 +8,8 @@
 #include <memory>
 #include <vector>
 namespace libaa {
-template <typename T> class DelayLine {
+template <typename T>
+class DelayLine {
 public:
     void clear() noexcept {
         std::fill(&raw_data_[0], (&raw_data_[0] + size()), T(0));

@@ -55,7 +55,7 @@ TEST_F(AIIRFilter, CanGetkLPF1Coeffs) {
 
     auto coeffs = f.calcFilterCoefficients(parameters, sample_rate);
     std::array<float, 7> expected = {0.00707352, 0.00707352, 0, -0.985853,
-                                     0,          1,          0};
+                                     0, 1, 0};
     ASSERT_THAT(coeffs, Pointwise(NearWithPrecision(1e-6), expected));
 }
 
@@ -64,7 +64,7 @@ TEST_F(AIIRFilter, CanGetkHPF1Coeffs) {
 
     auto coeffs = f.calcFilterCoefficients(parameters, sample_rate);
     std::array<float, 7> expected = {0.992926, -0.992926, 0, -0.985853,
-                                     0,        1,         0};
+                                     0, 1, 0};
     ASSERT_THAT(coeffs, Pointwise(NearWithPrecision(1e-6), expected));
 }
 
@@ -82,7 +82,7 @@ TEST_F(AIIRFilter, CanGetkHPF2Coeffs) {
 
     auto coeffs = f.calcFilterCoefficients(parameters, sample_rate);
     std::array<float, 7> expected = {0.989974, -1.97995, 0.989974, -1.97985,
-                                     0.98005,  1,        0};
+                                     0.98005, 1, 0};
     ASSERT_THAT(coeffs, Pointwise(NearWithPrecision(1e-5), expected));
 }
 
@@ -100,7 +100,7 @@ TEST_F(AIIRFilter, CanGetkBSF2Coeffs) {
 
     auto coeffs = f.calcFilterCoefficients(parameters, sample_rate);
     std::array<float, 7> expected = {0.990025, -1.97985, 0.990025, -1.97985,
-                                     0.98005,  1,        0};
+                                     0.98005, 1, 0};
     ASSERT_THAT(coeffs, Pointwise(NearWithPrecision(1e-5), expected));
 }
 
@@ -117,7 +117,7 @@ TEST_F(AIIRFilter, CanGetkAPF2Coeffs) {
 
     auto coeffs = f.calcFilterCoefficients(parameters, sample_rate);
     std::array<float, 7> expected = {0.980048, -1.97985, 1, -1.97985,
-                                     0.980048, 1,        0};
+                                     0.980048, 1, 0};
     ASSERT_THAT(coeffs, Pointwise(NearWithPrecision(1e-5), expected));
 }
 
@@ -126,7 +126,7 @@ TEST_F(AIIRFilter, CanGetkLowShelfCoeffs) {
 
     auto coeffs = f.calcFilterCoefficients(parameters, sample_rate);
     std::array<float, 7> expected = {0.0140477, 0.0140477, 0, -0.971905,
-                                     0,         0,         1};
+                                     0, 0, 1};
     ASSERT_THAT(coeffs, Pointwise(NearWithPrecision(1e-5), expected));
 }
 
@@ -135,6 +135,6 @@ TEST_F(AIIRFilter, CanGetkHighShelfCoeffs) {
 
     auto coeffs = f.calcFilterCoefficients(parameters, sample_rate);
     std::array<float, 7> expected = {0.996451, -0.996451, 0, -0.992901,
-                                     0,        0,         1};
+                                     0, 0, 1};
     ASSERT_THAT(coeffs, Pointwise(NearWithPrecision(1e-5), expected));
 }

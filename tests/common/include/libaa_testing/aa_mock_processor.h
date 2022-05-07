@@ -9,8 +9,7 @@
 #include "libaa/processor/aa_audio_processor.h"
 #include <gmock/gmock.h>
 
-namespace libaa
-{
+namespace libaa {
 class MockProcessor : public IAudioProcessor {
 public:
     ~MockProcessor() override = default;
@@ -28,6 +27,6 @@ public:
     MOCK_METHOD(int, getLatencySamples, (), (override, const, noexcept));
     MOCK_METHOD(int, getTailLengthSamples, (), (override, const, noexcept));
 };
-}
+} // namespace libaa
 
 #endif // LIBAA_AA_MOCK_PROCESSOR_H

@@ -9,7 +9,8 @@
 namespace libaa {
 class LFOGenerator::Impl {
 public:
-    Impl(LFOGenerator *parent) : parent_(parent) {}
+    Impl(LFOGenerator *parent)
+        : parent_(parent) {}
 
     void prepare(double sample_rate) {
         sample_rate_ = sample_rate;
@@ -86,7 +87,8 @@ public:
     LFOGenerator *parent_;
 };
 
-LFOGenerator::LFOGenerator() : impl_(std::make_shared<Impl>(this)) {}
+LFOGenerator::LFOGenerator()
+    : impl_(std::make_shared<Impl>(this)) {}
 
 void LFOGenerator::prepare(float sample_rate) {
     return impl_->prepare(sample_rate);

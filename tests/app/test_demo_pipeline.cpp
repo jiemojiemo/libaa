@@ -14,7 +14,8 @@ class ChangeDemoNameValue : public DemoValue {
 public:
     virtual ~ChangeDemoNameValue() = default;
 
-    ChangeDemoNameValue(std::string name) : new_name(std::move(name)) {}
+    ChangeDemoNameValue(std::string name)
+        : new_name(std::move(name)) {}
 
     void process(DemoContext &context) override {
         context.demo_name = new_name;

@@ -9,7 +9,8 @@ using namespace testing;
 using namespace libaa;
 class AAudioConnection : public Test {
 public:
-    AAudioConnection() : port(nullptr) {}
+    AAudioConnection()
+        : port(nullptr) {}
     void SetUp() override {
         block = std::shared_ptr<AudioBlock>(
             new AudioBlock({{1, 2, 3, 4}, {5, 6, 7, 8}}));

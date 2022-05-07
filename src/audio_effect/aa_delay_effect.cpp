@@ -54,5 +54,6 @@ void DelayEffect::processBlock(AudioBuffer<float> &buffer) {
         }
     }
 }
-DelayEffect::DelayEffect() : impl_(std::make_shared<Impl>()) {}
+DelayEffect::DelayEffect()
+    : impl_(std::make_shared<Impl>()) {}
 } // namespace libaa

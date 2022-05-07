@@ -7,9 +7,11 @@
 using std::vector;
 
 namespace libaa {
-template <typename T> class AudioBuffer {
+template <typename T>
+class AudioBuffer {
 public:
-    AudioBuffer() : num_channels_(0), size_(0), channels_(32, nullptr) {}
+    AudioBuffer()
+        : num_channels_(0), size_(0), channels_(32, nullptr) {}
 
     explicit AudioBuffer(int num_channels, int num_samples)
         : num_channels_(static_cast<size_t>(num_channels)),

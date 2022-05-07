@@ -81,7 +81,8 @@ public:
     }
 };
 
-Distortion::Distortion() : impl_(std::make_shared<Impl>()) {}
+Distortion::Distortion()
+    : impl_(std::make_shared<Impl>()) {}
 
 void Distortion::prepareToPlay(double sample_rate, int max_block_size) {
     (void)sample_rate;

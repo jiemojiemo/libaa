@@ -13,7 +13,8 @@
 namespace libaa {
 class AudioPort {
 public:
-    explicit AudioPort() : AudioPort(nullptr, 0) {}
+    explicit AudioPort()
+        : AudioPort(nullptr, 0) {}
     explicit AudioPort(const std::shared_ptr<AudioBlock> &block)
         : AudioPort(block, block->buffer.getNumberChannels()) {}
 

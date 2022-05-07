@@ -16,7 +16,8 @@ public:
     DelayLines<float> dlines_;
 };
 
-Flanger::Flanger() : impl_(std::make_shared<Impl>()) {}
+Flanger::Flanger()
+    : impl_(std::make_shared<Impl>()) {}
 
 void Flanger::prepareToPlay(double sample_rate, int max_block_size) {
     (void)max_block_size;

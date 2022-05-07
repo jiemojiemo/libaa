@@ -63,7 +63,7 @@ public:
         return 0.0f;
     }
 
-    virtual int getTailLengthSamples() const{
+    virtual int getTailLengthSamples() const {
         return 0;
     }
 

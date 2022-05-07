@@ -57,8 +57,8 @@ TEST_F(AParameters, CanAddChoiceParameter) {
 
     AudioProcessorParameter &p = params.get(0);
     AudioProcessorParameter expected{
-        ParameterType::kChoice, 0,      "choice", 0, 0,
-        float(choices.size()),  choices};
+        ParameterType::kChoice, 0, "choice", 0, 0,
+        float(choices.size()), choices};
 
     ASSERT_THAT(p, Eq(expected));
 }

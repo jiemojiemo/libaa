@@ -10,12 +10,12 @@ auto getTotalChannels(const std::initializer_list<int> &input_channels) {
     return std::accumulate(input_channels.begin(), input_channels.end(), 0);
 }
 
-auto getNumberOfParameters(const std::shared_ptr<IAudioProcessor>& proc){
+auto getNumberOfParameters(const std::shared_ptr<IAudioProcessor> &proc) {
     size_t num_params = 0;
-    if(proc != nullptr){
+    if (proc != nullptr) {
         num_params = (proc->getParameters() == nullptr)
-                              ? 0
-                              : proc->getParameters()->size();
+                         ? 0
+                         : proc->getParameters()->size();
     }
 
     return num_params;
