@@ -44,20 +44,23 @@ public:
     virtual bool hasProcessed() const = 0;
 
     /**
+     * Sets processed state, see aso @hasProcessed
+     */
+    virtual void setProcessedState(bool is_processed) = 0;
+
+    /**
      * Prepare for next block, call this before `pull` and reset hasProcessed()
      * state
      */
     virtual void prepareForNextBlock() = 0;
 
-    /**
-     * Returns all input ports
-     */
-    virtual const std::vector<AudioPort> &getAudioInputPorts() const = 0;
+    virtual int getAudioInputPortSize() const = 0;
 
-    /**
-     * Returns all output ports
-     */
-    virtual const std::vector<AudioPort> &getAudioOutputPorts() const = 0;
+    virtual int getAudioOutputPortSize() const = 0;
+
+    virtual int getAudioInputPortChannels(int port_index) const = 0;
+
+    virtual int getAudioOutputPortChannels(int port_index) const = 0;
 };
 } // namespace libaa
 

@@ -92,20 +92,32 @@ TEST_F(AProcessorNode, InitWithProcessReallocateParameterChanges) {
                 Eq(num_params));
 }
 
-TEST_F(AProcessorNode, HasDefalutOneInputAudioPort) {
+TEST_F(AProcessorNode, HasDefalutOneStereoInputAudioPort) {
     ProcessorNode node(proc);
 
-    auto ports = node.getAudioInputPorts();
-    ASSERT_THAT(ports.size(), Eq(1));
-    ASSERT_THAT(ports[0].getNumberChannels(), Eq(2));
+    ASSERT_THAT(node.getAudioInputPortSize(), Eq(1));
+    ASSERT_THAT(node.getAudioInputPortChannels(0), Eq(2));
 }
 
-TEST_F(AProcessorNode, HasDefalutOneOutputAudioPort) {
+TEST_F(AProcessorNode, HasDefalutOneStereoOutputAudioPort) {
     ProcessorNode node(proc);
 
-    auto ports = node.getAudioOutputPorts();
-    ASSERT_THAT(ports.size(), Eq(1));
-    ASSERT_THAT(ports[0].getNumberChannels(), Eq(2));
+    ASSERT_THAT(node.getAudioOutputPortSize(), Eq(1));
+    ASSERT_THAT(node.getAudioOutputPortChannels(0), Eq(2));
+}
+
+TEST_F(AProcessorNode, GetAudioInputPortChannelsThrowsIfOutofSize)
+{
+    ProcessorNode node(proc);
+
+    ASSERT_ANY_THROW(node.getAudioOutputPortChannels(1));
+}
+
+TEST_F(AProcessorNode, GetAudioOutputPortChannelsThrowsIfOutofSize)
+{
+    ProcessorNode node(proc);
+
+    ASSERT_ANY_THROW(node.getAudioOutputPortChannels(1));
 }
 
 TEST_F(AProcessorNode, InitWithChannelsHasMultipleInputAudioPort) {
@@ -113,15 +125,18 @@ TEST_F(AProcessorNode, InitWithChannelsHasMultipleInputAudioPort) {
     auto output_channels = {1};
     ProcessorNode node(proc, input_channels, output_channels);
 
-    auto input_ports = node.getAudioInputPorts();
-    auto output_ports = node.getAudioOutputPorts();
+    ASSERT_THAT(node.getAudioInputPortSize(), Eq(input_channels.size()));
+    ASSERT_THAT(node.getAudioInputPortChannels(0), Eq(2));
+    ASSERT_THAT(node.getAudioInputPortChannels(1), Eq(2));
 
-    ASSERT_THAT(input_ports.size(), Eq(input_channels.size()));
-    ASSERT_THAT(input_ports[0].getNumberChannels(), Eq(2));
-    ASSERT_THAT(input_ports[1].getNumberChannels(), Eq(2));
+    ASSERT_THAT(node.getAudioOutputPortSize(), Eq(output_channels.size()));
+    ASSERT_THAT(node.getAudioOutputPortChannels(0), Eq(1));
+}
 
-    ASSERT_THAT(output_ports.size(), Eq(output_channels.size()));
-    ASSERT_THAT(output_ports[0].getNumberChannels(), Eq(1));
+TEST_F(AProcessorNode, CanGetAudioInputPortSize) {
+    ProcessorNode node(proc);
+
+    ASSERT_THAT(node.getAudioInputPortSize(), Eq(1));
 }
 
 TEST_F(AProcessorNode, AddInputPortWillReallocateInputBuffer) {
@@ -132,12 +147,13 @@ TEST_F(AProcessorNode, AddInputPortWillReallocateInputBuffer) {
     ASSERT_THAT(node.getInputBlock()->buffer.getNumberChannels(), Eq(4));
 }
 
-TEST_F(AProcessorNode, AddAudioInputPortIncreaseTheAudioPorts) {
+TEST_F(AProcessorNode, AddInputPortIncreaseThePortSize) {
     ProcessorNode node(proc);
-    ASSERT_THAT(node.getAudioInputPorts().size(), Eq(1));
+    ASSERT_THAT(node.getAudioInputPortSize(), Eq(1));
 
     node.addAudioInputPort(2);
-    ASSERT_THAT(node.getAudioInputPorts().size(), Eq(2));
+
+    ASSERT_THAT(node.getAudioInputPortSize(), Eq(2));
 }
 
 TEST_F(AProcessorNode, DefaultIDIsEmpty) {
@@ -207,7 +223,7 @@ TEST_F(AProcessorNode, AddConnectionThrowsIfUpstreamPortIndexInvalid) {
     AudioConnection connection{upstream_node, 1, 0};
 
     ASSERT_THAT(upstream_port_index,
-                Ge(upstream_node->getAudioOutputPorts().size()));
+                Ge(upstream_node->getAudioOutputPortSize()));
     ASSERT_ANY_THROW(node.addUpstreamAudioConnection(connection));
 }
 
@@ -216,7 +232,7 @@ TEST_F(AProcessorNode, AddConnectionThrowsIfDownstreamPortIndexInvalid) {
     int downstream_port_index = 1;
     AudioConnection connection{upstream_node, 0, downstream_port_index};
 
-    ASSERT_THAT(downstream_port_index, Ge(node.getAudioInputPorts().size()));
+    ASSERT_THAT(downstream_port_index, Ge(node.getAudioInputPortSize()));
     ASSERT_ANY_THROW(node.addUpstreamAudioConnection(connection));
 }
 
@@ -224,8 +240,8 @@ TEST_F(AProcessorNode, AddConnectionThrowsChannelsMismatch) {
     ProcessorNode node(proc, {1}, {2});
     AudioConnection connection{upstream_node, 0, 0};
 
-    ASSERT_THAT(upstream_node->getAudioOutputPorts()[0].getNumberChannels(),
-                Not(node.getAudioInputPorts()[0].getNumberChannels()));
+    ASSERT_THAT(upstream_node->getAudioOutputPortChannels(0),
+                Not(node.getAudioInputPortChannels(0)));
     ASSERT_ANY_THROW(node.addUpstreamAudioConnection(connection));
 }
 

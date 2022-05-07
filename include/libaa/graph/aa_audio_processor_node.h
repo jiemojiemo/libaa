@@ -36,13 +36,11 @@ public:
 
     bool hasProcessed() const override;
 
+    void setProcessedState(bool is_processed) override;
+
     void prepareForNextBlock() override;
 
     void addAudioInputPort(int num_in_channel);
-
-    const std::vector<AudioPort> &getAudioInputPorts() const override;
-
-    const std::vector<AudioPort> &getAudioOutputPorts() const override;
 
     const std::vector<AudioConnection> &getUpstreamAudioConnections() const;
 
@@ -50,6 +48,10 @@ public:
     const AudioBlock *getInputBlock() const;
 
     const AudioBlock *getOutputBlock() const;
+    int getAudioInputPortSize() const override;
+    int getAudioOutputPortSize() const override;
+    int getAudioInputPortChannels(int port_index) const override;
+    int getAudioOutputPortChannels(int port_index) const override;
 
 private:
     void
