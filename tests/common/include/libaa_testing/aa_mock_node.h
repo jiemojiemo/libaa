@@ -24,18 +24,10 @@ public:
     MOCK_METHOD(bool, hasProcessed, (), (override, const));
     MOCK_METHOD(void, setProcessedState, (bool), (override));
     MOCK_METHOD(void, prepareForNextBlock, (), (override));
-    int getAudioInputPortSize() const override {
-        return 0;
-    }
-    int getAudioOutputPortSize() const override {
-        return 0;
-    }
-    int getAudioInputPortChannels(int port_index) const override {
-        return 0;
-    }
-    int getAudioOutputPortChannels(int port_index) const override {
-        return 0;
-    }
+    MOCK_METHOD(int, getAudioInputPortSize, (), (override, const));
+    MOCK_METHOD(int, getAudioOutputPortSize, (), (override, const));
+    MOCK_METHOD(int, getAudioInputPortChannels, (int), (override, const));
+    MOCK_METHOD(int, getAudioOutputPortChannels, (int), (override, const));
 };
 } // namespace libaa
 
