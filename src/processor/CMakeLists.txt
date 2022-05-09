@@ -8,6 +8,7 @@ set(PROCESSOR_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_reverb_tank_processor.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_pitch_shifter_processor.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_source_processor.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/aa_source_callback_processor.cpp
         )
 
 set(PROCESSOR_SRC ${PROCESSOR_SRC} PARENT_SCOPE)
