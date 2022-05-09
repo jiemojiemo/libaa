@@ -73,7 +73,8 @@ private:
     OutputPortNodeConnections output_audio_port_connections_;
     std::string node_id_{};
 
-    ParameterChangePort p{nullptr};
+    std::shared_ptr<AudioBlock> block_ = std::make_shared<AudioBlock>();
+    ParameterChangePort p{block_};
 };
 } // namespace libaa
 #endif // LIBAA_AA_GRAPH_NODE_H
