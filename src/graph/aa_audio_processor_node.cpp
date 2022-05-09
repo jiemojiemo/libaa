@@ -29,7 +29,7 @@ ProcessorNode::ProcessorNode(std::shared_ptr<IAudioProcessor> proc,
                              const std::initializer_list<int> &input_channels,
                              const std::initializer_list<int> &output_channels)
     : proc_(std::move(proc)) {
-    initInputAndOutputBlock(input_channels, output_channels);
+    initBlocksAndPorts(input_channels, output_channels);
 }
 
 void ProcessorNode::setNodeID(std::string node_id) {
@@ -47,33 +47,66 @@ void ProcessorNode::prepareToPlay(float sample_rate, int max_block_size) {
 }
 
 void ProcessorNode::addUpstreamAudioConnection(const AudioConnection &c) {
-    checkConnectionValidAndThrow(c);
+    checkAudioConnectionValidAndThrow(c);
 
     audio_connections_.push_back(c);
 }
-AudioPort &ProcessorNode::pullAudioPort(int output_audio_port) {
+
+void ProcessorNode::addUpstreamParameterChangeConnection(const ParameterChangeConnection &c) {
+    checkParameterConnectionValidAndThrow(c);
+
+    param_change_connections_.push_back(c);
+}
+
+void ProcessorNode::pullUpstreamDataAndProcess() {
     if (!hasProcessed()) {
-        has_processed_.store(true);
+        pullUpstreamAudio();
+        pullUpstreamParameterChange();
 
-        // pull upstream port
-        for (auto i = 0u; i < audio_connections_.size(); ++i) {
-            const AudioPort &upstream_audio_port = audio_connections_[i].pull();
-
-            // write upstream audio buffer to input_block
-            auto downstream_port_index =
-                audio_connections_[i].downstream_port_index;
-            auto &downstream_port = input_audio_ports_[downstream_port_index];
-
-            downstream_port.copyFrom(&upstream_audio_port);
-        }
-
-        // processor process input_block to output_block
         proc_->processBlock(input_block_.get(), output_block_.get());
+
+        has_processed_.store(true);
     }
+}
+
+void ProcessorNode::pullUpstreamAudio() {
+    for (auto i = 0u; i < audio_connections_.size(); ++i) {
+        const AudioPort &upstream_audio_port = audio_connections_[i].pull();
+
+        // write upstream audio buffer to input_block
+        auto downstream_port_index =
+            audio_connections_[i].downstream_port_index;
+        auto &downstream_port = input_audio_ports_[downstream_port_index];
+
+        downstream_port.copyFrom(&upstream_audio_port);
+    }
+}
+void ProcessorNode::pullUpstreamParameterChange() {
+    for (auto i = 0u; i < param_change_connections_.size(); ++i) {
+        ParameterChangePort &upstream_pc_port = param_change_connections_[i].pull();
+        auto downstream_port_index = param_change_connections_[i].downstream_port_index;
+        auto &downstream_port = input_pc_ports_[downstream_port_index];
+
+        size_t num_params = upstream_pc_port.getParameterChanges().getNumParameters();
+        ParameterChangePoint pc_point{};
+        for (size_t ii = 0; ii < num_params; ++ii) {
+            bool ok = upstream_pc_port.getParameterChanges().pop(ii, pc_point);
+            if (ok) {
+                downstream_port.getParameterChanges().push(ii, pc_point);
+            }
+        }
+    }
+}
+
+AudioPort &ProcessorNode::pullAudioPort(int output_audio_port) {
+    pullUpstreamDataAndProcess();
 
     return output_audio_ports_.at(output_audio_port);
 }
+
 ParameterChangePort &ProcessorNode::pullParameterChangePort(int output_pc_port) {
+    pullUpstreamDataAndProcess();
+
     return output_pc_ports_.at(output_pc_port);
 }
 
@@ -102,6 +135,10 @@ ProcessorNode::getUpstreamAudioConnections() const {
     return audio_connections_;
 }
 
+const std::vector<ParameterChangeConnection> &ProcessorNode::getUpstreamParameterConnections() const {
+    return param_change_connections_;
+}
+
 const AudioBlock *ProcessorNode::getInputBlock() const {
     return input_block_.get();
 }
@@ -110,7 +147,7 @@ const AudioBlock *ProcessorNode::getOutputBlock() const {
     return output_block_.get();
 }
 
-void ProcessorNode::initInputAndOutputBlock(
+void ProcessorNode::initBlocksAndPorts(
     const std::initializer_list<int> &input_channels,
     const std::initializer_list<int> &output_channels) {
     auto total_input_channels = getTotalChannels(input_channels);
@@ -124,6 +161,9 @@ void ProcessorNode::initInputAndOutputBlock(
                                                  init_num_frames, num_params);
 
     initAudioPorts(input_channels, output_channels);
+
+    input_pc_ports_ = {ParameterChangePort{input_block_}};
+    output_pc_ports_ = {ParameterChangePort{output_block_}};
 }
 
 void ProcessorNode::initAudioPorts(
@@ -143,7 +183,7 @@ void ProcessorNode::initAudioPorts(
     }
 }
 
-void ProcessorNode::checkConnectionValidAndThrow(
+void ProcessorNode::checkAudioConnectionValidAndThrow(
     const AudioConnection &c) const {
 
     auto upstream_output_port_size = c.upstream_node->getAudioOutputPortSize();
@@ -170,6 +210,19 @@ void ProcessorNode::checkConnectionValidAndThrow(
             "invalid connection: number of channels mismatch");
     }
 }
+
+void ProcessorNode::checkParameterConnectionValidAndThrow(const ParameterChangeConnection &c) const {
+    if (c.upstream_port_index >= c.upstream_node->getParameterChangeOutputPortSize()) {
+        throw std::invalid_argument(
+            "invalid parameter change connection: upstream port output of range");
+    }
+
+    if (c.downstream_port_index >= getParameterChangeInputPortSize()) {
+        throw std::invalid_argument(
+            "invalid parameter change connection: downstream port output of range");
+    }
+}
+
 int ProcessorNode::getAudioInputPortSize() const {
     return input_audio_ports_.size();
 }
@@ -181,6 +234,12 @@ int ProcessorNode::getAudioInputPortChannels(int port_index) const {
 }
 int ProcessorNode::getAudioOutputPortChannels(int port_index) const {
     return output_audio_ports_.at(port_index).getNumberChannels();
+}
+int ProcessorNode::getParameterChangeInputPortSize() const {
+    return input_pc_ports_.size();
+}
+int ProcessorNode::getParameterChangeOutputPortSize() const {
+    return output_pc_ports_.size();
 }
 
 } // namespace libaa

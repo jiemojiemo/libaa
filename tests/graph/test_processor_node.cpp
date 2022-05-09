@@ -84,6 +84,18 @@ TEST_F(AProcessorNode, HasDefalutOneStereoOutputAudioPort) {
     ASSERT_THAT(node.getAudioOutputPortChannels(0), Eq(2));
 }
 
+TEST_F(AProcessorNode, HasDefaultOneInputParameterChangePort) {
+    ProcessorNode node(proc);
+
+    ASSERT_THAT(node.getParameterChangeInputPortSize(), Eq(1));
+}
+
+TEST_F(AProcessorNode, HasDefaultOneOutputParameterChangePort) {
+    ProcessorNode node(proc);
+
+    ASSERT_THAT(node.getParameterChangeOutputPortSize(), Eq(1));
+}
+
 TEST_F(AProcessorNode, GetAudioInputPortChannelsThrowsIfOutofSize) {
     ProcessorNode node(proc);
 
@@ -177,11 +189,24 @@ TEST_F(AProcessorNode, HasNoAudioConnectionWhenInit) {
     ASSERT_THAT(node.getUpstreamAudioConnections().size(), Eq(0));
 }
 
+TEST_F(AProcessorNode, HasNoParameterChangeConnectionWhenInit) {
+    ProcessorNode node(proc);
+
+    ASSERT_THAT(node.getUpstreamParameterConnections().size(), Eq(0));
+}
+
 TEST_F(AProcessorNode, CanAddUpstreamAudioConnection) {
     ProcessorNode node(proc);
     AudioConnection connection{upstream_node, 0, 0};
 
     node.addUpstreamAudioConnection(connection);
+}
+
+TEST_F(AProcessorNode, CanAddUpstreamParameterChangeConnection) {
+    ProcessorNode node(proc);
+    ParameterChangeConnection connection{upstream_node, 0, 0};
+
+    node.addUpstreamParameterChangeConnection(connection);
 }
 
 TEST_F(AProcessorNode, AddAudioConnectionIncreasesTheConnectionSize) {
@@ -193,7 +218,16 @@ TEST_F(AProcessorNode, AddAudioConnectionIncreasesTheConnectionSize) {
     ASSERT_THAT(node.getUpstreamAudioConnections().size(), Eq(1));
 }
 
-TEST_F(AProcessorNode, AddConnectionThrowsIfUpstreamPortIndexInvalid) {
+TEST_F(AProcessorNode, AddParameterChangeConnectionIncreasesTheConnectionSize) {
+    ProcessorNode node(proc);
+    ParameterChangeConnection connection{upstream_node, 0, 0};
+
+    node.addUpstreamParameterChangeConnection(connection);
+
+    ASSERT_THAT(node.getUpstreamParameterConnections().size(), Eq(1));
+}
+
+TEST_F(AProcessorNode, AddAudioConnectionThrowsIfUpstreamPortIndexInvalid) {
     ProcessorNode node(proc);
     int upstream_port_index = 1;
     AudioConnection connection{upstream_node, 1, 0};
@@ -203,7 +237,17 @@ TEST_F(AProcessorNode, AddConnectionThrowsIfUpstreamPortIndexInvalid) {
     ASSERT_ANY_THROW(node.addUpstreamAudioConnection(connection));
 }
 
-TEST_F(AProcessorNode, AddConnectionThrowsIfDownstreamPortIndexInvalid) {
+TEST_F(AProcessorNode, AddParameterChangeConnectionThrowsIfUpstreamPortIndexInvalid) {
+    ProcessorNode node(proc);
+    int upstream_port_index = 1;
+    ParameterChangeConnection connection{upstream_node, 1, 0};
+
+    ASSERT_THAT(upstream_port_index,
+                Ge(upstream_node->getParameterChangeOutputPortSize()));
+    ASSERT_ANY_THROW(node.addUpstreamParameterChangeConnection(connection));
+}
+
+TEST_F(AProcessorNode, AddAudioConnectionThrowsIfDownstreamPortIndexInvalid) {
     ProcessorNode node(proc);
     int downstream_port_index = 1;
     AudioConnection connection{upstream_node, 0, downstream_port_index};
@@ -212,7 +256,16 @@ TEST_F(AProcessorNode, AddConnectionThrowsIfDownstreamPortIndexInvalid) {
     ASSERT_ANY_THROW(node.addUpstreamAudioConnection(connection));
 }
 
-TEST_F(AProcessorNode, AddConnectionThrowsChannelsMismatch) {
+TEST_F(AProcessorNode, AddParameterChangeConnectionThrowsIfDownstreamPortIndexInvalid) {
+    ProcessorNode node(proc);
+    int downstream_port_index = 1;
+    ParameterChangeConnection connection{upstream_node, 0, downstream_port_index};
+
+    ASSERT_THAT(downstream_port_index, Ge(node.getAudioInputPortSize()));
+    ASSERT_ANY_THROW(node.addUpstreamParameterChangeConnection(connection));
+}
+
+TEST_F(AProcessorNode, AddAudioConnectionThrowsChannelsMismatch) {
     ProcessorNode node(proc, {1}, {2});
     AudioConnection connection{upstream_node, 0, 0};
 
@@ -245,7 +298,7 @@ TEST_F(AProcessorNode, PrepareForNextBlockResetTheProcessState) {
     ASSERT_FALSE(node.hasProcessed());
 }
 
-TEST_F(AProcessorNode, PullAudioPortWillPullUpstreamAudio) {
+TEST_F(AProcessorNode, PullAudioPortWillPullUpstreamBlock) {
     ProcessorNode node(proc);
     AudioConnection connection{upstream_node, 0, 0};
     node.addUpstreamAudioConnection(connection);
@@ -270,6 +323,37 @@ TEST_F(AProcessorNode, PullAudioPortWillPullUpstreamAudio) {
     ASSERT_THAT(port.getChannelData(1)[0], Eq(2));
 }
 
+TEST_F(AProcessorNode, PullParameterChangePortWillPullUpstreamBlcok) {
+    ProcessorNode node(proc);
+    ParameterChangeConnection connection{upstream_node, 0, 0};
+    node.addUpstreamParameterChangeConnection(connection);
+
+    upstream_node->prepareToPlay(sr, max_block_size);
+    node.prepareToPlay(sr, max_block_size);
+
+    EXPECT_CALL(*up_proc, processBlock)
+        .WillOnce([this](AudioBlock *input, AudioBlock *output) {
+            output->buffer.copyFrom(&this->block.buffer,
+                                    this->block.buffer.getNumberChannels(),
+                                    this->block.buffer.getNumberFrames(), 0, 0);
+        });
+
+    EXPECT_CALL(*proc, processBlock)
+        .WillOnce([](AudioBlock *input, AudioBlock *output) {
+            output->buffer.copyFrom(&input->buffer);
+            output->param_changes.push(0, {0, 1, 1});
+        });
+
+    ParameterChangePort &port = node.pullParameterChangePort(0);
+    ParameterChangePoint result{};
+    port.getParameterChanges().pop(0, result);
+
+    ASSERT_THAT(port.getParameterChanges().getNumParameters(), Eq(proc->getParameters()->size()));
+    ASSERT_THAT(result.index, Eq(0));
+    ASSERT_THAT(result.time, Eq(1));
+    ASSERT_THAT(result.normalized_value, Eq(1));
+}
+
 TEST_F(AProcessorNode, PullAudioPortReturnsLastResultIfHasProcessed) {
     ProcessorNode node(proc);
     AudioConnection connection{upstream_node, 0, 0};
@@ -287,4 +371,18 @@ TEST_F(AProcessorNode, PullAudioPortReturnsLastResultIfHasProcessed) {
                 Eq(port_second_time.getNumberChannels()));
     ASSERT_THAT(port_first_time.getChannelData(0),
                 Eq(port_second_time.getChannelData(0)));
+}
+
+TEST_F(AProcessorNode, PullParameterChangePortReturnsLastResultIfHasProcessed) {
+    ProcessorNode node(proc);
+    ParameterChangeConnection connection{upstream_node, 0, 0};
+    node.addUpstreamParameterChangeConnection(connection);
+    upstream_node->prepareToPlay(sr, max_block_size);
+    node.prepareToPlay(sr, max_block_size);
+
+    EXPECT_CALL(*up_proc, processBlock).Times(1);
+    EXPECT_CALL(*proc, processBlock).Times(1);
+
+    auto &port_first_time = node.pullParameterChangePort(0);
+    auto &port_second_time = node.pullParameterChangePort(0);
 }

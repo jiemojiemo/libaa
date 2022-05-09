@@ -14,9 +14,13 @@ class MockProcessor : public IAudioProcessor {
 public:
     ~MockProcessor() override = default;
     MockProcessor() {
+        params_.pushFloatParameter("mock_float_param", 0, 0, 1);
+        params_.pushBoolParameter("mock_boll_param", true);
+
         ON_CALL(*this, getName).WillByDefault(testing::Return("MockProcessor"));
         ON_CALL(*this, getLatencySamples).WillByDefault(testing::Return(0));
         ON_CALL(*this, getTailLengthSamples).WillByDefault(testing::Return(0));
+        ON_CALL(*this, getParameters).WillByDefault(testing::Return(&params_));
     }
 
     MOCK_METHOD(std::string, getName, (), (override, const));
@@ -26,6 +30,9 @@ public:
     MOCK_METHOD(void, prepareToPlay, (float, int), (override));
     MOCK_METHOD(int, getLatencySamples, (), (override, const, noexcept));
     MOCK_METHOD(int, getTailLengthSamples, (), (override, const, noexcept));
+
+private:
+    AudioProcessorParameters params_;
 };
 } // namespace libaa
 
