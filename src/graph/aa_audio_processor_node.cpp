@@ -61,7 +61,7 @@ AudioPort &ProcessorNode::pullAudioPort(int output_audio_port) {
 
             // write upstream audio buffer to input_block
             auto downstream_port_index =
-                audio_connections_[i].downstream_audio_port_index;
+                audio_connections_[i].downstream_port_index;
             auto &downstream_port = input_audio_ports_[downstream_port_index];
 
             downstream_port.copyFrom(&upstream_audio_port);
@@ -147,14 +147,14 @@ void ProcessorNode::checkConnectionValidAndThrow(
     const AudioConnection &c) const {
 
     auto upstream_output_port_size = c.upstream_node->getAudioOutputPortSize();
-    if (c.upstream_audio_port_index >=
+    if (c.upstream_port_index >=
         static_cast<int>(upstream_output_port_size)) {
         throw std::invalid_argument(
             "invalid connection: upstream port output of range");
     }
 
     auto downstream_input_port_size = getAudioInputPortSize();
-    if (c.downstream_audio_port_index >=
+    if (c.downstream_port_index >=
         static_cast<int>(downstream_input_port_size)) {
         throw std::invalid_argument(
             "invalid connection: downstream port output of range");
@@ -162,9 +162,9 @@ void ProcessorNode::checkConnectionValidAndThrow(
 
     auto upstream_port_num_channels =
         c.upstream_node->getAudioOutputPortChannels(
-            c.upstream_audio_port_index);
+            c.upstream_port_index);
     auto downstream_port_num_channels =
-        getAudioInputPortChannels(c.downstream_audio_port_index);
+        getAudioInputPortChannels(c.downstream_port_index);
     if (upstream_port_num_channels != downstream_port_num_channels) {
         throw std::invalid_argument(
             "invalid connection: number of channels mismatch");

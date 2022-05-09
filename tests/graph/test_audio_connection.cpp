@@ -37,11 +37,11 @@ TEST_F(AAudioConnection, CanGetUpStreamNode) {
 }
 
 TEST_F(AAudioConnection, CanGetUpStreamPortIndex) {
-    ASSERT_THAT(c->upstream_audio_port_index, Eq(up_port_index));
+    ASSERT_THAT(c->upstream_port_index, Eq(up_port_index));
 }
 
 TEST_F(AAudioConnection, CanGetDownStreamPortIndex) {
-    ASSERT_THAT(c->downstream_audio_port_index, Eq(down_port_index));
+    ASSERT_THAT(c->downstream_port_index, Eq(down_port_index));
 }
 
 TEST_F(AAudioConnection, PullWillTriggerUpstreamNodeToPull) {

@@ -25,11 +25,11 @@ void GraphNode::prepareToPlay(float sample_rate, int max_block_size) {
 }
 void GraphNode::addUpstreamAudioConnection(const AudioConnection &c) {
     auto &downstream_port_connections =
-        input_audio_port_connections_.at(c.downstream_audio_port_index);
+        input_audio_port_connections_.at(c.downstream_port_index);
 
     for (auto &port_connection : downstream_port_connections) {
         auto internal_node_port_index = port_connection.node_port_index;
-        AudioConnection new_c{c.upstream_node, c.upstream_audio_port_index,
+        AudioConnection new_c{c.upstream_node, c.upstream_port_index,
                               internal_node_port_index};
 
         port_connection.node->addUpstreamAudioConnection(new_c);

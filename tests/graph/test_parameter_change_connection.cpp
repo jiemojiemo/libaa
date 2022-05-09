@@ -35,11 +35,11 @@ TEST_F(AParameterChangeConnection, CanGetUpStreamNode) {
 }
 
 TEST_F(AParameterChangeConnection, CanGetUpStreamPortIndex) {
-    ASSERT_THAT(c->upstream_param_change_port_index, Eq(up_port_index));
+    ASSERT_THAT(c->upstream_port_index, Eq(up_port_index));
 }
 
 TEST_F(AParameterChangeConnection, CanGetDownStreamPortIndex) {
-    ASSERT_THAT(c->downstream_param_change_port_index, Eq(down_port_index));
+    ASSERT_THAT(c->downstream_port_index, Eq(down_port_index));
 }
 
 TEST_F(AParameterChangeConnection, PullWillTriggerUpstreamNodeToPull) {
