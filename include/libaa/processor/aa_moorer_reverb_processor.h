@@ -114,6 +114,14 @@ public:
         return &params_;
     }
 
+    void setState(uint8_t *state, size_t size) override {
+        (void)(state);
+        (void)(size);
+    }
+    std::vector<uint8_t> getState() const override {
+        return std::vector<uint8_t>();
+    }
+
 private:
     void updateCombFilterParameter(float new_rt_60) {
         for (int i = 0; i < comb_filters_.size(); ++i) {

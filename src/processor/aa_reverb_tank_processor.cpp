@@ -22,4 +22,11 @@ void ReverbTankProcessor::processBlock(AudioBlock *input, AudioBlock *output) {
 const AudioProcessorParameters *ReverbTankProcessor::getParameters() const {
     return &utilities_.params;
 }
+void ReverbTankProcessor::setState(uint8_t *state, size_t size) {
+    (void)(state);
+    (void)(size);
+}
+std::vector<uint8_t> ReverbTankProcessor::getState() const {
+    return std::vector<uint8_t>();
+}
 } // namespace libaa

@@ -30,5 +30,12 @@ const AudioProcessorParameters *SourceProcessor::getParameters() const {
 const AudioBufferX<float> *SourceProcessor::getChannelData() const {
     return channel_data_.get();
 }
+void SourceProcessor::setState(uint8_t *state, size_t size) {
+    (void)(state);
+    (void)(size);
+}
+std::vector<uint8_t> SourceProcessor::getState() const {
+    return std::vector<uint8_t>();
+}
 
 } // namespace libaa

@@ -43,5 +43,12 @@ void GainProcessor::applyGain(AudioBlock *block) {
         }
     }
 }
+void GainProcessor::setState(uint8_t *state, size_t size) {
+    (void)(state);
+    (void)(size);
+}
+vector<uint8_t> GainProcessor::getState() const {
+    return std::vector<uint8_t>();
+}
 
 } // namespace libaa

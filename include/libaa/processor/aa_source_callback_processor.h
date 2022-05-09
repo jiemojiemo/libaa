@@ -23,6 +23,10 @@ public:
     void setSourceCallback(SourceCallback callback);
 
     SourceCallback getSourceCallback() const;
+
+    void setState(uint8_t *state, size_t size) override;
+    std::vector<uint8_t> getState() const override;
+
 private:
     SourceCallback callback_{nullptr};
 };

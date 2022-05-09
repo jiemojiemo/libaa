@@ -72,6 +72,18 @@ public:
      */
     virtual const AudioProcessorParameters *getParameters() const = 0;
 
+    /**
+     * Sets processor state from binary data, @see IAudioProcessor::getState
+     * @param state the binary data array
+     * @param size the binary data size
+     */
+    virtual void setState(uint8_t* state, size_t size) = 0;
+
+    /**
+     * Returns the processor state, serialize processor to binary data, @see IAudioProcessor::setState
+     */
+    virtual std::vector<uint8_t> getState() const = 0;
+
 protected:
     float sample_rate_{0.0f};
     int max_block_size_{0};
