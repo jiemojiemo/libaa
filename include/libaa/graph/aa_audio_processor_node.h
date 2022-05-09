@@ -9,6 +9,7 @@
 #include "libaa/graph/aa_audio_connection.h"
 #include "libaa/graph/aa_audio_port.h"
 #include "libaa/graph/aa_i_node.h"
+#include "libaa/graph/aa_parameter_change_port.h"
 #include "libaa/processor/aa_audio_processor.h"
 #include <atomic>
 #include <cassert>
@@ -33,6 +34,8 @@ public:
     void addUpstreamAudioConnection(const AudioConnection &c) override;
 
     AudioPort &pullAudioPort(int output_audio_port) override;
+
+    ParameterChangePort &pullParameterChangePort(int output_pc_port) override;
 
     bool hasProcessed() const override;
 
@@ -66,6 +69,8 @@ private:
     std::shared_ptr<IAudioProcessor> proc_{nullptr};
     std::vector<AudioPort> input_audio_ports_;
     std::vector<AudioPort> output_audio_ports_;
+    std::vector<ParameterChangePort> input_pc_ports_;
+    std::vector<ParameterChangePort> output_pc_ports_;
     std::vector<AudioConnection> audio_connections_;
     std::shared_ptr<AudioBlock> input_block_{nullptr};
     std::shared_ptr<AudioBlock> output_block_{nullptr};

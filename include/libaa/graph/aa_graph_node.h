@@ -9,6 +9,7 @@
 #include "libaa/graph/aa_audio_connection.h"
 #include "libaa/graph/aa_audio_port.h"
 #include "libaa/graph/aa_i_node.h"
+#include "libaa/graph/aa_parameter_change_port.h"
 namespace libaa {
 class GraphNode : public INode {
 public:
@@ -44,6 +45,8 @@ public:
 
     AudioPort &pullAudioPort(int output_audio_port) override;
 
+    ParameterChangePort &pullParameterChangePort(int output_pc_port) override;
+
     bool hasProcessed() const override;
 
     void setProcessedState(bool is_processed) override;
@@ -69,6 +72,8 @@ private:
     InputPortNodeConnections input_audio_port_connections_;
     OutputPortNodeConnections output_audio_port_connections_;
     std::string node_id_{};
+
+    ParameterChangePort p{nullptr};
 };
 } // namespace libaa
 #endif // LIBAA_AA_GRAPH_NODE_H

@@ -9,6 +9,7 @@
 #include "libaa/graph/aa_audio_connection.h"
 #include "libaa/graph/aa_audio_port.h"
 #include "libaa/graph/aa_i_node.h"
+#include "libaa/graph/aa_parameter_change_port.h"
 #include <gmock/gmock.h>
 
 namespace libaa {
@@ -21,6 +22,7 @@ public:
     MOCK_METHOD(void, addUpstreamAudioConnection,
                 (const libaa::AudioConnection &), (override));
     MOCK_METHOD(libaa::AudioPort &, pullAudioPort, (int), (override));
+    MOCK_METHOD(libaa::ParameterChangePort &, pullParameterChangePort, (int), (override));
     MOCK_METHOD(bool, hasProcessed, (), (override, const));
     MOCK_METHOD(void, setProcessedState, (bool), (override));
     MOCK_METHOD(void, prepareForNextBlock, (), (override));

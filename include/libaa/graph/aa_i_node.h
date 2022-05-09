@@ -10,6 +10,7 @@
 namespace libaa {
 class AudioConnection;
 class AudioPort;
+class ParameterChangePort;
 
 class INode {
 public:
@@ -32,11 +33,16 @@ public:
     virtual void addUpstreamAudioConnection(const AudioConnection &c) = 0;
 
     /**
-     * Pulls data from update stream and then process the input data, finally
-     * returns the output audio port.
-     * @param output_audio_port , the output port index
+     * Pulls data from upstream node into input data, and then process it, finally returns the output parameter port.
+     * @param output_audio_port , the output audio port index
      */
     virtual AudioPort &pullAudioPort(int output_audio_port) = 0;
+
+    /**
+     * Pulls data from upstream node into input data, and then process it, finally returns the output parameter port.
+     * @param output_pc_port, the output parameter port index
+     */
+    virtual ParameterChangePort &pullParameterChangePort(int output_pc_port) = 0;
 
     /**
      * Returns true if last block processed
