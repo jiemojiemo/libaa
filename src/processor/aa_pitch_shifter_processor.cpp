@@ -76,4 +76,11 @@ int PitchShiftProcessor::getLatencySamples() const noexcept {
 void *PitchShiftProcessor::getPitchShifterImpl() const {
     return impl_->utilities_.get();
 }
+void PitchShiftProcessor::setState(uint8_t *state, size_t size) {
+    (void)(state);
+    (void)(size);
+}
+std::vector<uint8_t> PitchShiftProcessor::getState() const {
+    return std::vector<uint8_t>();
+}
 } // namespace libaa

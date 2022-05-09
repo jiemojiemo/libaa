@@ -22,6 +22,9 @@ public:
 
     const AudioProcessorParameters *getParameters() const override;
 
+    void setState(uint8_t *state, size_t size) override;
+    vector<uint8_t> getState() const override;
+
 private:
     void updateGainParameter(AudioBlock *block);
     void applyGain(AudioBlock *block);

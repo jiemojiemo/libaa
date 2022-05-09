@@ -32,4 +32,11 @@ void VibratorProcessor::processBlock(AudioBlock *input, AudioBlock *output) {
 const AudioProcessorParameters *VibratorProcessor::getParameters() const {
     return &param_;
 }
+void VibratorProcessor::setState(uint8_t *state, size_t size) {
+    (void)(state);
+    (void)(size);
+}
+vector<uint8_t> VibratorProcessor::getState() const {
+    return std::vector<uint8_t>();
+}
 } // namespace libaa

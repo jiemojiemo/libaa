@@ -24,6 +24,9 @@ public:
 
     const AudioProcessorParameters *getParameters() const override;
 
+    void setState(uint8_t *state, size_t size) override;
+    vector<uint8_t> getState() const override;
+
 private:
     AudioProcessorParameters param_;
     DelayProcessorUtilities utilities;

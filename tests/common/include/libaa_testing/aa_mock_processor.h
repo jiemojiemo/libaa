@@ -30,6 +30,8 @@ public:
     MOCK_METHOD(void, prepareToPlay, (float, int), (override));
     MOCK_METHOD(int, getLatencySamples, (), (override, const, noexcept));
     MOCK_METHOD(int, getTailLengthSamples, (), (override, const, noexcept));
+    MOCK_METHOD(void, setState, (uint8_t *state, size_t size), (override));
+    MOCK_METHOD(std::vector<uint8_t>, getState, (), (override, const));
 
 private:
     AudioProcessorParameters params_;

@@ -22,6 +22,9 @@ public:
 
     const AudioProcessorParameters *getParameters() const override;
 
+    void setState(uint8_t *state, size_t size) override;
+    std::vector<uint8_t> getState() const override;
+
     ReverbTankUtilities utilities_;
 };
 } // namespace libaa

@@ -26,4 +26,11 @@ void SourceCallbackProcessor::setSourceCallback(SourceCallback callback) {
 SourceCallbackProcessor::SourceCallback SourceCallbackProcessor::getSourceCallback() const {
     return callback_;
 }
+void SourceCallbackProcessor::setState(uint8_t *state, size_t size) {
+    (void)(state);
+    (void)(size);
+}
+std::vector<uint8_t> SourceCallbackProcessor::getState() const {
+    return std::vector<uint8_t>();
+}
 } // namespace libaa

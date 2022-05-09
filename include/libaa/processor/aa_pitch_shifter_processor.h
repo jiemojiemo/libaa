@@ -26,6 +26,9 @@ public:
 
     void *getPitchShifterImpl() const;
 
+    void setState(uint8_t *state, size_t size) override;
+    std::vector<uint8_t> getState() const override;
+
 private:
     class Impl;
     std::shared_ptr<Impl> impl_;

@@ -37,5 +37,12 @@ void DelayProcessor::processBlock(AudioBlock *input, AudioBlock *output) {
 const AudioProcessorParameters *DelayProcessor::getParameters() const {
     return &param_;
 }
+void DelayProcessor::setState(uint8_t *state, size_t size) {
+    (void)(state);
+    (void)(size);
+}
+vector<uint8_t> DelayProcessor::getState() const {
+    return std::vector<uint8_t>();
+}
 
 } // namespace libaa

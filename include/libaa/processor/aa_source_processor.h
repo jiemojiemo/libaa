@@ -25,6 +25,9 @@ public:
 
     const AudioBufferX<float> *getChannelData() const;
 
+    void setState(uint8_t *state, size_t size) override;
+    std::vector<uint8_t> getState() const override;
+
 private:
     std::unique_ptr<AudioBufferX<float>> channel_data_{nullptr};
 };
