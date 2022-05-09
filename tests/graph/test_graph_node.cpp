@@ -3,6 +3,8 @@
 //
 #include "libaa/graph/aa_audio_processor_node.h"
 #include "libaa/graph/aa_graph_node.h"
+#include "libaa/processor/aa_source_callback_processor.h"
+#include "libaa/processor/aa_source_processor.h"
 #include "libaa_testing/aa_mock_node.h"
 #include "libaa_testing/aa_mock_processor.h"
 #include <gmock/gmock.h>
@@ -33,27 +35,36 @@ TEST_F(AGraphNode, CanInitWithNodesAndPorts) {
     GraphNode::InputPortNodeConnections input_audio_ports{{{node0, 0}},
                                                           {{node1, 0}}};
     GraphNode::OutputPortNodeConnections output_audio_ports{{node0, 0}};
-    GraphNode node{nodes, input_audio_ports, output_audio_ports};
+    GraphNode::InputPortNodeConnections input_pc_ports{{{node0, 0}}};
+    GraphNode::OutputPortNodeConnections output_pc_ports{{node0, 0}};
+
+    GraphNode node{nodes, input_audio_ports, input_pc_ports, output_audio_ports, output_pc_ports};
 
     ASSERT_THAT(node.getInputAudioPortConnections().size(), Eq(2));
     ASSERT_THAT(node.getOutputAudioPortConnections().size(), Eq(1));
+    ASSERT_THAT(node.getInputParameterChangePortConnections().size(), Eq(1));
+    ASSERT_THAT(node.getOutputParameterChangePortConnections().size(), Eq(1));
 }
 
 TEST_F(AGraphNode, AudioInputPortSizeIsSameWithInputPortConnectionSize) {
     GraphNode::InputPortNodeConnections input_audio_ports{{{node0, 0}},
                                                           {{node1, 0}}};
+    GraphNode::InputPortNodeConnections input_pc_ports{{{node0, 0}}};
 
-    GraphNode node{nodes, input_audio_ports, {}};
+    GraphNode node{nodes, input_audio_ports, input_pc_ports, {}, {}};
 
     ASSERT_THAT(node.getAudioInputPortSize(), Eq(input_audio_ports.size()));
+    ASSERT_THAT(node.getParameterChangeInputPortSize(), Eq(input_pc_ports.size()));
 }
 
 TEST_F(AGraphNode, AudioOutputPortSizeIsSameWithOutputPortConnectionSize) {
     GraphNode::OutputPortNodeConnections output_audio_ports{{node0, 0}};
+    GraphNode::OutputPortNodeConnections output_pc_ports{{node0, 0}, {node1, 0}};
 
-    GraphNode node{nodes, {}, output_audio_ports};
+    GraphNode node{nodes, {}, {}, output_audio_ports, output_pc_ports};
 
     ASSERT_THAT(node.getAudioOutputPortSize(), Eq(output_audio_ports.size()));
+    ASSERT_THAT(node.getParameterChangeOutputPortSize(), Eq(output_pc_ports.size()));
 }
 
 TEST_F(AGraphNode, CanGetNumberOfChannelsInInputPort) {
@@ -152,7 +163,7 @@ TEST_F(AGraphNode, CanSetProcessedStateForEveryNode) {
     node.setProcessedState(true);
 }
 
-TEST_F(AGraphNode, AddUpstreamConnectionWillConnectInternalNodes) {
+TEST_F(AGraphNode, AddUpstreamAudioConnectionWillConnectInternalNodes) {
     GraphNode::InputPortNodeConnections input_audio_ports{
         {{node0, 0}, {node1, 1}},
     };
@@ -168,25 +179,33 @@ TEST_F(AGraphNode, AddUpstreamConnectionWillConnectInternalNodes) {
     node.addUpstreamAudioConnection(c);
 }
 
-TEST_F(AGraphNode, PullAudioPortWillPullUpstreamAudio) {
+TEST_F(AGraphNode, AddUpstreamParameterChangeConnectionWillConnectInternalNodes) {
+    GraphNode::InputPortNodeConnections input_pc_ports{
+        {{node0, 0}, {node1, 1}},
+    };
+
+    GraphNode node{nodes, {}, input_pc_ports, {}, {}};
+    ParameterChangeConnection c(upstream_node, 0, 0);
+
+    ParameterChangeConnection expected_con_0{upstream_node, 0, 0};
+    ParameterChangeConnection expected_con_1{upstream_node, 0, 1};
+    EXPECT_CALL(*node0, addUpstreamParameterChangeConnection(expected_con_0)).Times(1);
+    EXPECT_CALL(*node1, addUpstreamParameterChangeConnection(expected_con_1)).Times(1);
+
+    node.addUpstreamParameterChangeConnection(c);
+}
+
+TEST_F(AGraphNode, PullAudioPortWillPullUpstreamData) {
     auto proc0 = std::make_shared<NiceMock<MockProcessor>>();
     auto proc1 = std::make_shared<NiceMock<MockProcessor>>();
-
     auto proc_node0 = std::make_shared<ProcessorNode>(proc0);
     auto proc_node1 = std::make_shared<ProcessorNode>(proc1);
 
     proc_node1->addUpstreamAudioConnection(AudioConnection{proc_node0, 0, 0});
 
-    GraphNode::InputPortNodeConnections input_audio_ports{
-        {{proc_node0, 0}},
-    };
     GraphNode::OutputPortNodeConnections output_audio_ports{{proc_node1, 0}};
     GraphNode node{
-        {proc_node0, proc_node1}, input_audio_ports, output_audio_ports};
-
-    auto node_0_block =
-        std::shared_ptr<AudioBlock>(new AudioBlock({{1, 1, 1}, {2, 2, 2}}));
-    AudioPort node_0_port(node_0_block);
+        {proc_node0, proc_node1}, {}, output_audio_ports};
 
     EXPECT_CALL(*proc0, processBlock).Times(1);
     EXPECT_CALL(*proc1, processBlock)
@@ -201,4 +220,35 @@ TEST_F(AGraphNode, PullAudioPortWillPullUpstreamAudio) {
 
     ASSERT_THAT(output_port.getChannelData(0)[0], Eq(1));
     ASSERT_THAT(output_port.getChannelData(1)[0], Eq(2));
+}
+
+TEST_F(AGraphNode, PullParameterChangePortWillPullUpstreamData) {
+    auto proc0 = std::make_shared<NiceMock<MockProcessor>>();
+    auto proc1 = std::make_shared<NiceMock<MockProcessor>>();
+    auto proc_node0 = std::make_shared<ProcessorNode>(proc0);
+    auto proc_node1 = std::make_shared<ProcessorNode>(proc1);
+
+    proc_node1->addUpstreamParameterChangeConnection(ParameterChangeConnection{proc_node0, 0, 0});
+    GraphNode::OutputPortNodeConnections output_pc_ports{{proc_node1, 0}};
+    GraphNode node{
+        {proc_node0, proc_node1}, {}, {}, {}, output_pc_ports};
+
+    EXPECT_CALL(*proc0, processBlock).Times(1);
+    EXPECT_CALL(*proc1, processBlock)
+        .WillOnce([this](AudioBlock *input, AudioBlock *output) {
+            output->buffer.copyFrom(&this->block.buffer,
+                                    this->block.buffer.getNumberChannels(),
+                                    this->block.buffer.getNumberFrames(), 0, 0);
+            output->param_changes.push(0, {0, 1, 1});
+        });
+
+    node.prepareToPlay(sample_rate, max_block_size);
+    ParameterChangePort &port = node.pullParameterChangePort(0);
+    ParameterChangePoint result{};
+    port.getParameterChanges().pop(0, result);
+
+    ASSERT_THAT(port.getParameterChanges().getNumParameters(), Eq(proc0->getParameters()->size()));
+    ASSERT_THAT(result.index, Eq(0));
+    ASSERT_THAT(result.time, Eq(1));
+    ASSERT_THAT(result.normalized_value, Eq(1));
 }

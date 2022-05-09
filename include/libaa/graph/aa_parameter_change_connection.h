@@ -19,6 +19,8 @@ public:
         return upstream_node->pullParameterChangePort(upstream_port_index);
     }
 };
+
+bool operator==(const ParameterChangeConnection &lhs, const ParameterChangeConnection &rhs);
 } // namespace libaa
 
 #endif // LIBAA_AA_PARAMETER_CHANGE_CONNECTION_H

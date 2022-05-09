@@ -7,6 +7,7 @@
 
 #pragma once
 #include "libaa/graph/aa_i_node.h"
+#include <memory>
 namespace libaa {
 class Connection {
 public:

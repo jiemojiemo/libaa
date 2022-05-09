@@ -33,6 +33,12 @@ public:
               InputPortNodeConnections input_audio_port_connections,
               OutputPortNodeConnections output_audio_port_connections);
 
+    GraphNode(std::vector<std::shared_ptr<INode>> nodes,
+              InputPortNodeConnections input_audio_port_connections,
+              InputPortNodeConnections input_param_change_port_connections,
+              OutputPortNodeConnections output_audio_port_connections,
+              OutputPortNodeConnections output_param_change_port_connections);
+
     ~GraphNode() override = default;
 
     void setNodeID(std::string node_id) override;
@@ -58,21 +64,31 @@ public:
     const std::vector<std::shared_ptr<INode>> &getAllNodes() const;
 
     const InputPortNodeConnections &getInputAudioPortConnections() const;
-
+    const InputPortNodeConnections &getInputParameterChangePortConnections() const;
     const OutputPortNodeConnections &getOutputAudioPortConnections() const;
+    const OutputPortNodeConnections &getOutputParameterChangePortConnections() const;
+
 
     int getAudioInputPortSize() const override;
 
     int getAudioOutputPortSize() const override;
 
+    int getParameterChangeInputPortSize() const override;
+
+    int getParameterChangeOutputPortSize() const override;
+
     int getAudioInputPortChannels(int port_index) const override;
 
     int getAudioOutputPortChannels(int port_index) const override;
 
+
+
 private:
     std::vector<std::shared_ptr<INode>> nodes_;
     InputPortNodeConnections input_audio_port_connections_;
+    InputPortNodeConnections input_param_change_port_connections_;
     OutputPortNodeConnections output_audio_port_connections_;
+    OutputPortNodeConnections output_param_change_port_connections_;
     std::string node_id_{};
 
     std::shared_ptr<AudioBlock> block_ = std::make_shared<AudioBlock>();

@@ -17,8 +17,14 @@ class INode {
 public:
     virtual ~INode() = default;
 
+    /**
+     * Sets the node id
+     */
     virtual void setNodeID(std::string node_id) = 0;
 
+    /**
+     * Returns the node id
+     */
     virtual std::string getNodeID() const = 0;
 
     /**
@@ -66,22 +72,37 @@ public:
      */
     virtual void prepareForNextBlock() = 0;
 
+    /**
+     * Returns the number of audio input port
+     */
     virtual int getAudioInputPortSize() const = 0;
 
+    /**
+     * Returns the number of audio output port
+     */
     virtual int getAudioOutputPortSize() const = 0;
 
+    /**
+     * Returns the number of channels in a input audio port
+     * @param port_index the audio port index
+     */
     virtual int getAudioInputPortChannels(int port_index) const = 0;
 
+    /**
+     * Returns the number of channels in a output output port
+     * @param port_index the audio port index
+     */
     virtual int getAudioOutputPortChannels(int port_index) const = 0;
 
-    virtual int getParameterChangeInputPortSize() const
-    {
-        return 0;
-    }
+    /**
+     * Returns the number of parameter change input port
+     */
+    virtual int getParameterChangeInputPortSize() const = 0;
 
-    virtual int getParameterChangeOutputPortSize() const{
-        return 0;
-    }
+    /**
+     * Returns the number of parameter change output port
+     */
+    virtual int getParameterChangeOutputPortSize() const = 0;
 };
 } // namespace libaa
 

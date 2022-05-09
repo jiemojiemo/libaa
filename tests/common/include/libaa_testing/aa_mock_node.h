@@ -33,6 +33,8 @@ public:
     MOCK_METHOD(int, getAudioOutputPortSize, (), (override, const));
     MOCK_METHOD(int, getAudioInputPortChannels, (int), (override, const));
     MOCK_METHOD(int, getAudioOutputPortChannels, (int), (override, const));
+    MOCK_METHOD(int, getParameterChangeInputPortSize, (), (override, const));
+    MOCK_METHOD(int, getParameterChangeOutputPortSize, (), (override, const));
 };
 } // namespace libaa
 
