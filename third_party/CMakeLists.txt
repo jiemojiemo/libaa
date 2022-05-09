@@ -24,6 +24,10 @@ if (NOT EXISTS yaml-cpp)
     add_subdirectory(yaml-cpp EXCLUDE_FROM_ALL)
 endif ()
 
+if (NOT EXISTS nlohmann_json)
+    add_subdirectory(nlohmann/json EXCLUDE_FROM_ALL)
+endif ()
+
 add_library(Ring-Buffer INTERFACE)
 target_include_directories(Ring-Buffer INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/Ring-Buffer/")
 

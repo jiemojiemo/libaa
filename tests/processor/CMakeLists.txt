@@ -19,3 +19,6 @@ target_include_directories(aa_processor_unit_test PRIVATE
         $<BUILD_INTERFACE:${LIBAA_3RD_DIR}/rubberband-2.0.2/rubberband>
         $<BUILD_INTERFACE:${LIBAA_3RD_DIR}/rubberband-2.0.2/src>
         )
+target_link_libraries(aa_processor_unit_test PRIVATE
+        nlohmann_json
+        )

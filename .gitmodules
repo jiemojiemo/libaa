@@ -11,3 +11,6 @@
 [submodule "third_party/yaml-cpp"]
 	path = third_party/yaml-cpp
 	url = https://github.com/jbeder/yaml-cpp
+[submodule "third_party/nlohmann/json"]
+	path = third_party/nlohmann/json
+	url = git@github.com:nlohmann/json.git
