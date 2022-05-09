@@ -29,7 +29,7 @@ endif ()
 
 set(LIBAA_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(LIBAA_3RD_DIR ${LIBAA_DIR}/third_party)
-set(LIBAA_INC_DRI ${LIBAA_DIR}/include)
+set(LIBAA_INC_DIR ${LIBAA_DIR}/include)
 
 add_subdirectory(third_party)
 add_subdirectory(src)
