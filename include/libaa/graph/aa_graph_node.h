@@ -43,6 +43,8 @@ public:
 
     void addUpstreamAudioConnection(const AudioConnection &c) override;
 
+    void addUpstreamParameterChangeConnection(const ParameterChangeConnection &c) override;
+
     AudioPort &pullAudioPort(int output_audio_port) override;
 
     ParameterChangePort &pullParameterChangePort(int output_pc_port) override;

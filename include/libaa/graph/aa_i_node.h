@@ -11,6 +11,7 @@ namespace libaa {
 class AudioConnection;
 class AudioPort;
 class ParameterChangePort;
+class ParameterChangeConnection;
 
 class INode {
 public:
@@ -31,6 +32,11 @@ public:
      * Adds upstream audio connection
      */
     virtual void addUpstreamAudioConnection(const AudioConnection &c) = 0;
+
+    /**
+     * Adds upstream parameter change connection
+     */
+    virtual void addUpstreamParameterChangeConnection(const ParameterChangeConnection &c) = 0;
 
     /**
      * Pulls data from upstream node into input data, and then process it, finally returns the output parameter port.
@@ -67,6 +73,15 @@ public:
     virtual int getAudioInputPortChannels(int port_index) const = 0;
 
     virtual int getAudioOutputPortChannels(int port_index) const = 0;
+
+    virtual int getParameterChangeInputPortSize() const
+    {
+        return 0;
+    }
+
+    virtual int getParameterChangeOutputPortSize() const{
+        return 0;
+    }
 };
 } // namespace libaa
 

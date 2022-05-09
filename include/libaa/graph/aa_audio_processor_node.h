@@ -9,6 +9,7 @@
 #include "libaa/graph/aa_audio_connection.h"
 #include "libaa/graph/aa_audio_port.h"
 #include "libaa/graph/aa_i_node.h"
+#include "libaa/graph/aa_parameter_change_connection.h"
 #include "libaa/graph/aa_parameter_change_port.h"
 #include "libaa/processor/aa_audio_processor.h"
 #include <atomic>
@@ -19,6 +20,8 @@ namespace libaa {
 
 class ProcessorNode : public INode {
 public:
+    ~ProcessorNode() override = default;
+
     explicit ProcessorNode(std::shared_ptr<IAudioProcessor> proc);
 
     explicit ProcessorNode(std::shared_ptr<IAudioProcessor> proc,
@@ -32,6 +35,8 @@ public:
     void prepareToPlay(float sample_rate, int max_block_size) override;
 
     void addUpstreamAudioConnection(const AudioConnection &c) override;
+
+    void addUpstreamParameterChangeConnection(const ParameterChangeConnection &c) override;
 
     AudioPort &pullAudioPort(int output_audio_port) override;
 
@@ -47,6 +52,8 @@ public:
 
     const std::vector<AudioConnection> &getUpstreamAudioConnections() const;
 
+    const std::vector<ParameterChangeConnection> &getUpstreamParameterConnections() const;
+
     //** testing ***
     const AudioBlock *getInputBlock() const;
 
@@ -55,16 +62,23 @@ public:
     int getAudioOutputPortSize() const override;
     int getAudioInputPortChannels(int port_index) const override;
     int getAudioOutputPortChannels(int port_index) const override;
+    int getParameterChangeInputPortSize() const override;
+    int getParameterChangeOutputPortSize() const override;
 
 private:
     void
-    initInputAndOutputBlock(const std::initializer_list<int> &input_channels,
-                            const std::initializer_list<int> &output_channels);
+    initBlocksAndPorts(const std::initializer_list<int> &input_channels,
+                       const std::initializer_list<int> &output_channels);
 
     void initAudioPorts(const std::initializer_list<int> &input_channels,
                         const std::initializer_list<int> &output_channels);
 
-    void checkConnectionValidAndThrow(const AudioConnection &c) const;
+    void checkAudioConnectionValidAndThrow(const AudioConnection &c) const;
+    void checkParameterConnectionValidAndThrow(const ParameterChangeConnection &c) const;
+
+    void pullUpstreamDataAndProcess();
+    void pullUpstreamAudio();
+    void pullUpstreamParameterChange();
 
     std::shared_ptr<IAudioProcessor> proc_{nullptr};
     std::vector<AudioPort> input_audio_ports_;
@@ -72,6 +86,7 @@ private:
     std::vector<ParameterChangePort> input_pc_ports_;
     std::vector<ParameterChangePort> output_pc_ports_;
     std::vector<AudioConnection> audio_connections_;
+    std::vector<ParameterChangeConnection> param_change_connections_;
     std::shared_ptr<AudioBlock> input_block_{nullptr};
     std::shared_ptr<AudioBlock> output_block_{nullptr};
     std::string node_id_{};
