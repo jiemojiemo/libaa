@@ -6,7 +6,17 @@ add_subdirectory(graph)
 add_subdirectory(processor)
 set(GENERATOR_SRC audio_generator/aa_lfo_generator.cpp)
 
-message(STATUS "DSP_SRC:${DSP_SRC}")
+# install version file
+include(GitUtils)
+include(git_revision)
+get_git_revision_info(
+        libaa_GIT_SHORT_TAG
+        libaa_GIT_LONG_TAG
+        libaa_GIT_COMMIT_HASH)
+configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/aa_version.h.in
+        ${CMAKE_BINARY_DIR}/aa_version.h)
+file(COPY ${CMAKE_BINARY_DIR}/aa_version.h DESTINATION ${LIBAA_INC_DIR}/libaa)
 
 add_library(libaa
         ${FILEIO_SRC}
@@ -19,7 +29,7 @@ add_library(libaa
 target_include_directories(libaa
         PUBLIC
         $<INSTALL_INTERFACE:include/libaa>
-        $<BUILD_INTERFACE:${LIBAA_INC_DRI}>
+        $<BUILD_INTERFACE:${LIBAA_INC_DIR}>
         PRIVATE
         $<BUILD_INTERFACE:${LIBAA_3RD_DIR}/Eigen3.3.7>
         $<BUILD_INTERFACE:${LIBAA_3RD_DIR}/farbot/include>
@@ -30,7 +40,9 @@ target_include_directories(libaa
         )
 
 target_link_libraries(libaa
-        PUBLIC kissfft fdk-aac mp3lame rubberband)
+        PUBLIC kissfft fdk-aac mp3lame rubberband nlohmann_json
+        )
+
 target_compile_features(libaa PUBLIC cxx_std_14)
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -69,6 +81,13 @@ if (LIBAA_INSTALL)
             )
     install(EXPORT samplerate DESTINATION lib/cmake)
 
+    install(TARGETS nlohmann_json
+            EXPORT nlohmann_json
+            LIBRARY DESTINATION lib
+            ARCHIVE DESTINATION lib
+            )
+    install(EXPORT nlohmann_json DESTINATION lib/cmake)
+
     install(TARGETS rubberband
             EXPORT rubberband
             LIBRARY DESTINATION lib
@@ -82,7 +101,7 @@ if (LIBAA_INSTALL)
             ARCHIVE DESTINATION lib
             )
     install(
-            DIRECTORY ${LIBAA_INC_DRI}/
+            DIRECTORY ${LIBAA_INC_DIR}/
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
             FILES_MATCHING PATTERN "*.h"
     )
@@ -96,17 +115,6 @@ if (LIBAA_INSTALL)
             "lib/cmake/"
             )
 
-    # install version file
-    include(GitUtils)
-    include(git_revision)
-    get_git_revision_info(
-            libaa_GIT_SHORT_TAG
-            libaa_GIT_LONG_TAG
-            libaa_GIT_COMMIT_HASH)
-
-    configure_file(
-            ${CMAKE_CURRENT_SOURCE_DIR}/aa_version.h.in
-            ${CMAKE_BINARY_DIR}/aa_version.h)
     install(
             FILES ${CMAKE_BINARY_DIR}/aa_version.h
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}

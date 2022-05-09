@@ -1,8 +1,11 @@
 //
 // Created by William on 3/23/22.
 //
+#include "libaa/aa_version.h"
 #include "libaa/dsp/aa_db_utils.h"
 #include "libaa/processor/aa_gain_processor.h"
+#include <nlohmann/json.hpp>
+
 #include <gmock/gmock.h>
 
 using namespace testing;
@@ -11,6 +14,8 @@ using namespace libaa;
 class AGainProcessor : public Test {
 public:
     GainProcessor proc;
+    float sr = 44100;
+    int max_block_size = 4;
 };
 
 TEST_F(AGainProcessor, CanReportCorrectName) {
@@ -72,11 +77,23 @@ TEST_F(AGainProcessor, ProcessChangeInputDbWithParameterChange) {
     AudioBlock block{{{1, 1, 1, 1}, {2, 2, 2, 2}}, 1};
     block.param_changes.push(0, {0, 0, normalized_db});
 
-    float sr = 44100;
-    int max_block_size = 4;
     proc.prepareToPlay(sr, max_block_size);
     proc.processBlock(&block, &block);
 
     ASSERT_THAT(block.buffer.getReadPointer(0)[0], Eq(1 * boost_scale));
     ASSERT_THAT(block.buffer.getReadPointer(1)[0], Eq(2 * boost_scale));
+}
+
+TEST_F(AGainProcessor, StateStringAsExpected) {
+    auto state = proc.getState();
+
+    nlohmann::json expect;
+    expect["version"] = LIBAA_VERSION;
+    expect["processor_name"] = proc.getName();
+    expect["parameters"] = {
+        {proc.getParameters()->get(0).getParameterName(), proc.getParameters()->get(0).getPlainValue()}};
+
+    auto state_json = nlohmann::json::parse(state.begin(), state.begin() + state.size());
+
+    ASSERT_THAT(state_json, Eq(expect));
 }

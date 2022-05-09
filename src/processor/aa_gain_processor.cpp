@@ -4,8 +4,10 @@
 //
 
 #include "libaa/processor/aa_gain_processor.h"
+#include "libaa/aa_version.h"
 #include "libaa/dsp/aa_db_utils.h"
 #include <cmath>
+#include <nlohmann/json.hpp>
 namespace libaa {
 GainProcessor::GainProcessor(float gain_db) {
     parameters.pushFloatParameter("Gain dB", gain_db, -96.0f, 35.0f);
@@ -48,7 +50,14 @@ void GainProcessor::setState(uint8_t *state, size_t size) {
     (void)(size);
 }
 vector<uint8_t> GainProcessor::getState() const {
-    return std::vector<uint8_t>();
+    nlohmann::json state_json;
+    state_json["version"] = LIBAA_VERSION;
+    state_json["processor_name"] = getName();
+    state_json["parameters"] = {
+        {getParameters()->get(0).getParameterName(), getParameters()->get(0).getPlainValue()}};
+
+    auto state_string = to_string(state_json);
+    return vector<uint8_t>{state_string.begin(), state_string.end()};
 }
 
 } // namespace libaa
