@@ -336,22 +336,21 @@ TEST_F(AProcessorNode, PullParameterChangePortWillPullUpstreamBlcok) {
             output->buffer.copyFrom(&this->block.buffer,
                                     this->block.buffer.getNumberChannels(),
                                     this->block.buffer.getNumberFrames(), 0, 0);
+            output->param_changes.push(0, {0, 1, 1});
         });
 
     EXPECT_CALL(*proc, processBlock)
         .WillOnce([](AudioBlock *input, AudioBlock *output) {
             output->buffer.copyFrom(&input->buffer);
-            output->param_changes.push(0, {0, 1, 1});
+
+            ParameterChangePoint result{};
+            input->param_changes.pop(0, result);
+            ASSERT_THAT(result.index, Eq(0));
+            ASSERT_THAT(result.time, Eq(1));
+            ASSERT_THAT(result.normalized_value, Eq(1));
         });
 
     ParameterChangePort &port = node.pullParameterChangePort(0);
-    ParameterChangePoint result{};
-    port.getParameterChanges().pop(0, result);
-
-    ASSERT_THAT(port.getParameterChanges().getNumParameters(), Eq(proc->getParameters()->size()));
-    ASSERT_THAT(result.index, Eq(0));
-    ASSERT_THAT(result.time, Eq(1));
-    ASSERT_THAT(result.normalized_value, Eq(1));
 }
 
 TEST_F(AProcessorNode, PullAudioPortReturnsLastResultIfHasProcessed) {
