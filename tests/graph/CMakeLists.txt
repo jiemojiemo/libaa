@@ -5,4 +5,5 @@ add_libaa_test(
         test_graph_node.cpp
         test_processor_node.cpp
         test_parameter_change_port.cpp
+        test_parameter_change_connection.cpp
 )

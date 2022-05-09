@@ -41,6 +41,12 @@ AudioPort &GraphNode::pullAudioPort(int output_audio_port) {
     const int node_port = output_port_connection.node_port_index;
     return output_port_connection.node->pullAudioPort(node_port);
 }
+
+ParameterChangePort &GraphNode::pullParameterChangePort(int output_pc_port) {
+    (void)(output_pc_port);
+    return p;
+}
+
 bool GraphNode::hasProcessed() const {
     for (const auto &n : nodes_) {
         if (!n->hasProcessed())
@@ -96,4 +102,5 @@ int GraphNode::getAudioOutputPortChannels(int port_index) const {
         output_audio_port_connections_.at(port_index).node_port_index;
     return node_in_port_index->getAudioOutputPortChannels(node_port_index);
 }
+
 } // namespace libaa

@@ -3,6 +3,7 @@
 //
 
 #include "libaa/graph/aa_audio_processor_node.h"
+#include "libaa/graph/aa_parameter_change_port.h"
 
 namespace libaa {
 
@@ -71,6 +72,9 @@ AudioPort &ProcessorNode::pullAudioPort(int output_audio_port) {
     }
 
     return output_audio_ports_.at(output_audio_port);
+}
+ParameterChangePort &ProcessorNode::pullParameterChangePort(int output_pc_port) {
+    return output_pc_ports_.at(output_pc_port);
 }
 
 bool ProcessorNode::hasProcessed() const {
