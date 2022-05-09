@@ -4,4 +4,5 @@ add_libaa_test(
         test_audio_port.cpp
         test_graph_node.cpp
         test_processor_node.cpp
+        test_parameter_change_port.cpp
 )
