@@ -28,8 +28,16 @@ std::string serializeProcessorToString(const IAudioProcessor *proc) {
     nlohmann::json result;
     result["version"] = LIBAA_VERSION;
     result["processor_name"] = proc->getName();
-    result["parameters"] = {
-        {proc->getParameters()->get(0).getParameterName(), proc->getParameters()->get(0).getPlainValue()}};
+
+    const auto *parameters = proc->getParameters();
+    if (parameters != nullptr) {
+        nlohmann::json param_json;
+        for (auto i = 0u; i < parameters->size(); ++i) {
+            const AudioProcessorParameter &current_param = parameters->get(i);
+            param_json[current_param.getParameterName()] = current_param.getPlainValue();
+        }
+        result["parameters"] = param_json;
+    }
 
     return result.dump();
 }
@@ -43,7 +51,7 @@ std::string convertProcessorStateToString(const std::vector<uint8_t> &state) {
     return std::string{state.begin(), state.end()};
 }
 
-void updateParametersFromState(uint8_t* state, size_t size, AudioProcessorParameters& parameters){
+void updateParametersFromState(uint8_t *state, size_t size, AudioProcessorParameters &parameters) {
     nlohmann::json state_json = nlohmann::json::parse((char *)(state), (char *)(state + size));
     nlohmann::json &param_json = state_json["parameters"];
 
