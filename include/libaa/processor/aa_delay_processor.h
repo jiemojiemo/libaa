@@ -28,7 +28,7 @@ public:
     vector<uint8_t> getState() const override;
 
 private:
-    AudioProcessorParameters param_;
+    AudioProcessorParameters params_;
     DelayProcessorUtilities utilities;
 };
 } // namespace libaa
