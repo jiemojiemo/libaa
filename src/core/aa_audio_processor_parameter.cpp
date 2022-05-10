@@ -3,7 +3,7 @@
 // Created by William.Hua on 2021/5/19.
 //
 #include "libaa/core/aa_audio_processor_parameter.h"
-
+#include <algorithm>
 namespace libaa {
 
 namespace {
