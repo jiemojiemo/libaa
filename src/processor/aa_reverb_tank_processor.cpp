@@ -3,6 +3,7 @@
 //
 
 #include "libaa/processor/aa_reverb_tank_processor.h"
+#include "libaa/processor/aa_processor_utilities.h"
 
 namespace libaa {
 std::string ReverbTankProcessor::getName() const {
@@ -23,10 +24,9 @@ const AudioProcessorParameters *ReverbTankProcessor::getParameters() const {
     return &utilities_.params;
 }
 void ReverbTankProcessor::setState(uint8_t *state, size_t size) {
-    (void)(state);
-    (void)(size);
+    ProcessorUtilities::updateParametersFromState(state, size, utilities_.params);
 }
 std::vector<uint8_t> ReverbTankProcessor::getState() const {
-    return std::vector<uint8_t>();
+    return ProcessorUtilities::serializeProcessorToBinaryArray(this);
 }
 } // namespace libaa
