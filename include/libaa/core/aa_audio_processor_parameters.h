@@ -28,6 +28,8 @@ public:
     const AudioProcessorParameter &get(int param_id) const;
     AudioProcessorParameter &get(int param_id);
 
+    int findParameterIndexByName(const std::string &param_name) const;
+
 private:
     std::vector<AudioProcessorParameter> parameters_;
 };

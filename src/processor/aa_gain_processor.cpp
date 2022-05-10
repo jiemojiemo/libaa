@@ -46,8 +46,17 @@ void GainProcessor::applyGain(AudioBlock *block) {
     }
 }
 void GainProcessor::setState(uint8_t *state, size_t size) {
-    (void)(state);
-    (void)(size);
+    nlohmann::json state_json = nlohmann::json::parse((char *)(state), (char *)(state + size));
+    nlohmann::json &param_json = state_json["parameters"];
+
+    for (auto it = param_json.begin(); it != param_json.end(); ++it) {
+        std::string param_name = it.key();
+        auto p_index = parameters.findParameterIndexByName(param_name);
+        if (p_index != -1) {
+            float plain_value = it.value().get<float>();
+            parameters.get(p_index).setPlainValue(plain_value);
+        }
+    }
 }
 vector<uint8_t> GainProcessor::getState() const {
     nlohmann::json state_json;
