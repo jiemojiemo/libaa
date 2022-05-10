@@ -3,8 +3,11 @@
 //
 
 #include "libaa/processor/aa_processor_utilities.h"
+#include "libaa/aa_version.h"
 #include "libaa/core/aa_audio_processor_parameters.h"
 #include "libaa/core/aa_parameter_changes.h"
+#include "libaa/processor/aa_audio_processor.h"
+#include <nlohmann/json.hpp>
 namespace libaa {
 class ParameterChanges;
 class AudioProcessorParameters;
@@ -20,5 +23,20 @@ void updateParameterFromParameterChanges(ParameterChanges &param_changes,
         }
     }
 }
+
+std::string serializeProcessorToString(const IAudioProcessor *proc) {
+    nlohmann::json result;
+    result["version"] = LIBAA_VERSION;
+    result["processor_name"] = proc->getName();
+    result["parameters"] = {
+        {proc->getParameters()->get(0).getParameterName(), proc->getParameters()->get(0).getPlainValue()}};
+
+    return result.dump();
+}
+
+std::string convertProcessorStateToString(const std::vector<uint8_t> &state) {
+    return std::string{state.begin(), state.end()};
+}
+
 } // namespace ProcessorUtilities
 } // namespace libaa

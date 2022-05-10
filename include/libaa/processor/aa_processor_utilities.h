@@ -6,13 +6,17 @@
 #define AUDIOEFFECT_AE_PROCESSOR_UTILITIES_H
 
 #pragma once
-
+#include <string>
 namespace libaa {
 class ParameterChanges;
 class AudioProcessorParameters;
+class IAudioProcessor;
 namespace ProcessorUtilities {
 void updateParameterFromParameterChanges(ParameterChanges &param_changes,
                                          AudioProcessorParameters &param);
+
+std::string serializeProcessorToString(const IAudioProcessor *proc);
+std::string convertProcessorStateToString(const std::vector<uint8_t> &state);
 } // namespace ProcessorUtilities
 
 } // namespace libaa

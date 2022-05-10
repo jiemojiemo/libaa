@@ -46,4 +46,13 @@ int AudioProcessorParameters::pushBoolParameter(std::string param_name,
     return new_param_index;
 }
 
+int AudioProcessorParameters::findParameterIndexByName(const std::string &param_name) const {
+    for (auto i = 0u; i < parameters_.size(); ++i) {
+        if (get(i).getParameterName() == param_name) {
+            return i;
+        }
+    }
+    return -1;
+}
+
 } // namespace libaa

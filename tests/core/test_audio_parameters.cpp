@@ -72,3 +72,18 @@ TEST_F(AParameters, CanAddBoolParameter) {
 
     ASSERT_THAT(p, Eq(expected));
 }
+
+TEST_F(AParameters, CanFindParameterByNameAndReturnsIndex) {
+    params.pushFloatParameter("A", 1.0, 0, 2.0);
+    params.pushBoolParameter("B", true);
+
+    ASSERT_THAT(params.findParameterIndexByName("A"), Eq(0));
+    ASSERT_THAT(params.findParameterIndexByName("B"), Eq(1));
+}
+
+TEST_F(AParameters, ReturnsNeg1IfCannotFindByName) {
+    params.pushFloatParameter("A", 1.0, 0, 2.0);
+    params.pushBoolParameter("B", true);
+
+    ASSERT_THAT(params.findParameterIndexByName("C"), Eq(-1));
+}

@@ -4,6 +4,7 @@
 #include "libaa/aa_version.h"
 #include "libaa/dsp/aa_db_utils.h"
 #include "libaa/processor/aa_gain_processor.h"
+#include "libaa/processor/aa_processor_utilities.h"
 #include <nlohmann/json.hpp>
 
 #include <gmock/gmock.h>
@@ -87,13 +88,20 @@ TEST_F(AGainProcessor, ProcessChangeInputDbWithParameterChange) {
 TEST_F(AGainProcessor, StateStringAsExpected) {
     auto state = proc.getState();
 
-    nlohmann::json expect;
-    expect["version"] = LIBAA_VERSION;
-    expect["processor_name"] = proc.getName();
-    expect["parameters"] = {
-        {proc.getParameters()->get(0).getParameterName(), proc.getParameters()->get(0).getPlainValue()}};
+    auto expected_string = ProcessorUtilities::serializeProcessorToString(&proc);
 
-    auto state_json = nlohmann::json::parse(state.begin(), state.begin() + state.size());
+    ASSERT_THAT(ProcessorUtilities::convertProcessorStateToString(state), Eq(expected_string));
+}
 
-    ASSERT_THAT(state_json, Eq(expect));
+TEST_F(AGainProcessor, SetStateUpdatesParameters) {
+    float expected_gain_val = 10;
+    auto state_str = ProcessorUtilities::serializeProcessorToString(&proc);
+    auto state_json = nlohmann::json::parse(state_str);
+    state_json["parameters"]["Gain dB"] = expected_gain_val;
+    auto new_state_str = state_json.dump();
+
+    proc.setState((uint8_t *)new_state_str.data(), new_state_str.size());
+
+    float gain_val = proc.getParameters()->get(0).getPlainValue();
+    ASSERT_THAT(gain_val, Eq(expected_gain_val));
 }
