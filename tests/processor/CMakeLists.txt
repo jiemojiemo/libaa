@@ -3,6 +3,7 @@ add_libaa_test(aa_processor_unit_test
         test_delay_processor_utilities.cpp
         test_delay_processor.cpp
         test_vibrator_processor.cpp
+        test_processor_utilities.cpp
         test_reverb_tank_processor.cpp
         test_reverb_tank_processor_utilities.cpp
         test_pitch_shift_utilities.cpp

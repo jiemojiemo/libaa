@@ -16,6 +16,7 @@ public:
     MockProcessor() {
         params_.pushFloatParameter("mock_float_param", 0, 0, 1);
         params_.pushBoolParameter("mock_boll_param", true);
+        params_.pushChoiceParameter("mock_choice_param", 0, {"AA", "BB"});
 
         ON_CALL(*this, getName).WillByDefault(testing::Return("MockProcessor"));
         ON_CALL(*this, getLatencySamples).WillByDefault(testing::Return(0));
@@ -30,7 +31,7 @@ public:
     MOCK_METHOD(void, prepareToPlay, (float, int), (override));
     MOCK_METHOD(int, getLatencySamples, (), (override, const, noexcept));
     MOCK_METHOD(int, getTailLengthSamples, (), (override, const, noexcept));
-    MOCK_METHOD(void, setState, (uint8_t *state, size_t size), (override));
+    MOCK_METHOD(void, setState, (uint8_t * state, size_t size), (override));
     MOCK_METHOD(std::vector<uint8_t>, getState, (), (override, const));
 
 private:

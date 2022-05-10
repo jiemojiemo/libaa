@@ -34,7 +34,15 @@ std::string serializeProcessorToString(const IAudioProcessor *proc) {
         nlohmann::json param_json;
         for (auto i = 0u; i < parameters->size(); ++i) {
             const AudioProcessorParameter &current_param = parameters->get(i);
-            param_json[current_param.getParameterName()] = current_param.getPlainValue();
+
+            auto param_type = current_param.getParameterType();
+            if (param_type == ParameterType::kFloat) {
+                param_json[current_param.getParameterName()] = current_param.getPlainValue();
+            } else if (param_type == ParameterType::kBool) {
+                param_json[current_param.getParameterName()] = current_param.getBool();
+            } else if (param_type == ParameterType::kChoice) {
+                param_json[current_param.getParameterName()] = current_param.getChoiceString();
+            }
         }
         result["parameters"] = param_json;
     }
@@ -56,11 +64,12 @@ void updateParametersFromState(uint8_t *state, size_t size, AudioProcessorParame
     nlohmann::json &param_json = state_json["parameters"];
 
     for (auto it = param_json.begin(); it != param_json.end(); ++it) {
-        std::string param_name = it.key();
+        const std::string &param_name = it.key();
         auto p_index = parameters.findParameterIndexByName(param_name);
         if (p_index != -1) {
-            float plain_value = it.value().get<float>();
-            parameters.get(p_index).setPlainValue(plain_value);
+            auto &current_param = parameters.get(p_index);
+            auto param_value_str = it.value().is_string() ? it.value().get<std::string>() : it.value().dump();
+            current_param.setPlainValue(param_value_str);
         }
     }
 }

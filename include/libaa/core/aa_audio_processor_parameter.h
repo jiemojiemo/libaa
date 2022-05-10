@@ -35,6 +35,8 @@ public:
 
     float convertPlainValueToNormalizedValue(float plain_value) const;
 
+    float convertPlainValueStringToNormalizedValue(const std::string& plain_val_str) const;
+
     float convertNormalizedValueToPlainValue(float norm_value) const;
 
     std::string convertNormalizedValueToChoiceString(float norm_value) const;
@@ -49,6 +51,8 @@ public:
 
     int getInt() const;
 
+    std::string getChoiceString() const;
+
     std::string getPlainValueString() const;
 
     void setPlainValue(float plain_value);
@@ -58,6 +62,8 @@ public:
     void setNormalizedValue(float normalized_value);
 
     void setNormalizedValue(const std::string &normalized_value_str);
+
+    void setBoolValue(bool bool_value);
 
     const std::string &getParameterName() const;
 

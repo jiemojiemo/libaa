@@ -1,9 +1,11 @@
 //
 // Created by user on 4/19/22.
 //
+#include "libaa/processor/aa_processor_utilities.h"
 #include "libaa/processor/aa_reverb_tank_processor.h"
 #include <array>
 #include <gmock/gmock.h>
+#include <nlohmann/json.hpp>
 
 using namespace testing;
 
@@ -195,4 +197,32 @@ TEST_F(AReverbProcessorTank, CanProcess) {
     ASSERT_THAT(block.buffer.getWriterPointer(1)[0], FloatNear(1.00483, 1e-5));
     ASSERT_THAT(block.buffer.getWriterPointer(1)[1],
                 FloatNear(-0.010529f, 1e-5));
+}
+
+TEST_F(AReverbProcessorTank, StateStringAsExpected) {
+    auto state = proc.getState();
+
+    auto expected_string = ProcessorUtilities::serializeProcessorToString(&proc);
+
+    std::cout << expected_string << std::endl;
+
+    ASSERT_THAT(ProcessorUtilities::convertProcessorStateToString(state), Eq(expected_string));
+}
+
+TEST_F(AReverbProcessorTank, SetStateUpdatesParameters) {
+    float expected_param_val = 0.1;
+    std::string expected_str_val = "Thin";
+    auto state_str = ProcessorUtilities::serializeProcessorToString(&proc);
+    auto state_json = nlohmann::json::parse(state_str);
+    state_json["parameters"]["Reverb Time"] = expected_param_val;
+    state_json["parameters"]["Density"] = expected_str_val;
+    auto new_state_str = nlohmann::to_string(state_json);
+    std::cout << new_state_str << std::endl;
+
+    proc.setState((uint8_t *)new_state_str.data(), new_state_str.size());
+
+    float param_val = proc.getParameters()->get(0).getPlainValue();
+    std::string param_str_val = proc.getParameters()->get(6).getChoiceString();
+    ASSERT_THAT(param_val, Eq(expected_param_val));
+    ASSERT_THAT(param_str_val, Eq(expected_str_val));
 }
