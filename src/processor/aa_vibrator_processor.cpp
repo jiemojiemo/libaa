@@ -33,10 +33,9 @@ const AudioProcessorParameters *VibratorProcessor::getParameters() const {
     return &param_;
 }
 void VibratorProcessor::setState(uint8_t *state, size_t size) {
-    (void)(state);
-    (void)(size);
+    ProcessorUtilities::updateParametersFromState(state, size, param_);
 }
 vector<uint8_t> VibratorProcessor::getState() const {
-    return std::vector<uint8_t>();
+    return ProcessorUtilities::serializeProcessorToBinaryArray(this);
 }
 } // namespace libaa
