@@ -1,7 +1,6 @@
 //
 // Created by William on 3/23/22.
 //
-#include "libaa/aa_version.h"
 #include "libaa/dsp/aa_db_utils.h"
 #include "libaa/processor/aa_gain_processor.h"
 #include "libaa/processor/aa_processor_utilities.h"

@@ -3,6 +3,9 @@
 //
 #include "aa_testing_helper.h"
 #include "libaa/processor/aa_delay_processor.h"
+#include "libaa/processor/aa_processor_utilities.h"
+#include <nlohmann/json.hpp>
+
 #include <gmock/gmock.h>
 
 using namespace testing;
@@ -92,4 +95,25 @@ TEST_F(ADelayProcessor, ProcessAsExpect) {
     AudioBlock expected{{{0, 0, 0, 1}, {0, 0, 0, 2}}};
 
     ASSERT_THAT(block.buffer, Eq(expected.buffer));
+}
+
+TEST_F(ADelayProcessor, StateStringAsExpected) {
+    auto state = proc.getState();
+
+    auto expected_string = ProcessorUtilities::serializeProcessorToString(&proc);
+
+    ASSERT_THAT(ProcessorUtilities::convertProcessorStateToString(state), Eq(expected_string));
+}
+
+TEST_F(ADelayProcessor, SetStateUpdatesParameters) {
+    float expected_param_val = 1.0;
+    auto state_str = ProcessorUtilities::serializeProcessorToString(&proc);
+    auto state_json = nlohmann::json::parse(state_str);
+    state_json["parameters"]["Feedback"] = expected_param_val;
+    auto new_state_str = nlohmann::to_string(state_json);
+
+    proc.setState((uint8_t *)new_state_str.data(), new_state_str.size());
+
+    float gain_val = proc.getParameters()->get(1).getPlainValue();
+    ASSERT_THAT(gain_val, Eq(expected_param_val));
 }

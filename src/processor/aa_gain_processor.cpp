@@ -6,6 +6,7 @@
 #include "libaa/processor/aa_gain_processor.h"
 #include "libaa/aa_version.h"
 #include "libaa/dsp/aa_db_utils.h"
+#include "libaa/processor/aa_processor_utilities.h"
 #include <cmath>
 #include <nlohmann/json.hpp>
 namespace libaa {
@@ -46,27 +47,10 @@ void GainProcessor::applyGain(AudioBlock *block) {
     }
 }
 void GainProcessor::setState(uint8_t *state, size_t size) {
-    nlohmann::json state_json = nlohmann::json::parse((char *)(state), (char *)(state + size));
-    nlohmann::json &param_json = state_json["parameters"];
-
-    for (auto it = param_json.begin(); it != param_json.end(); ++it) {
-        std::string param_name = it.key();
-        auto p_index = parameters.findParameterIndexByName(param_name);
-        if (p_index != -1) {
-            float plain_value = it.value().get<float>();
-            parameters.get(p_index).setPlainValue(plain_value);
-        }
-    }
+    ProcessorUtilities::updateParametersFromState(state, size, parameters);
 }
 vector<uint8_t> GainProcessor::getState() const {
-    nlohmann::json state_json;
-    state_json["version"] = LIBAA_VERSION;
-    state_json["processor_name"] = getName();
-    state_json["parameters"] = {
-        {getParameters()->get(0).getParameterName(), getParameters()->get(0).getPlainValue()}};
-
-    auto state_string = to_string(state_json);
-    return vector<uint8_t>{state_string.begin(), state_string.end()};
+    return ProcessorUtilities::serializeProcessorToBinaryArray(this);
 }
 
 } // namespace libaa

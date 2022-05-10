@@ -34,8 +34,27 @@ std::string serializeProcessorToString(const IAudioProcessor *proc) {
     return result.dump();
 }
 
+std::vector<uint8_t> serializeProcessorToBinaryArray(const IAudioProcessor *proc) {
+    auto state_string = ProcessorUtilities::serializeProcessorToString(proc);
+    return std::vector<uint8_t>{state_string.begin(), state_string.end()};
+}
+
 std::string convertProcessorStateToString(const std::vector<uint8_t> &state) {
     return std::string{state.begin(), state.end()};
+}
+
+void updateParametersFromState(uint8_t* state, size_t size, AudioProcessorParameters& parameters){
+    nlohmann::json state_json = nlohmann::json::parse((char *)(state), (char *)(state + size));
+    nlohmann::json &param_json = state_json["parameters"];
+
+    for (auto it = param_json.begin(); it != param_json.end(); ++it) {
+        std::string param_name = it.key();
+        auto p_index = parameters.findParameterIndexByName(param_name);
+        if (p_index != -1) {
+            float plain_value = it.value().get<float>();
+            parameters.get(p_index).setPlainValue(plain_value);
+        }
+    }
 }
 
 } // namespace ProcessorUtilities
