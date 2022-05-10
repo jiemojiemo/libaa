@@ -146,4 +146,11 @@ int GraphNode::getAudioOutputPortChannels(int port_index) const {
         output_audio_port_connections_.at(port_index).node_port_index;
     return node_in_port_index->getAudioOutputPortChannels(node_port_index);
 }
+void GraphNode::setState(uint8_t *state, size_t size) {
+    (void)(state);
+    (void)(size);
+}
+std::vector<uint8_t> GraphNode::getState() const {
+    return std::vector<uint8_t>();
+}
 } // namespace libaa

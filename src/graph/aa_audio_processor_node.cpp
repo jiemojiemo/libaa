@@ -241,5 +241,12 @@ int ProcessorNode::getParameterChangeInputPortSize() const {
 int ProcessorNode::getParameterChangeOutputPortSize() const {
     return output_pc_ports_.size();
 }
+void ProcessorNode::setState(uint8_t *state, size_t size) {
+    (void)(state);
+    (void)(size);
+}
+std::vector<uint8_t> ProcessorNode::getState() const {
+    return std::vector<uint8_t>();
+}
 
 } // namespace libaa

@@ -103,6 +103,18 @@ public:
      * Returns the number of parameter change output port
      */
     virtual int getParameterChangeOutputPortSize() const = 0;
+
+    /**
+     * Sets node state from binary data, @see IAudioProcessor::getState
+     * @param state the binary data array
+     * @param size the binary data size
+     */
+    virtual void setState(uint8_t *state, size_t size) = 0;
+
+    /**
+     * Returns the processor state, serialize processor to binary data, @see INode::setState
+     */
+    virtual std::vector<uint8_t> getState() const = 0;
 };
 } // namespace libaa
 
