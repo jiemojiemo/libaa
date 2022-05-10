@@ -6,7 +6,10 @@
 #include "libaa/core/aa_audio_block.h"
 #include "libaa/core/aa_audio_processor_parameters.h"
 #include "libaa/processor/aa_pitch_shifter_processor.h"
+#include "libaa/processor/aa_processor_utilities.h"
+
 #include <gmock/gmock.h>
+#include <nlohmann/json.hpp>
 
 using namespace testing;
 using namespace libaa;
@@ -90,4 +93,25 @@ TEST_F(APitchShifter, ProcessAsExpected) {
     AudioBlock expected{{{0, 0, 0, 0}, {0, 0, 0, 0}}};
 
     ASSERT_THAT(block.buffer, Eq(expected.buffer));
+}
+
+TEST_F(APitchShifter, StateStringAsExpected) {
+    auto state = proc.getState();
+
+    auto expected_string = ProcessorUtilities::serializeProcessorToString(&proc);
+
+    ASSERT_THAT(ProcessorUtilities::convertProcessorStateToString(state), Eq(expected_string));
+}
+
+TEST_F(APitchShifter, SetStateUpdatesParameters) {
+    float expected_param_val = 0.5;
+    auto state_str = ProcessorUtilities::serializeProcessorToString(&proc);
+    auto state_json = nlohmann::json::parse(state_str);
+    state_json["parameters"]["Octaves"] = expected_param_val;
+    auto new_state_str = nlohmann::to_string(state_json);
+
+    proc.setState((uint8_t *)new_state_str.data(), new_state_str.size());
+
+    float param_val = proc.getParameters()->get(0).getPlainValue();
+    ASSERT_THAT(param_val, Eq(expected_param_val));
 }
