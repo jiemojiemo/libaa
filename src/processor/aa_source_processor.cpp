@@ -3,6 +3,7 @@
 //
 
 #include "libaa/processor/aa_source_processor.h"
+#include "libaa/processor/aa_processor_utilities.h"
 
 namespace libaa {
 SourceProcessor::SourceProcessor()
@@ -35,7 +36,7 @@ void SourceProcessor::setState(uint8_t *state, size_t size) {
     (void)(size);
 }
 std::vector<uint8_t> SourceProcessor::getState() const {
-    return std::vector<uint8_t>();
+    return ProcessorUtilities::serializeProcessorToBinaryArray(this);
 }
 
 } // namespace libaa

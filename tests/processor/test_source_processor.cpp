@@ -2,7 +2,7 @@
 // Created by user on 5/8/22.
 //
 #include "libaa/processor/aa_source_processor.h"
-
+#include "libaa/processor/aa_processor_utilities.h"
 #include <gmock/gmock.h>
 
 using namespace testing;
@@ -46,4 +46,16 @@ TEST_F(ASourceProcessor, ProcessWillCopyChannelDataToOutput) {
 
     ASSERT_THAT(block.buffer.getReadPointer(0)[0], Eq(1));
     ASSERT_THAT(block.buffer.getReadPointer(1)[0], Eq(4));
+}
+
+
+TEST_F(ASourceProcessor, StateStringAsExpected) {
+    SourceProcessor proc{
+        {{1, 2, 3},
+         {4, 5, 6}}};
+    auto state = proc.getState();
+
+    auto expected_string = ProcessorUtilities::serializeProcessorToString(&proc);
+
+    ASSERT_THAT(ProcessorUtilities::convertProcessorStateToString(state), Eq(expected_string));
 }
