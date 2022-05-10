@@ -95,7 +95,6 @@ TEST_F(AGainProcessor, StateStringAsExpected) {
 TEST_F(AGainProcessor, SetStateUpdatesParameters) {
     float expected_gain_val = 10;
     auto state_str = ProcessorUtilities::serializeProcessorToString(&proc);
-    std::cout << state_str << std::endl;
     auto state_json = nlohmann::json::parse(state_str);
     state_json["parameters"]["Gain dB"] = expected_gain_val;
     auto new_state_str = state_json.dump();

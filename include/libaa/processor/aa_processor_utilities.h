@@ -17,9 +17,13 @@ void updateParameterFromParameterChanges(ParameterChanges &param_changes,
                                          AudioProcessorParameters &param);
 
 std::string serializeProcessorToString(const IAudioProcessor *proc);
+
 std::vector<uint8_t> serializeProcessorToBinaryArray(const IAudioProcessor *proc);
+
 std::string convertProcessorStateToString(const std::vector<uint8_t> &state);
+
 void updateParametersFromState(uint8_t *state, size_t size, AudioProcessorParameters &parameters);
+
 } // namespace ProcessorUtilities
 
 } // namespace libaa

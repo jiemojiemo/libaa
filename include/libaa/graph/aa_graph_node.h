@@ -68,7 +68,6 @@ public:
     const OutputPortNodeConnections &getOutputAudioPortConnections() const;
     const OutputPortNodeConnections &getOutputParameterChangePortConnections() const;
 
-
     int getAudioInputPortSize() const override;
 
     int getAudioOutputPortSize() const override;
@@ -81,7 +80,8 @@ public:
 
     int getAudioOutputPortChannels(int port_index) const override;
 
-
+    void setState(uint8_t *state, size_t size) override;
+    std::vector<uint8_t> getState() const override;
 
 private:
     std::vector<std::shared_ptr<INode>> nodes_;

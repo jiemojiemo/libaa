@@ -54,10 +54,6 @@ public:
 
     const std::vector<ParameterChangeConnection> &getUpstreamParameterConnections() const;
 
-    //** testing ***
-    const AudioBlock *getInputBlock() const;
-
-    const AudioBlock *getOutputBlock() const;
     int getAudioInputPortSize() const override;
     int getAudioOutputPortSize() const override;
     int getAudioInputPortChannels(int port_index) const override;
@@ -65,6 +61,12 @@ public:
     int getParameterChangeInputPortSize() const override;
     int getParameterChangeOutputPortSize() const override;
 
+    void setState(uint8_t *state, size_t size) override;
+    std::vector<uint8_t> getState() const override;
+
+    //** testing ***
+    const AudioBlock *getInputBlock() const;
+    const AudioBlock *getOutputBlock() const;
 private:
     void
     initBlocksAndPorts(const std::initializer_list<int> &input_channels,
