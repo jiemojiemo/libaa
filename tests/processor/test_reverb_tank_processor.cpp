@@ -204,8 +204,6 @@ TEST_F(AReverbProcessorTank, StateStringAsExpected) {
 
     auto expected_string = ProcessorUtilities::serializeProcessorToString(&proc);
 
-    std::cout << expected_string << std::endl;
-
     ASSERT_THAT(ProcessorUtilities::convertProcessorStateToString(state), Eq(expected_string));
 }
 
@@ -217,7 +215,6 @@ TEST_F(AReverbProcessorTank, SetStateUpdatesParameters) {
     state_json["parameters"]["Reverb Time"] = expected_param_val;
     state_json["parameters"]["Density"] = expected_str_val;
     auto new_state_str = nlohmann::to_string(state_json);
-    std::cout << new_state_str << std::endl;
 
     proc.setState((uint8_t *)new_state_str.data(), new_state_str.size());
 

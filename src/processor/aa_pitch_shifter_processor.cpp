@@ -2,11 +2,10 @@
 // Created by agen on 4/11/22.
 //
 
-#include "libaa/processor/aa_pitch_shifter_utilities.h"
-
+#include "libaa/processor/aa_pitch_shifter_processor.h"
 #include "libaa/core/aa_audio_block.h"
 #include "libaa/core/aa_audio_processor_parameters.h"
-#include "libaa/processor/aa_pitch_shifter_processor.h"
+#include "libaa/processor/aa_pitch_shifter_utilities.h"
 #include "libaa/processor/aa_processor_utilities.h"
 
 namespace libaa {
@@ -77,10 +76,9 @@ void *PitchShiftProcessor::getPitchShifterImpl() const {
     return impl_->utilities_.get();
 }
 void PitchShiftProcessor::setState(uint8_t *state, size_t size) {
-    (void)(state);
-    (void)(size);
+    ProcessorUtilities::updateParametersFromState(state, size, impl_->params_);
 }
 std::vector<uint8_t> PitchShiftProcessor::getState() const {
-    return std::vector<uint8_t>();
+    return ProcessorUtilities::serializeProcessorToBinaryArray(this);
 }
 } // namespace libaa
