@@ -315,38 +315,10 @@ TEST_F(AGraphNode, NodeStateContainsNodeTypeString) {
     ASSERT_THAT(node_json["node_type"].get<std::string>(), Eq("graph_node"));
 }
 
-TEST_F(AGraphNode, OneInputAudioPortsNodeState) {
+TEST_F(AGraphNode, NodeStateContainsInputAudioPorts) {
     GraphNode::InputPortNodeConnections input_audio_ports{
-        {{node0, 0}},
-    };
-    GraphNode node{nodes, input_audio_ports, {}};
-
-    auto node_state = node.getState();
-    auto node_json = nlohmann::json::parse(node_state);
-
-    auto expected_json = nlohmann::json::parse(R"(
-    {
-        "ports":
-        [
-            {
-                "internal_node_id" : "node0",
-                "internal_node_port_index": 0,
-                "port_type": "audio",
-                "port_direction": "input",
-                "port_index": 0
-            }
-        ]
-    }
-    )");
-
-    ASSERT_TRUE(node_json["ports"].is_array());
-    ASSERT_THAT(node_json["ports"], Eq(expected_json["ports"]));
-}
-
-TEST_F(AGraphNode, MultiInputAudioPortsNodeState) {
-    GraphNode::InputPortNodeConnections input_audio_ports{
-        {{node0, 0}, {node1, 1}},
-    };
+        {{node0, 0}, {node1, 0}},
+        {{node0, 1}, {node1, 1}}};
     GraphNode node{nodes, input_audio_ports, {}};
 
     auto node_state = node.getState();
@@ -365,10 +337,24 @@ TEST_F(AGraphNode, MultiInputAudioPortsNodeState) {
             },
             {
                 "internal_node_id" : "node1",
-                "internal_node_port_index": 1,
+                "internal_node_port_index": 0,
                 "port_type": "audio",
                 "port_direction": "input",
                 "port_index": 0
+            },
+            {
+                "internal_node_id" : "node0",
+                "internal_node_port_index": 1,
+                "port_type": "audio",
+                "port_direction": "input",
+                "port_index": 1
+            },
+            {
+                "internal_node_id" : "node1",
+                "internal_node_port_index": 1,
+                "port_type": "audio",
+                "port_direction": "input",
+                "port_index": 1
             }
         ]
     }
@@ -378,7 +364,7 @@ TEST_F(AGraphNode, MultiInputAudioPortsNodeState) {
     ASSERT_THAT(node_json["ports"], Eq(expected_json["ports"]));
 }
 
-TEST_F(AGraphNode, NodeStateContainsOutputPorts) {
+TEST_F(AGraphNode, NodeStateContainsOutputAudioPorts) {
     GraphNode::OutputPortNodeConnections output_audio_ports{
         {node0, 0},
         {node1, 1}};
@@ -413,3 +399,104 @@ TEST_F(AGraphNode, NodeStateContainsOutputPorts) {
     ASSERT_TRUE(node_json["ports"].is_array());
     ASSERT_THAT(node_json["ports"], Eq(expected_json["ports"]));
 }
+
+
+TEST_F(AGraphNode, NodeStateContainsInputParameterChangePorts) {
+    GraphNode::InputPortNodeConnections input_pc_ports{
+        {{node0, 0}, {node1, 0}},
+        {{node0, 1}, {node1, 1}}};
+
+    GraphNode node{nodes, {}, input_pc_ports, {}, {}};
+
+    auto node_state = node.getState();
+    auto node_json = nlohmann::json::parse(node_state);
+
+    auto expected_json = nlohmann::json::parse(R"(
+    {
+        "ports":
+        [
+            {
+                "internal_node_id" : "node0",
+                "internal_node_port_index": 0,
+                "port_type": "parameter_change",
+                "port_direction": "input",
+                "port_index": 0
+            },
+            {
+                "internal_node_id" : "node1",
+                "internal_node_port_index": 0,
+                "port_type": "parameter_change",
+                "port_direction": "input",
+                "port_index": 0
+            },
+            {
+                "internal_node_id" : "node0",
+                "internal_node_port_index": 1,
+                "port_type": "parameter_change",
+                "port_direction": "input",
+                "port_index": 1
+            },
+            {
+                "internal_node_id" : "node1",
+                "internal_node_port_index": 1,
+                "port_type": "parameter_change",
+                "port_direction": "input",
+                "port_index": 1
+            }
+        ]
+    }
+    )");
+
+    ASSERT_TRUE(node_json["ports"].is_array());
+    ASSERT_THAT(node_json["ports"], Eq(expected_json["ports"]));
+}
+
+
+TEST_F(AGraphNode, NodeStateContainsOutputParameterChangePorts) {
+    GraphNode::OutputPortNodeConnections output_pc_ports{
+        {node0, 0},
+        {node1, 1}};
+
+    GraphNode node{nodes, {}, {}, {}, output_pc_ports};
+
+    auto node_state = node.getState();
+    auto node_json = nlohmann::json::parse(node_state);
+
+    auto expected_json = nlohmann::json::parse(R"(
+    {
+        "ports":
+        [
+            {
+                "internal_node_id" : "node0",
+                "internal_node_port_index": 0,
+                "port_type": "parameter_change",
+                "port_direction": "output",
+                "port_index": 0
+            },
+            {
+                "internal_node_id" : "node1",
+                "internal_node_port_index": 1,
+                "port_type": "parameter_change",
+                "port_direction": "output",
+                "port_index": 1
+            }
+        ]
+    }
+    )");
+
+    ASSERT_TRUE(node_json["ports"].is_array());
+    ASSERT_THAT(node_json["ports"], Eq(expected_json["ports"]));
+}
+
+// TEST_F(AGraphNode, NodeStateContainsInternalNodeAudionConnections) {
+//     auto proc0 = std::make_shared<NiceMock<MockProcessor>>();
+//     auto proc1 = std::make_shared<NiceMock<MockProcessor>>();
+//     auto proc_node0 = std::make_shared<ProcessorNode>(proc0);
+//     auto proc_node1 = std::make_shared<ProcessorNode>(proc1);
+//
+//     proc_node1->addUpstreamAudioConnection(AudioConnection{proc_node0, 0, 0});
+//
+//     GraphNode::OutputPortNodeConnections output_audio_ports{{proc_node1, 0}};
+//     GraphNode node{
+//         {proc_node0, proc_node1}, {}, output_audio_ports};
+// }
