@@ -12,18 +12,18 @@ auto serializePortConnectionToJson(const GraphNode::PortNodeConnection &port_con
                                    PortDirection direction,
                                    PortType port_type,
                                    int graph_port_index) {
-    auto type_to_string = [](PortType port_type){
-        if(port_type == PortType::kAudio){
+    auto type_to_string = [](PortType port_type) {
+        if (port_type == PortType::kAudio) {
             return "audio";
-        }else{
-            return "";
+        } else {
+            return "parameter_change";
         }
     };
 
-    auto direction_to_string = [](PortDirection direction){
-        if(direction == PortDirection::kInput){
+    auto direction_to_string = [](PortDirection direction) {
+        if (direction == PortDirection::kInput) {
             return "input";
-        }else{
+        } else {
             return "output";
         }
     };
@@ -37,6 +37,60 @@ auto serializePortConnectionToJson(const GraphNode::PortNodeConnection &port_con
 
     return port_json;
 }
+
+auto serializePortsConnectionToJson(const GraphNode::InputPortNodeConnections &input_audio_port_connections_,
+                                    const GraphNode::InputPortNodeConnections &input_param_change_port_connections_,
+                                    const GraphNode::OutputPortNodeConnections &output_audio_port_connections_,
+                                    const GraphNode::OutputPortNodeConnections &output_param_change_port_connections_) {
+    nlohmann::json ports_json;
+
+    // input audio port connection
+    int graph_audio_input_port_index = 0;
+    for (const auto &input_audio_ports : input_audio_port_connections_) {
+        for (const auto &input_audio_port : input_audio_ports) {
+            ports_json.push_back(serializePortConnectionToJson(input_audio_port,
+                                                               PortDirection::kInput,
+                                                               PortType::kAudio,
+                                                               graph_audio_input_port_index));
+        }
+        ++graph_audio_input_port_index;
+    }
+
+    // input parameter change connection
+    int graph_pc_input_port_index = 0;
+    for (const auto &ports : input_param_change_port_connections_) {
+        for (const auto &input_audio_port : ports) {
+            ports_json.push_back(serializePortConnectionToJson(input_audio_port,
+                                                               PortDirection::kInput,
+                                                               PortType::kParameterChange,
+                                                               graph_pc_input_port_index));
+        }
+        ++graph_pc_input_port_index;
+    }
+
+    // output audio port connection
+    int graph_audio_output_port_index = 0;
+    for (const auto &output_audio_port : output_audio_port_connections_) {
+        ports_json.push_back(serializePortConnectionToJson(output_audio_port,
+                                                           PortDirection::kOutput,
+                                                           PortType::kAudio,
+                                                           graph_audio_output_port_index));
+        ++graph_audio_output_port_index;
+    }
+
+    // output parameter change port connection
+    int graph_pc_output_port_index = 0;
+    for (const auto &output_audio_port : output_param_change_port_connections_) {
+        ports_json.push_back(serializePortConnectionToJson(output_audio_port,
+                                                           PortDirection::kOutput,
+                                                           PortType::kParameterChange,
+                                                           graph_pc_output_port_index));
+        ++graph_pc_output_port_index;
+    }
+
+    return ports_json;
+}
+
 GraphNode::GraphNode(std::vector<std::shared_ptr<INode>> nodes,
                      InputPortNodeConnections input_audio_port_connections,
                      OutputPortNodeConnections output_audio_port_connections)
@@ -186,31 +240,11 @@ std::vector<uint8_t> GraphNode::getState() const {
     state_json["version"] = LIBAA_VERSION;
     state_json["node_type"] = "graph_node";
 
-    nlohmann::json ports_json;
-
-    // input audio port connection
-    int graph_audio_input_port_index = 0;
-    for (const auto &input_audio_ports : input_audio_port_connections_) {
-        for (const auto &input_audio_port : input_audio_ports) {
-            ports_json.push_back(serializePortConnectionToJson(input_audio_port,
-                                                               PortDirection::kInput,
-                                                               PortType::kAudio,
-                                                               graph_audio_input_port_index));
-        }
-        ++graph_audio_input_port_index;
-    }
-
-    // output audio port connection
-    int graph_audio_output_port_index = 0;
-    for (const auto &output_audio_port : output_audio_port_connections_) {
-        ports_json.push_back(serializePortConnectionToJson(output_audio_port,
-                                                           PortDirection::kOutput,
-                                                           PortType::kAudio,
-                                                           graph_audio_output_port_index));
-        ++graph_audio_output_port_index;
-    }
-
-    state_json["ports"] = ports_json;
+    state_json["ports"] = serializePortsConnectionToJson(
+        input_audio_port_connections_,
+        input_param_change_port_connections_,
+        output_audio_port_connections_,
+        output_param_change_port_connections_);
 
     auto state_string = nlohmann::to_string(state_json);
     return std::vector<uint8_t>{state_string.begin(), state_string.end()};
