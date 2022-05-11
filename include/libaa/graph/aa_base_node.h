@@ -18,9 +18,9 @@ public:
 
     std::string getNodeID() const override;
 
-    const std::vector<AudioConnection> &getUpstreamAudioConnections() const;
+    const std::vector<AudioConnection> &getUpstreamAudioConnections() const override;
 
-    const std::vector<ParameterChangeConnection> &getUpstreamParameterConnections() const;
+    const std::vector<ParameterChangeConnection> &getUpstreamParameterConnections() const override;
 
 protected:
     std::string node_id_{};

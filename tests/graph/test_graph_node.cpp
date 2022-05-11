@@ -4,6 +4,8 @@
 #include "libaa/aa_version.h"
 #include "libaa/graph/aa_audio_processor_node.h"
 #include "libaa/graph/aa_graph_node.h"
+#include "libaa/processor/aa_delay_processor.h"
+#include "libaa/processor/aa_gain_processor.h"
 #include "libaa/processor/aa_source_callback_processor.h"
 #include "libaa/processor/aa_source_processor.h"
 #include "libaa_testing/aa_mock_node.h"
@@ -400,7 +402,6 @@ TEST_F(AGraphNode, NodeStateContainsOutputAudioPorts) {
     ASSERT_THAT(node_json["ports"], Eq(expected_json["ports"]));
 }
 
-
 TEST_F(AGraphNode, NodeStateContainsInputParameterChangePorts) {
     GraphNode::InputPortNodeConnections input_pc_ports{
         {{node0, 0}, {node1, 0}},
@@ -451,7 +452,6 @@ TEST_F(AGraphNode, NodeStateContainsInputParameterChangePorts) {
     ASSERT_THAT(node_json["ports"], Eq(expected_json["ports"]));
 }
 
-
 TEST_F(AGraphNode, NodeStateContainsOutputParameterChangePorts) {
     GraphNode::OutputPortNodeConnections output_pc_ports{
         {node0, 0},
@@ -488,15 +488,36 @@ TEST_F(AGraphNode, NodeStateContainsOutputParameterChangePorts) {
     ASSERT_THAT(node_json["ports"], Eq(expected_json["ports"]));
 }
 
-// TEST_F(AGraphNode, NodeStateContainsInternalNodeAudionConnections) {
-//     auto proc0 = std::make_shared<NiceMock<MockProcessor>>();
-//     auto proc1 = std::make_shared<NiceMock<MockProcessor>>();
-//     auto proc_node0 = std::make_shared<ProcessorNode>(proc0);
-//     auto proc_node1 = std::make_shared<ProcessorNode>(proc1);
-//
-//     proc_node1->addUpstreamAudioConnection(AudioConnection{proc_node0, 0, 0});
-//
-//     GraphNode::OutputPortNodeConnections output_audio_ports{{proc_node1, 0}};
-//     GraphNode node{
-//         {proc_node0, proc_node1}, {}, output_audio_ports};
-// }
+TEST_F(AGraphNode, NodeStateContainsInternalNodeAudioConnections) {
+    auto gain = std::make_shared<GainProcessor>();
+    auto delay = std::make_shared<DelayProcessor>();
+    auto gain_node = std::make_shared<ProcessorNode>(gain);
+    auto delay_node = std::make_shared<ProcessorNode>(delay);
+    gain_node->setNodeID("gain");
+    delay_node->setNodeID("delay");
+    delay_node->addUpstreamAudioConnection(AudioConnection{gain_node, 0, 0});
+
+    GraphNode::OutputPortNodeConnections output_audio_ports{{delay_node, 0}};
+    GraphNode node{
+        {gain_node, delay_node}, {}, {}};
+    auto node_state = node.getState();
+    auto node_json = nlohmann::json::parse(node_state);
+
+    auto expected_json = nlohmann::json::parse(R"(
+    {
+        "connections":
+        [
+            {
+                "downstream_node_id" : "delay",
+                "downstream_node_port": 0,
+                "upstream_node_id": "gain",
+                "upstream_node_port": 0,
+                "port_type": "audio"
+            }
+        ]
+    }
+    )");
+
+    ASSERT_TRUE(node_json["connections"].is_array());
+    ASSERT_THAT(node_json["connections"], Eq(expected_json["connections"]));
+}
