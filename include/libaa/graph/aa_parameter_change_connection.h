@@ -13,7 +13,11 @@
 namespace libaa {
 class ParameterChangeConnection : public Connection {
 public:
-    using Connection::Connection;
+    ParameterChangeConnection(std::shared_ptr<INode> upstream_n,
+                              int upstream_port_inx,
+                              int downstream_port_inx)
+        : Connection(std::move(upstream_n), upstream_port_inx, downstream_port_inx, ConnectionType::kParameterChangeConnection) {
+    }
 
     ParameterChangePort &pull() {
         return upstream_node->pullParameterChangePort(upstream_port_index);
