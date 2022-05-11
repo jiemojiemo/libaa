@@ -27,12 +27,6 @@ GraphNode::GraphNode(std::vector<std::shared_ptr<INode>> nodes,
 {
 }
 
-void GraphNode::setNodeID(std::string node_id) {
-    node_id_ = std::move(node_id);
-}
-std::string GraphNode::getNodeID() const {
-    return node_id_;
-}
 void GraphNode::prepareToPlay(float sample_rate, int max_block_size) {
     for (auto &n : nodes_) {
         n->prepareToPlay(sample_rate, max_block_size);
@@ -49,6 +43,8 @@ void GraphNode::addUpstreamAudioConnection(const AudioConnection &c) {
 
         port_connection.node->addUpstreamAudioConnection(new_audio_con);
     }
+
+    audio_connections_.push_back(c);
 }
 
 void GraphNode::addUpstreamParameterChangeConnection(const ParameterChangeConnection &c) {
@@ -61,6 +57,8 @@ void GraphNode::addUpstreamParameterChangeConnection(const ParameterChangeConnec
 
         port_connection.node->addUpstreamParameterChangeConnection(new_pc_con);
     }
+
+    param_change_connections_.push_back(c);
 }
 
 AudioPort &GraphNode::pullAudioPort(int output_audio_port) {

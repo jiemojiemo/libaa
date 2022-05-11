@@ -40,13 +40,6 @@ ProcessorNode::ProcessorNode(std::shared_ptr<IAudioProcessor> proc,
     initBlocksAndPorts(input_channels, output_channels);
 }
 
-void ProcessorNode::setNodeID(std::string node_id) {
-    node_id_ = std::move(node_id);
-}
-std::string ProcessorNode::getNodeID() const {
-    return node_id_;
-}
-
 void ProcessorNode::prepareToPlay(float sample_rate, int max_block_size) {
     input_block_->buffer.resizeFrames(max_block_size);
     output_block_->buffer.resizeFrames(max_block_size);
@@ -136,15 +129,6 @@ void ProcessorNode::addAudioInputPort(int num_in_channel) {
     input_block_->buffer.resize(new_channel_size, 0);
     input_audio_ports_.emplace_back(input_block_, num_in_channel,
                                     old_channel_size);
-}
-
-const std::vector<AudioConnection> &
-ProcessorNode::getUpstreamAudioConnections() const {
-    return audio_connections_;
-}
-
-const std::vector<ParameterChangeConnection> &ProcessorNode::getUpstreamParameterConnections() const {
-    return param_change_connections_;
 }
 
 const AudioBlock *ProcessorNode::getInputBlock() const {

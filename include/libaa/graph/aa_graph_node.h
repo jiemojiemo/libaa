@@ -8,10 +8,10 @@
 #pragma once
 #include "libaa/graph/aa_audio_connection.h"
 #include "libaa/graph/aa_audio_port.h"
-#include "libaa/graph/aa_i_node.h"
+#include "libaa/graph/aa_base_node.h"
 #include "libaa/graph/aa_parameter_change_port.h"
 namespace libaa {
-class GraphNode : public INode {
+class GraphNode : public BaseNode {
 public:
     /**
      * PortNodeConnection describes the input or output ports of a graph
@@ -40,10 +40,6 @@ public:
               OutputPortNodeConnections output_param_change_port_connections);
 
     ~GraphNode() override = default;
-
-    void setNodeID(std::string node_id) override;
-
-    std::string getNodeID() const override;
 
     void prepareToPlay(float sample_rate, int max_block_size) override;
 
@@ -89,10 +85,6 @@ private:
     InputPortNodeConnections input_param_change_port_connections_;
     OutputPortNodeConnections output_audio_port_connections_;
     OutputPortNodeConnections output_param_change_port_connections_;
-    std::string node_id_{};
-
-    std::shared_ptr<AudioBlock> block_ = std::make_shared<AudioBlock>();
-    ParameterChangePort p{block_};
 };
 } // namespace libaa
 #endif // LIBAA_AA_GRAPH_NODE_H

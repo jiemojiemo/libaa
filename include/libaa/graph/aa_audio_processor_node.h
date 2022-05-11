@@ -8,7 +8,7 @@
 #pragma once
 #include "libaa/graph/aa_audio_connection.h"
 #include "libaa/graph/aa_audio_port.h"
-#include "libaa/graph/aa_i_node.h"
+#include "libaa/graph/aa_base_node.h"
 #include "libaa/graph/aa_parameter_change_connection.h"
 #include "libaa/graph/aa_parameter_change_port.h"
 #include "libaa/processor/aa_audio_processor.h"
@@ -18,7 +18,7 @@
 
 namespace libaa {
 
-class ProcessorNode : public INode {
+class ProcessorNode : public BaseNode {
 public:
     ~ProcessorNode() override = default;
 
@@ -27,10 +27,6 @@ public:
     explicit ProcessorNode(std::shared_ptr<IAudioProcessor> proc,
                            const std::initializer_list<int> &input_channels,
                            const std::initializer_list<int> &output_channels);
-
-    void setNodeID(std::string node_id) override;
-
-    std::string getNodeID() const override;
 
     void prepareToPlay(float sample_rate, int max_block_size) override;
 
@@ -50,10 +46,6 @@ public:
 
     void addAudioInputPort(int num_in_channel);
 
-    const std::vector<AudioConnection> &getUpstreamAudioConnections() const;
-
-    const std::vector<ParameterChangeConnection> &getUpstreamParameterConnections() const;
-
     int getAudioInputPortSize() const override;
     int getAudioOutputPortSize() const override;
     int getAudioInputPortChannels(int port_index) const override;
@@ -67,6 +59,7 @@ public:
     //** testing ***
     const AudioBlock *getInputBlock() const;
     const AudioBlock *getOutputBlock() const;
+
 private:
     void
     initBlocksAndPorts(const std::initializer_list<int> &input_channels,
@@ -87,11 +80,8 @@ private:
     std::vector<AudioPort> output_audio_ports_;
     std::vector<ParameterChangePort> input_pc_ports_;
     std::vector<ParameterChangePort> output_pc_ports_;
-    std::vector<AudioConnection> audio_connections_;
-    std::vector<ParameterChangeConnection> param_change_connections_;
     std::shared_ptr<AudioBlock> input_block_{nullptr};
     std::shared_ptr<AudioBlock> output_block_{nullptr};
-    std::string node_id_{};
     std::atomic<bool> has_processed_{false};
 };
 } // namespace libaa
