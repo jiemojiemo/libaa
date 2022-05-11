@@ -91,6 +91,28 @@ auto serializePortsConnectionToJson(const GraphNode::InputPortNodeConnections &i
     return ports_json;
 }
 
+auto serializeNodeConnectionsToJson(const std::vector<std::shared_ptr<INode>> &nodes)
+{
+
+    nlohmann::json connections_json;
+    // audio connections
+    for (const auto &node : nodes) {
+        const auto &upstream_connections = node->getUpstreamAudioConnections();
+        for(const auto& connection : upstream_connections)
+        {
+            nlohmann::json connection_json;
+            connection_json["upstream_node_id"] = connection.upstream_node->getNodeID();
+            connection_json["upstream_node_port"] = connection.upstream_port_index;
+            connection_json["downstream_node_port"] = connection.downstream_port_index;
+            connection_json["downstream_node_id"] = node->getNodeID();
+            connection_json["port_type"] = "audio";
+            connections_json.push_back(connection_json);
+        }
+    }
+
+    return connections_json;
+}
+
 GraphNode::GraphNode(std::vector<std::shared_ptr<INode>> nodes,
                      InputPortNodeConnections input_audio_port_connections,
                      OutputPortNodeConnections output_audio_port_connections)
@@ -245,6 +267,7 @@ std::vector<uint8_t> GraphNode::getState() const {
         input_param_change_port_connections_,
         output_audio_port_connections_,
         output_param_change_port_connections_);
+    state_json["connections"] = serializeNodeConnectionsToJson(nodes_);
 
     auto state_string = nlohmann::to_string(state_json);
     return std::vector<uint8_t>{state_string.begin(), state_string.end()};

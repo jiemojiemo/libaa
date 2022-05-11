@@ -45,6 +45,15 @@ public:
     virtual void addUpstreamParameterChangeConnection(const ParameterChangeConnection &c) = 0;
 
     /**
+     * Returns upstream audio connections
+     */
+    virtual const std::vector<AudioConnection> &getUpstreamAudioConnections() const = 0;
+
+    /**
+     * Returns upstream parameter change connections
+     */
+    virtual const std::vector<ParameterChangeConnection> &getUpstreamParameterConnections() const = 0;
+    /**
      * Pulls data from upstream node into input data, and then process it, finally returns the output parameter port.
      * @param output_audio_port , the output audio port index
      */
