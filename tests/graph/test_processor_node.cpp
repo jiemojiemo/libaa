@@ -4,7 +4,9 @@
 
 #include "libaa/graph/aa_audio_processor_node.h"
 #include "libaa_testing/aa_mock_processor.h"
+#include "libaa/processor/aa_gain_processor.h"
 #include <gmock/gmock.h>
+#include <nlohmann/json.hpp>
 
 using namespace testing;
 using namespace libaa;
@@ -21,6 +23,12 @@ public:
         params.pushFloatParameter("C", 0, 0, 1.0);
         params.pushFloatParameter("D", 0, 0, 1.0);
     }
+
+    auto makeMockProcessorState() const{
+        GainProcessor gain;
+        return gain.getState();
+    }
+
     std::shared_ptr<MockProcessor> proc;
     std::shared_ptr<MockProcessor> up_proc;
     std::shared_ptr<ProcessorNode> upstream_node;
@@ -384,4 +392,65 @@ TEST_F(AProcessorNode, PullParameterChangePortReturnsLastResultIfHasProcessed) {
 
     auto &port_first_time = node.pullParameterChangePort(0);
     auto &port_second_time = node.pullParameterChangePort(0);
+}
+
+TEST_F(AProcessorNode, NodeStateContainsNodeId) {
+    auto node_id = "ABC";
+    ProcessorNode node(proc);
+    node.setNodeID(node_id);
+
+    auto node_state = node.getState();
+    auto node_json = nlohmann::json::parse(node_state);
+
+    ASSERT_FALSE(node_json["node_id"].is_null());
+    ASSERT_THAT(node_json["node_id"].get<std::string>(), Eq(node_id));
+}
+
+TEST_F(AProcessorNode, NodeStateContainsInputChannels) {
+    auto input_channels = {2, 1, 2};
+    ProcessorNode node(proc, input_channels, {});
+
+    auto node_state = node.getState();
+    auto node_json = nlohmann::json::parse(node_state);
+
+    auto expected_json = nlohmann::json::parse(R"(
+        {
+            "input_channels": [2,1,2]
+        }
+    )");
+    ASSERT_FALSE(node_json["input_channels"].is_null());
+    ASSERT_TRUE(node_json["input_channels"].is_array());
+    ASSERT_THAT(node_json["input_channels"], Eq(expected_json["input_channels"]));
+}
+
+TEST_F(AProcessorNode, NodeStateContainsOutputChannels) {
+    auto output_channels = {2, 1, 2};
+    ProcessorNode node(proc, {}, output_channels);
+
+    auto node_state = node.getState();
+    auto node_json = nlohmann::json::parse(node_state);
+
+    auto expected_json = nlohmann::json::parse(R"(
+        {
+            "output_channels": [2,1,2]
+        }
+    )");
+    ASSERT_FALSE(node_json["output_channels"].is_null());
+    ASSERT_TRUE(node_json["output_channels"].is_array());
+    ASSERT_THAT(node_json["output_channels"], Eq(expected_json["output_channels"]));
+}
+
+TEST_F(AProcessorNode, NodeStateContainsProcessorState)
+{
+    ProcessorNode node(proc);
+    auto proc_state = makeMockProcessorState();
+    auto proc_state_json = nlohmann::json::parse(proc_state);
+
+    EXPECT_CALL(*proc, getState).WillOnce(Return(proc_state));
+
+    auto node_state = node.getState();
+    auto node_json = nlohmann::json::parse(node_state);
+
+    ASSERT_FALSE(node_json["processor_state"].is_null());
+    ASSERT_THAT(node_json["processor_state"], Eq(proc_state_json));
 }

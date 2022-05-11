@@ -7,6 +7,7 @@
 
 #pragma once
 #include "libaa/processor/aa_audio_processor.h"
+#include "libaa/processor/aa_gain_processor.h"
 #include <gmock/gmock.h>
 
 namespace libaa {
@@ -18,10 +19,12 @@ public:
         params_.pushBoolParameter("mock_boll_param", true);
         params_.pushChoiceParameter("mock_choice_param", 0, {"AA", "BB"});
 
+        auto not_empty_state = makeMockProcessorState();
         ON_CALL(*this, getName).WillByDefault(testing::Return("MockProcessor"));
         ON_CALL(*this, getLatencySamples).WillByDefault(testing::Return(0));
         ON_CALL(*this, getTailLengthSamples).WillByDefault(testing::Return(0));
         ON_CALL(*this, getParameters).WillByDefault(testing::Return(&params_));
+        ON_CALL(*this, getState).WillByDefault(testing::Return(not_empty_state));
     }
 
     MOCK_METHOD(std::string, getName, (), (override, const));
@@ -33,6 +36,11 @@ public:
     MOCK_METHOD(int, getTailLengthSamples, (), (override, const, noexcept));
     MOCK_METHOD(void, setState, (uint8_t * state, size_t size), (override));
     MOCK_METHOD(std::vector<uint8_t>, getState, (), (override, const));
+
+    static std::vector<uint8_t> makeMockProcessorState(){
+        GainProcessor gain;
+        return gain.getState();
+    }
 
 private:
     AudioProcessorParameters params_;

@@ -4,7 +4,7 @@
 
 #include "libaa/graph/aa_audio_processor_node.h"
 #include "libaa/graph/aa_parameter_change_port.h"
-
+#include <nlohmann/json.hpp>
 namespace libaa {
 
 auto getTotalChannels(const std::initializer_list<int> &input_channels) {
@@ -20,6 +20,14 @@ auto getNumberOfParameters(const std::shared_ptr<IAudioProcessor> &proc) {
     }
 
     return num_params;
+}
+
+auto getChannelsFromPorts(const std::vector<AudioPort> &audio_ports) {
+    std::vector<int> channels;
+    for (const auto &audio_port : audio_ports) {
+        channels.push_back(audio_port.getNumberChannels());
+    }
+    return channels;
 }
 
 ProcessorNode::ProcessorNode(std::shared_ptr<IAudioProcessor> proc)
@@ -246,7 +254,14 @@ void ProcessorNode::setState(uint8_t *state, size_t size) {
     (void)(size);
 }
 std::vector<uint8_t> ProcessorNode::getState() const {
-    return std::vector<uint8_t>();
+    nlohmann::json state_json;
+    state_json["node_id"] = getNodeID();
+    state_json["input_channels"] = nlohmann::json(getChannelsFromPorts(input_audio_ports_));
+    state_json["output_channels"] = nlohmann::json(getChannelsFromPorts(output_audio_ports_));
+    state_json["processor_state"] = nlohmann::json::parse(proc_->getState());
+
+    auto state_string = nlohmann::to_string(state_json);
+    return std::vector<uint8_t>{state_string.begin(), state_string.end()};
 }
 
 } // namespace libaa
