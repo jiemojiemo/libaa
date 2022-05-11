@@ -17,6 +17,7 @@ class SchroederReverbProcessor : public IAudioProcessor {
 public:
     SchroederReverbProcessor() {
         params_.pushFloatParameter("Reverb Time(ms)", 50.0f, 0.0f, 2000.0f);
+        params_.pushFloatParameter("Damping", 0.707f, 0.0f, 1.0f);
         params_.pushFloatParameter("Wet", 1.0f, 0.0f, 1.0f);
         params_.pushFloatParameter("Dry", 0.0f, 0.0f, 1.0f);
     }
@@ -34,7 +35,7 @@ public:
             allpass_filters_[i].prepare(sample_rate, max_delay_size);
         }
 
-        updateCombFilterParameter(params_.get(0).getPlainValue());
+        updateCombFilterParameter(params_.get(0).getPlainValue(), params_.get(1).getPlainValue());
         updateAPFParameter();
     }
     void processBlock(AudioBlock *input, AudioBlock *output) override {
@@ -42,15 +43,16 @@ public:
 
         ProcessorUtilities::updateParameterFromParameterChanges(
             input->param_changes, params_);
-        updateCombFilterParameter(params_.get(0).getPlainValue());
+        updateCombFilterParameter(params_.get(0).getPlainValue(),
+                                  params_.get(1).getPlainValue());
 
         auto num_channels = output->buffer.getNumberChannels();
         float *left_channel = output->buffer.getWriterPointer(0);
         float *right_channel = num_channels > 1
                                    ? output->buffer.getWriterPointer(1)
                                    : left_channel;
-        float wet = params_.get(1).getPlainValue();
-        float dry = params_.get(2).getPlainValue();
+        float wet = params_.get(2).getPlainValue();
+        float dry = params_.get(3).getPlainValue();
         for (int i = 0; i < output->buffer.getNumberFrames(); ++i) {
             float xn_L = left_channel[i];
             float xn_R = right_channel[i];
@@ -89,11 +91,13 @@ public:
     }
 
 private:
-    void updateCombFilterParameter(float new_rt_60) {
+    void updateCombFilterParameter(float new_rt_60, float damping) {
         for (int i = 0; i < comb_filters_.size(); ++i) {
             auto param = comb_filters_[0].getParameters();
             param.rt_60_ms = new_rt_60;
             param.delay_ms = comb_filter_delays[i];
+            param.enable_LPF = true;
+            param.lpf_g = damping;
             comb_filters_[i].updateParameters(param);
         }
     }
