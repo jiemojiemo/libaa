@@ -42,6 +42,10 @@ TEST_F(AParameterChangeConnection, CanGetDownStreamPortIndex) {
     ASSERT_THAT(c->downstream_port_index, Eq(down_port_index));
 }
 
+TEST_F(AParameterChangeConnection, HasParameterChangeConnectionType) {
+    ASSERT_THAT(c->type, Eq(ConnectionType::kParameterChangeConnection));
+}
+
 TEST_F(AParameterChangeConnection, PullWillTriggerUpstreamNodeToPull) {
     ParameterChangePort pc_port(block);
 

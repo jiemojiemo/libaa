@@ -12,7 +12,7 @@ class AConnection : public Test {
 public:
     void SetUp() override {
         c = std::make_unique<Connection>(n, up_port_index,
-                                         down_port_index);
+                                         down_port_index, ConnectionType::kAudioConnection);
     }
     std::shared_ptr<MockNode> n = std::make_shared<MockNode>();
     std::unique_ptr<Connection> c;
@@ -22,7 +22,7 @@ public:
 };
 
 TEST_F(AConnection, CanInitWithNodeAndPortIndex) {
-    auto c = std::make_unique<Connection>(n, up_port_index, down_port_index);
+    auto c = std::make_unique<Connection>(n, up_port_index, down_port_index, ConnectionType::kAudioConnection);
 }
 
 TEST_F(AConnection, CanGetUpStreamNode) {
@@ -35,4 +35,8 @@ TEST_F(AConnection, CanGetUpStreamPortIndex) {
 
 TEST_F(AConnection, CanGetDownStreamPortIndex) {
     ASSERT_THAT(c->downstream_port_index, Eq(down_port_index));
+}
+
+TEST_F(AConnection, CanGetConnectionType) {
+    ASSERT_THAT(c->type, Eq(ConnectionType::kAudioConnection));
 }

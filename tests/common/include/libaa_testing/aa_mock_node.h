@@ -8,17 +8,16 @@
 #pragma once
 #include "libaa/graph/aa_audio_connection.h"
 #include "libaa/graph/aa_audio_port.h"
+#include "libaa/graph/aa_base_node.h"
 #include "libaa/graph/aa_i_node.h"
 #include "libaa/graph/aa_parameter_change_connection.h"
 #include "libaa/graph/aa_parameter_change_port.h"
 #include <gmock/gmock.h>
 
 namespace libaa {
-class MockNode : public libaa::INode {
+class MockNode : public libaa::BaseNode {
 public:
     ~MockNode() override = default;
-    MOCK_METHOD(void, setNodeID, (std::string), (override));
-    MOCK_METHOD(std::string, getNodeID, (), (override, const));
     MOCK_METHOD(void, prepareToPlay, (float, int), (override));
     MOCK_METHOD(void, addUpstreamAudioConnection,
                 (const libaa::AudioConnection &), (override));

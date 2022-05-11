@@ -44,6 +44,10 @@ TEST_F(AAudioConnection, CanGetDownStreamPortIndex) {
     ASSERT_THAT(c->downstream_port_index, Eq(down_port_index));
 }
 
+TEST_F(AAudioConnection, HasAudioConnectionType) {
+    ASSERT_THAT(c->type, Eq(ConnectionType::kAudioConnection));
+}
+
 TEST_F(AAudioConnection, PullWillTriggerUpstreamNodeToPull) {
     AudioPort audio_port(block);
 

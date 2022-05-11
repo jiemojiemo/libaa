@@ -2,9 +2,41 @@
 // Created by user on 5/7/22.
 //
 #include "libaa/graph/aa_graph_node.h"
+#include "libaa/aa_version.h"
 #include "libaa/graph/aa_parameter_change_connection.h"
+#include "libaa/graph/aa_port.h"
+#include <nlohmann/json.hpp>
 
 namespace libaa {
+auto serializePortConnectionToJson(const GraphNode::PortNodeConnection &port_con,
+                                   PortDirection direction,
+                                   PortType port_type,
+                                   int graph_port_index) {
+    auto type_to_string = [](PortType port_type){
+        if(port_type == PortType::kAudio){
+            return "audio";
+        }else{
+            return "";
+        }
+    };
+
+    auto direction_to_string = [](PortDirection direction){
+        if(direction == PortDirection::kInput){
+            return "input";
+        }else{
+            return "output";
+        }
+    };
+
+    nlohmann::json port_json;
+    port_json["internal_node_id"] = port_con.node->getNodeID();
+    port_json["internal_node_port_index"] = port_con.node_port_index;
+    port_json["port_type"] = type_to_string(port_type);
+    port_json["port_direction"] = direction_to_string(direction);
+    port_json["port_index"] = graph_port_index;
+
+    return port_json;
+}
 GraphNode::GraphNode(std::vector<std::shared_ptr<INode>> nodes,
                      InputPortNodeConnections input_audio_port_connections,
                      OutputPortNodeConnections output_audio_port_connections)
@@ -149,6 +181,38 @@ void GraphNode::setState(uint8_t *state, size_t size) {
     (void)(size);
 }
 std::vector<uint8_t> GraphNode::getState() const {
-    return std::vector<uint8_t>();
+    nlohmann::json state_json;
+    state_json["node_id"] = getNodeID();
+    state_json["version"] = LIBAA_VERSION;
+    state_json["node_type"] = "graph_node";
+
+    nlohmann::json ports_json;
+
+    // input audio port connection
+    int graph_audio_input_port_index = 0;
+    for (const auto &input_audio_ports : input_audio_port_connections_) {
+        for (const auto &input_audio_port : input_audio_ports) {
+            ports_json.push_back(serializePortConnectionToJson(input_audio_port,
+                                                               PortDirection::kInput,
+                                                               PortType::kAudio,
+                                                               graph_audio_input_port_index));
+        }
+        ++graph_audio_input_port_index;
+    }
+
+    // output audio port connection
+    int graph_audio_output_port_index = 0;
+    for (const auto &output_audio_port : output_audio_port_connections_) {
+        ports_json.push_back(serializePortConnectionToJson(output_audio_port,
+                                                           PortDirection::kOutput,
+                                                           PortType::kAudio,
+                                                           graph_audio_output_port_index));
+        ++graph_audio_output_port_index;
+    }
+
+    state_json["ports"] = ports_json;
+
+    auto state_string = nlohmann::to_string(state_json);
+    return std::vector<uint8_t>{state_string.begin(), state_string.end()};
 }
 } // namespace libaa

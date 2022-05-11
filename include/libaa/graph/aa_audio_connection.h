@@ -13,7 +13,11 @@
 namespace libaa {
 class AudioConnection : public Connection {
 public:
-    using Connection::Connection;
+    AudioConnection(std::shared_ptr<INode> upstream_n,
+                    int upstream_port_inx,
+                    int downstream_port_inx)
+        : Connection(std::move(upstream_n), upstream_port_inx, downstream_port_inx, ConnectionType::kAudioConnection) {
+    }
     /**
      * Pull from upstream node and returns the AudioPort
      */
