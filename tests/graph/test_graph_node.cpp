@@ -195,6 +195,31 @@ TEST_F(AGraphNode, AddUpstreamParameterChangeConnectionWillConnectInternalNodes)
     node.addUpstreamParameterChangeConnection(c);
 }
 
+TEST_F(AGraphNode, AddUpstreamAudioConnectionIncreasesTheConnectionSize) {
+    GraphNode::InputPortNodeConnections input_audio_ports{
+        {{node0, 0}, {node1, 1}},
+    };
+    GraphNode node{nodes, input_audio_ports, {}};
+    AudioConnection c(upstream_node, 0, 0);
+
+    node.addUpstreamAudioConnection(c);
+
+    ASSERT_THAT(node.getUpstreamAudioConnections().size(), Eq(1));
+}
+
+TEST_F(AGraphNode, AddUpstreamParameterChangeConnectionIncreasesTheConnectionSize) {
+    GraphNode::InputPortNodeConnections input_pc_ports{
+        {{node0, 0}, {node1, 1}},
+    };
+
+    GraphNode node{nodes, {}, input_pc_ports, {}, {}};
+    ParameterChangeConnection c(upstream_node, 0, 0);
+
+    node.addUpstreamParameterChangeConnection(c);
+
+    ASSERT_THAT(node.getUpstreamParameterConnections().size(), Eq(1));
+}
+
 TEST_F(AGraphNode, PullAudioPortWillPullUpstreamData) {
     auto proc0 = std::make_shared<NiceMock<MockProcessor>>();
     auto proc1 = std::make_shared<NiceMock<MockProcessor>>();
