@@ -10,7 +10,9 @@
 namespace libaa {
 namespace NodeSerializationUtilities {
 std::vector<uint8_t> jsonToBinaryData(const nlohmann::json &j);
-}
+nlohmann::json binaryDataToJson(const std::vector<uint8_t> &data);
+nlohmann::json binaryDataToJson(uint8_t *data, size_t size);
+} // namespace NodeSerializationUtilities
 } // namespace libaa
 
 #endif // LIBAA_AA_NODE_SERIALIZATION_UTILITIES_H

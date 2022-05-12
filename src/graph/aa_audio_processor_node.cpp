@@ -33,14 +33,13 @@ auto getChannelsFromPorts(const std::vector<AudioPort> &audio_ports) {
 }
 
 auto jsonToBinaryData(const nlohmann::json &j) {
-    auto j_str = nlohmann::to_string(j);
-    return std::vector<uint8_t>(j_str.begin(), j_str.end());
+    return NodeSerializationUtilities::jsonToBinaryData(j);
 }
 
-auto createProcessorWithState(const nlohmann::json &state_json) {
-    auto processor_name = state_json["processor_state"]["processor_name"];
+auto createProcessorWithState(const nlohmann::json &node_state_json) {
+    auto processor_name = node_state_json["processor_state"]["processor_name"];
     auto proc = ProcessorFactory::create(processor_name);
-    auto processor_state = jsonToBinaryData(state_json["processor_state"]);
+    auto processor_state = jsonToBinaryData(node_state_json["processor_state"]);
     proc->setState(processor_state.data(), processor_state.size());
 
     return proc;
@@ -251,6 +250,9 @@ int ProcessorNode::getParameterChangeOutputPortSize() const {
 }
 void ProcessorNode::setState(uint8_t *state, size_t size) {
     auto state_json = nlohmann::json::parse(state, state + size);
+
+    BaseNode::setNodeID(state_json["node_id"].get<std::string>());
+
     proc_ = createProcessorWithState(state_json);
 
     // rebuild audio ports
@@ -263,6 +265,7 @@ void ProcessorNode::setState(uint8_t *state, size_t size) {
 std::vector<uint8_t> ProcessorNode::getState() const {
     nlohmann::json state_json;
     state_json["node_id"] = getNodeID();
+    state_json["node_type"] = "processor_node";
     state_json["input_channels"] = nlohmann::json(getChannelsFromPorts(input_audio_ports_));
     state_json["output_channels"] = nlohmann::json(getChannelsFromPorts(output_audio_ports_));
     state_json["processor_state"] = nlohmann::json::parse(proc_->getState());
