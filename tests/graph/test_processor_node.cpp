@@ -3,8 +3,8 @@
 //
 
 #include "libaa/graph/aa_audio_processor_node.h"
-#include "libaa_testing/aa_mock_processor.h"
 #include "libaa/processor/aa_gain_processor.h"
+#include "libaa_testing/aa_mock_processor.h"
 #include <gmock/gmock.h>
 #include <nlohmann/json.hpp>
 
@@ -17,6 +17,7 @@ public:
         proc = std::make_shared<NiceMock<MockProcessor>>();
         up_proc = std::make_shared<NiceMock<MockProcessor>>();
         upstream_node = std::make_shared<ProcessorNode>(up_proc);
+        gain_proc = std::make_shared<GainProcessor>();
 
         params.pushFloatParameter("A", 0, 0, 1.0);
         params.pushFloatParameter("B", 0, 0, 1.0);
@@ -24,7 +25,7 @@ public:
         params.pushFloatParameter("D", 0, 0, 1.0);
     }
 
-    auto makeMockProcessorState() const{
+    auto makeMockProcessorState() const {
         GainProcessor gain;
         return gain.getState();
     }
@@ -32,6 +33,7 @@ public:
     std::shared_ptr<MockProcessor> proc;
     std::shared_ptr<MockProcessor> up_proc;
     std::shared_ptr<ProcessorNode> upstream_node;
+    std::shared_ptr<GainProcessor> gain_proc;
     AudioBlock block{{{1, 1, 1}, {2, 2, 2}}};
 
     AudioProcessorParameters params;
@@ -440,8 +442,7 @@ TEST_F(AProcessorNode, NodeStateContainsOutputChannels) {
     ASSERT_THAT(node_json["output_channels"], Eq(expected_json["output_channels"]));
 }
 
-TEST_F(AProcessorNode, NodeStateContainsProcessorState)
-{
+TEST_F(AProcessorNode, NodeStateContainsProcessorState) {
     ProcessorNode node(proc);
     auto proc_state = makeMockProcessorState();
     auto proc_state_json = nlohmann::json::parse(proc_state);
@@ -453,4 +454,79 @@ TEST_F(AProcessorNode, NodeStateContainsProcessorState)
 
     ASSERT_FALSE(node_json["processor_state"].is_null());
     ASSERT_THAT(node_json["processor_state"], Eq(proc_state_json));
+}
+
+TEST_F(AProcessorNode, SetStateRebuildInternalProcessor) {
+    ProcessorNode node(proc);
+    ProcessorNode gain_node(gain_proc);
+
+    auto gain_node_state = gain_node.getState();
+    node.setState(gain_node_state.data(), gain_node_state.size());
+
+    ASSERT_THAT(node.getProcessor()->getName(), Eq(gain_proc->getName()));
+}
+
+TEST_F(AProcessorNode, SetStateRebuildInternalProcessorParameters) {
+    gain_proc = std::make_shared<GainProcessor>(20);
+    ProcessorNode node(proc);
+    ProcessorNode gain_node(gain_proc);
+    auto gain_node_state = gain_node.getState();
+    auto gain_node_json = nlohmann::json::parse(gain_node_state);
+
+    node.setState(gain_node_state.data(), gain_node_state.size());
+
+    auto node_state = node.getState();
+    auto node_state_json = nlohmann::json::parse(node_state);
+
+    ASSERT_THAT(node_state_json["processor_state"], Eq(gain_node_json["processor_state"]));
+}
+
+TEST_F(AProcessorNode, SetStateRebuildInternalAudioInputPorts) {
+    auto input_channels = {2, 1};
+    ProcessorNode node(proc);
+    ProcessorNode gain_node(gain_proc, input_channels, {});
+
+    auto gain_node_state = gain_node.getState();
+    node.setState(gain_node_state.data(), gain_node_state.size());
+
+    ASSERT_THAT(node.getAudioInputPortSize(), Eq(input_channels.size()));
+    ASSERT_THAT(node.getAudioInputPortChannels(0), Eq(2));
+    ASSERT_THAT(node.getAudioInputPortChannels(1), Eq(1));
+}
+
+TEST_F(AProcessorNode, SetStateRebuildInternalAudioOutputPorts) {
+    auto output_channels = {2, 1};
+    ProcessorNode node(proc);
+    ProcessorNode gain_node(gain_proc, {}, output_channels);
+
+    auto gain_node_state = gain_node.getState();
+    node.setState(gain_node_state.data(), gain_node_state.size());
+
+    ASSERT_THAT(node.getAudioOutputPortSize(), Eq(output_channels.size()));
+    ASSERT_THAT(node.getAudioOutputPortChannels(0), Eq(2));
+    ASSERT_THAT(node.getAudioOutputPortChannels(1), Eq(1));
+}
+
+TEST_F(AProcessorNode, SetStateReallocateInternalInputBlock) {
+    auto input_channels = {2, 1};
+    ProcessorNode node(proc);
+    ProcessorNode gain_node(gain_proc, input_channels, {});
+
+    auto gain_node_state = gain_node.getState();
+    node.setState(gain_node_state.data(), gain_node_state.size());
+
+    ASSERT_THAT(node.getInputBlock()->buffer.getNumberChannels(), Eq(3));
+    ASSERT_THAT(node.getInputBlock()->param_changes.getNumParameters(), Eq(gain_proc->getParameters()->size()));
+}
+
+TEST_F(AProcessorNode, SetStateReallocateInternalOutputBlock) {
+    auto output_channels = {2, 1};
+    ProcessorNode node(proc);
+    ProcessorNode gain_node(gain_proc, {}, output_channels);
+
+    auto gain_node_state = gain_node.getState();
+    node.setState(gain_node_state.data(), gain_node_state.size());
+
+    ASSERT_THAT(node.getOutputBlock()->buffer.getNumberChannels(), Eq(3));
+    ASSERT_THAT(node.getOutputBlock()->param_changes.getNumParameters(), Eq(gain_proc->getParameters()->size()));
 }

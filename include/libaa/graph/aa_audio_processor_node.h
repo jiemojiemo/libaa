@@ -56,17 +56,18 @@ public:
     void setState(uint8_t *state, size_t size) override;
     std::vector<uint8_t> getState() const override;
 
+    const IAudioProcessor *getProcessor() const;
     //** testing ***
     const AudioBlock *getInputBlock() const;
     const AudioBlock *getOutputBlock() const;
 
 private:
     void
-    initBlocksAndPorts(const std::initializer_list<int> &input_channels,
-                       const std::initializer_list<int> &output_channels);
+    initBlocksAndPorts(const std::vector<int> &input_channels,
+                       const std::vector<int> &output_channels);
 
-    void initAudioPorts(const std::initializer_list<int> &input_channels,
-                        const std::initializer_list<int> &output_channels);
+    void initAudioPorts(const std::vector<int> &input_channels,
+                        const std::vector<int> &output_channels);
 
     void checkAudioConnectionValidAndThrow(const AudioConnection &c) const;
     void checkParameterConnectionValidAndThrow(const ParameterChangeConnection &c) const;
