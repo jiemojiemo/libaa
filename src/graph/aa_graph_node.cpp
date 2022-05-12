@@ -3,6 +3,7 @@
 //
 #include "libaa/graph/aa_graph_node.h"
 #include "libaa/aa_version.h"
+#include "libaa/graph/aa_node_serialization_utilities.h"
 #include "libaa/graph/aa_parameter_change_connection.h"
 #include "libaa/graph/aa_port.h"
 #include <nlohmann/json.hpp>
@@ -91,15 +92,13 @@ auto serializePortsConnectionToJson(const GraphNode::InputPortNodeConnections &i
     return ports_json;
 }
 
-auto serializeNodeConnectionsToJson(const std::vector<std::shared_ptr<INode>> &nodes)
-{
+auto serializeNodeConnectionsToJson(const std::vector<std::shared_ptr<INode>> &nodes) {
 
     nlohmann::json connections_json;
     // audio connections
     for (const auto &node : nodes) {
         const auto &upstream_connections = node->getUpstreamAudioConnections();
-        for(const auto& connection : upstream_connections)
-        {
+        for (const auto &connection : upstream_connections) {
             nlohmann::json connection_json;
             connection_json["upstream_node_id"] = connection.upstream_node->getNodeID();
             connection_json["upstream_node_port"] = connection.upstream_port_index;
@@ -253,8 +252,7 @@ int GraphNode::getAudioOutputPortChannels(int port_index) const {
     return node_in_port_index->getAudioOutputPortChannels(node_port_index);
 }
 void GraphNode::setState(uint8_t *state, size_t size) {
-    (void)(state);
-    (void)(size);
+    auto state_json = nlohmann::json::parse(state, state + size);
 }
 std::vector<uint8_t> GraphNode::getState() const {
     nlohmann::json state_json;
@@ -269,7 +267,6 @@ std::vector<uint8_t> GraphNode::getState() const {
         output_param_change_port_connections_);
     state_json["connections"] = serializeNodeConnectionsToJson(nodes_);
 
-    auto state_string = nlohmann::to_string(state_json);
-    return std::vector<uint8_t>{state_string.begin(), state_string.end()};
+    return NodeSerializationUtilities::jsonToBinaryData(state_json);
 }
 } // namespace libaa

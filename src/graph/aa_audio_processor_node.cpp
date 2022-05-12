@@ -3,6 +3,7 @@
 //
 
 #include "libaa/graph/aa_audio_processor_node.h"
+#include "libaa/graph/aa_node_serialization_utilities.h"
 #include "libaa/graph/aa_parameter_change_port.h"
 #include "libaa/processor/aa_processor_factory.h"
 #include <nlohmann/json.hpp>
@@ -36,8 +37,7 @@ auto jsonToBinaryData(const nlohmann::json &j) {
     return std::vector<uint8_t>(j_str.begin(), j_str.end());
 }
 
-auto createProcessorWithState(const nlohmann::json& state_json)
-{
+auto createProcessorWithState(const nlohmann::json &state_json) {
     auto processor_name = state_json["processor_state"]["processor_name"];
     auto proc = ProcessorFactory::create(processor_name);
     auto processor_state = jsonToBinaryData(state_json["processor_state"]);
@@ -267,7 +267,7 @@ std::vector<uint8_t> ProcessorNode::getState() const {
     state_json["output_channels"] = nlohmann::json(getChannelsFromPorts(output_audio_ports_));
     state_json["processor_state"] = nlohmann::json::parse(proc_->getState());
 
-    return jsonToBinaryData(state_json);
+    return NodeSerializationUtilities::jsonToBinaryData(state_json);
 }
 
 const IAudioProcessor *ProcessorNode::getProcessor() const {
