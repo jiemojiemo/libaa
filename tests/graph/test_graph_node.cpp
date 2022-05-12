@@ -4,12 +4,14 @@
 #include "libaa/aa_version.h"
 #include "libaa/graph/aa_audio_processor_node.h"
 #include "libaa/graph/aa_graph_node.h"
+#include "libaa/graph/aa_node_serialization_utilities.h"
 #include "libaa/processor/aa_delay_processor.h"
 #include "libaa/processor/aa_gain_processor.h"
 #include "libaa/processor/aa_source_callback_processor.h"
 #include "libaa/processor/aa_source_processor.h"
 #include "libaa_testing/aa_mock_node.h"
 #include "libaa_testing/aa_mock_processor.h"
+
 #include <gmock/gmock.h>
 #include <nlohmann/json.hpp>
 
@@ -20,12 +22,18 @@ public:
     void SetUp() override {
         node0->setNodeID("node0");
         node1->setNodeID("node1");
+        gain_node->setNodeID("gain_node");
+        delay_node->setNodeID("delay_node");
     }
 
     std::shared_ptr<MockNode> node0 = std::make_shared<MockNode>();
     std::shared_ptr<MockNode> node1 = std::make_shared<MockNode>();
     std::shared_ptr<MockNode> upstream_node = std::make_shared<MockNode>();
     std::vector<std::shared_ptr<INode>> nodes{node0, node1};
+    std::shared_ptr<GainProcessor> gain = std::make_shared<GainProcessor>();
+    std::shared_ptr<DelayProcessor> delay = std::make_shared<DelayProcessor>();
+    std::shared_ptr<ProcessorNode> gain_node = std::make_shared<ProcessorNode>(gain);
+    std::shared_ptr<ProcessorNode> delay_node = std::make_shared<ProcessorNode>(delay);
     AudioBlock block{{{1, 1, 1}, {2, 2, 2}}};
 
     float sample_rate = 44100;
@@ -489,15 +497,8 @@ TEST_F(AGraphNode, NodeStateContainsOutputParameterChangePorts) {
 }
 
 TEST_F(AGraphNode, NodeStateContainsInternalNodeAudioConnections) {
-    auto gain = std::make_shared<GainProcessor>();
-    auto delay = std::make_shared<DelayProcessor>();
-    auto gain_node = std::make_shared<ProcessorNode>(gain);
-    auto delay_node = std::make_shared<ProcessorNode>(delay);
-    gain_node->setNodeID("gain");
-    delay_node->setNodeID("delay");
     delay_node->addUpstreamAudioConnection(AudioConnection{gain_node, 0, 0});
 
-    GraphNode::OutputPortNodeConnections output_audio_ports{{delay_node, 0}};
     GraphNode node{
         {gain_node, delay_node}, {}, {}};
     auto node_state = node.getState();
@@ -508,9 +509,9 @@ TEST_F(AGraphNode, NodeStateContainsInternalNodeAudioConnections) {
         "connections":
         [
             {
-                "downstream_node_id" : "delay",
+                "downstream_node_id" : "delay_node",
                 "downstream_node_port": 0,
-                "upstream_node_id": "gain",
+                "upstream_node_id": "gain_node",
                 "upstream_node_port": 0,
                 "port_type": "audio"
             }
@@ -520,4 +521,233 @@ TEST_F(AGraphNode, NodeStateContainsInternalNodeAudioConnections) {
 
     ASSERT_TRUE(node_json["connections"].is_array());
     ASSERT_THAT(node_json["connections"], Eq(expected_json["connections"]));
+}
+
+TEST_F(AGraphNode, NodeStateContainsInternalNodeParameterChangeConnections) {
+    delay_node->addUpstreamParameterChangeConnection(ParameterChangeConnection{gain_node, 0, 0});
+
+    GraphNode node{
+        {gain_node, delay_node}, {}, {}};
+    auto node_state = node.getState();
+    auto node_json = nlohmann::json::parse(node_state);
+
+    auto expected_json = nlohmann::json::parse(R"(
+    {
+        "connections":
+        [
+            {
+                "downstream_node_id" : "delay_node",
+                "downstream_node_port": 0,
+                "upstream_node_id": "gain_node",
+                "upstream_node_port": 0,
+                "port_type": "parameter_change"
+            }
+        ]
+    }
+    )");
+
+    ASSERT_TRUE(node_json["connections"].is_array());
+    ASSERT_THAT(node_json["connections"], Eq(expected_json["connections"]));
+}
+
+TEST_F(AGraphNode, NodeStateContainsInternalNodesState) {
+    auto gain_node = std::make_shared<ProcessorNode>(gain);
+    auto delay_node = std::make_shared<ProcessorNode>(delay);
+    gain_node->setNodeID("gain");
+    delay_node->setNodeID("delay");
+    delay_node->addUpstreamAudioConnection(AudioConnection{gain_node, 0, 0});
+
+    GraphNode::OutputPortNodeConnections output_audio_ports{{delay_node, 0}};
+    GraphNode node{
+        {gain_node, delay_node}, {}, {}};
+
+    nlohmann::json expected_json;
+    auto gain_node_state_json = NodeSerializationUtilities::binaryDataToJson(gain_node->getState());
+    auto delay_node_state_json = NodeSerializationUtilities::binaryDataToJson(delay_node->getState());
+    expected_json["nodes"].push_back(gain_node_state_json);
+    expected_json["nodes"].push_back(delay_node_state_json);
+
+    auto node_json = NodeSerializationUtilities::binaryDataToJson(node.getState());
+
+    ASSERT_TRUE(node_json["nodes"].is_array());
+    ASSERT_THAT(node_json["nodes"], Eq(expected_json["nodes"]));
+}
+
+TEST_F(AGraphNode, SetStateCanReCreatesInternalProcessorNodes) {
+    auto gain_node = std::make_shared<ProcessorNode>(gain);
+    auto delay_node = std::make_shared<ProcessorNode>(delay);
+    gain_node->setNodeID("gain");
+    delay_node->setNodeID("delay");
+    delay_node->addUpstreamAudioConnection(AudioConnection{gain_node, 0, 0});
+    auto processors_node = std::shared_ptr<GraphNode>(new GraphNode{{gain_node, delay_node}, {}, {}});
+    GraphNode graph_node{
+        {processors_node, gain_node, delay_node}, {}, {}};
+
+    GraphNode node{{}, {}, {}};
+
+    auto other_node_state = graph_node.getState();
+    node.setState(other_node_state.data(), other_node_state.size());
+
+    ASSERT_THAT(node.getAllNodes().size(), Eq(3));
+}
+
+TEST_F(AGraphNode, SetStateThrowsIfNodeTypeUnsupported) {
+    auto gain_node = std::make_shared<ProcessorNode>(gain);
+    gain_node->setNodeID("gain");
+    GraphNode graph_node{
+        {gain_node}, {}, {}};
+
+    auto other_node_state_json = NodeSerializationUtilities::binaryDataToJson(graph_node.getState());
+    other_node_state_json["nodes"][0]["node_type"] = "unknown";
+    auto other_node_state = NodeSerializationUtilities::jsonToBinaryData(other_node_state_json);
+
+    GraphNode node{{}, {}, {}};
+
+    ASSERT_ANY_THROW(node.setState(other_node_state.data(), other_node_state.size()));
+}
+
+TEST_F(AGraphNode, SetStateUpdatesNodeId) {
+    auto node_id = "abc";
+    GraphNode other_node{{}, {}, {}};
+    other_node.setNodeID(node_id);
+
+    auto other_node_state = other_node.getState();
+
+    GraphNode node{{}, {}, {}};
+    node.setState(other_node_state.data(), other_node_state.size());
+
+    ASSERT_THAT(node.getNodeID(), Eq(node_id));
+}
+
+TEST_F(AGraphNode, SetStateRebuildInputAudioPorts) {
+    GraphNode::InputPortNodeConnections input_audio_ports{
+        {{gain_node, 0}, {delay_node, 0}},
+        {{gain_node, 1}, {delay_node, 1}}};
+
+    GraphNode expected_node{{gain_node, delay_node}, input_audio_ports, {}};
+    auto expected_node_state = expected_node.getState();
+    auto expected_node_state_json = NodeSerializationUtilities::binaryDataToJson(expected_node_state);
+
+    GraphNode node{{}, {}, {}};
+    node.setState(expected_node_state.data(), expected_node_state.size());
+
+    ASSERT_THAT(node.getAudioInputPortSize(), Eq(input_audio_ports.size()));
+    ASSERT_THAT(node.getInputAudioPortConnections()[0].size(), Eq(2));
+    ASSERT_THAT(node.getInputAudioPortConnections()[0].front().node_port_index, Eq(0));
+    ASSERT_THAT(node.getInputAudioPortConnections()[0].back().node_port_index, Eq(0));
+    ASSERT_THAT(node.getInputAudioPortConnections()[1].size(), Eq(2));
+    ASSERT_THAT(node.getInputAudioPortConnections()[1].front().node_port_index, Eq(1));
+    ASSERT_THAT(node.getInputAudioPortConnections()[1].back().node_port_index, Eq(1));
+}
+
+TEST_F(AGraphNode, SetStateRebuildOutputAudioPorts) {
+    GraphNode::OutputPortNodeConnections output_audio_ports{{gain_node, 0}, {delay_node, 1}};
+
+    GraphNode expected_node{{gain_node, delay_node}, {}, output_audio_ports};
+    auto expected_node_state = expected_node.getState();
+    auto expected_node_state_json = NodeSerializationUtilities::binaryDataToJson(expected_node_state);
+
+    GraphNode node{{}, {}, {}};
+    node.setState(expected_node_state.data(), expected_node_state.size());
+
+    ASSERT_THAT(node.getAudioOutputPortSize(), Eq(output_audio_ports.size()));
+    ASSERT_THAT(node.getOutputAudioPortConnections().size(), Eq(output_audio_ports.size()));
+    ASSERT_THAT(node.getOutputAudioPortConnections()[0].node->getNodeID(), Eq(gain_node->getNodeID()));
+    ASSERT_THAT(node.getOutputAudioPortConnections()[0].node_port_index, Eq(0));
+    ASSERT_THAT(node.getOutputAudioPortConnections()[1].node->getNodeID(), Eq(delay_node->getNodeID()));
+    ASSERT_THAT(node.getOutputAudioPortConnections()[1].node_port_index, Eq(1));
+}
+
+TEST_F(AGraphNode, SetStateRebuildInputParameterChangePorts) {
+    GraphNode::InputPortNodeConnections input_pc_ports{
+        {{gain_node, 0}, {delay_node, 0}},
+        {{gain_node, 1}, {delay_node, 1}}};
+
+    GraphNode expected_node{{gain_node, delay_node}, {}, input_pc_ports, {}, {}};
+    auto expected_node_state = expected_node.getState();
+    auto expected_node_state_json = NodeSerializationUtilities::binaryDataToJson(expected_node_state);
+
+    GraphNode node{{}, {}, {}};
+    node.setState(expected_node_state.data(), expected_node_state.size());
+
+    ASSERT_THAT(node.getParameterChangeInputPortSize(), Eq(input_pc_ports.size()));
+    ASSERT_THAT(node.getInputParameterChangePortConnections()[0].size(), Eq(2));
+    ASSERT_THAT(node.getInputParameterChangePortConnections()[0].front().node_port_index, Eq(0));
+    ASSERT_THAT(node.getInputParameterChangePortConnections()[0].back().node_port_index, Eq(0));
+    ASSERT_THAT(node.getInputParameterChangePortConnections()[1].size(), Eq(2));
+    ASSERT_THAT(node.getInputParameterChangePortConnections()[1].front().node_port_index, Eq(1));
+    ASSERT_THAT(node.getInputParameterChangePortConnections()[1].back().node_port_index, Eq(1));
+}
+
+TEST_F(AGraphNode, SetStateRebuildOutputParameterChangePorts) {
+    GraphNode::OutputPortNodeConnections output_pc_ports{{gain_node, 0}, {delay_node, 1}};
+
+    GraphNode expected_node{{gain_node, delay_node}, {}, {}, {}, output_pc_ports};
+    auto expected_node_state = expected_node.getState();
+    auto expected_node_state_json = NodeSerializationUtilities::binaryDataToJson(expected_node_state);
+
+    GraphNode node{{}, {}, {}};
+    node.setState(expected_node_state.data(), expected_node_state.size());
+
+    ASSERT_THAT(node.getParameterChangeOutputPortSize(), Eq(output_pc_ports.size()));
+    ASSERT_THAT(node.getOutputParameterChangePortConnections().size(), Eq(output_pc_ports.size()));
+    ASSERT_THAT(node.getOutputParameterChangePortConnections()[0].node->getNodeID(), Eq(gain_node->getNodeID()));
+    ASSERT_THAT(node.getOutputParameterChangePortConnections()[0].node_port_index, Eq(0));
+    ASSERT_THAT(node.getOutputParameterChangePortConnections()[1].node->getNodeID(), Eq(delay_node->getNodeID()));
+    ASSERT_THAT(node.getOutputParameterChangePortConnections()[1].node_port_index, Eq(1));
+}
+
+TEST_F(AGraphNode, SetStateRebuildNodeAudioConnections) {
+    delay_node->addUpstreamAudioConnection(AudioConnection{gain_node, 0, 0});
+    GraphNode expected_node{
+        {gain_node, delay_node}, {}, {}};
+    auto expected_node_state = expected_node.getState();
+    auto expected_json = nlohmann::json::parse(R"(
+    {
+        "connections":
+        [
+            {
+                "downstream_node_id" : "delay_node",
+                "downstream_node_port": 0,
+                "upstream_node_id": "gain_node",
+                "upstream_node_port": 0,
+                "port_type": "audio"
+            }
+        ]
+    }
+    )");
+
+    GraphNode node{{}, {}, {}};
+    node.setState(expected_node_state.data(), expected_node_state.size());
+
+    auto node_state_json = NodeSerializationUtilities::binaryDataToJson(node.getState());
+    ASSERT_THAT(node_state_json["connections"], Eq(expected_json["connections"]));
+}
+
+
+TEST_F(AGraphNode, SetStateRebuildNodeParameterChangeConnections) {
+    delay_node->addUpstreamParameterChangeConnection(ParameterChangeConnection{gain_node, 0, 0});
+    GraphNode expected_node{
+        {gain_node, delay_node}, {}, {}};
+    auto expected_node_state = expected_node.getState();
+    auto expected_json = nlohmann::json::parse(R"(
+    {
+        "connections":
+        [
+            {
+                "downstream_node_id" : "delay_node",
+                "downstream_node_port": 0,
+                "upstream_node_id": "gain_node",
+                "upstream_node_port": 0,
+                "port_type": "parameter_change"
+            }
+        ]
+    }
+    )");
+
+    GraphNode node{{}, {}, {}};
+    node.setState(expected_node_state.data(), expected_node_state.size());
+
+    auto node_state_json = NodeSerializationUtilities::binaryDataToJson(node.getState());
+    ASSERT_THAT(node_state_json["connections"], Eq(expected_json["connections"]));
 }

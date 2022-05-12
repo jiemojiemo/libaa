@@ -3,6 +3,7 @@
 //
 
 #include "libaa/graph/aa_audio_processor_node.h"
+#include "libaa/graph/aa_node_serialization_utilities.h"
 #include "libaa/processor/aa_gain_processor.h"
 #include "libaa_testing/aa_mock_processor.h"
 #include <gmock/gmock.h>
@@ -408,6 +409,15 @@ TEST_F(AProcessorNode, NodeStateContainsNodeId) {
     ASSERT_THAT(node_json["node_id"].get<std::string>(), Eq(node_id));
 }
 
+TEST_F(AProcessorNode, NodeStateContainsNodeTypeString) {
+    ProcessorNode node(proc);
+
+    auto node_json = NodeSerializationUtilities::binaryDataToJson(node.getState());
+
+    ASSERT_FALSE(node_json["node_type"].is_null());
+    ASSERT_THAT(node_json["node_type"].get<std::string>(), Eq("processor_node"));
+}
+
 TEST_F(AProcessorNode, NodeStateContainsInputChannels) {
     auto input_channels = {2, 1, 2};
     ProcessorNode node(proc, input_channels, {});
@@ -454,6 +464,19 @@ TEST_F(AProcessorNode, NodeStateContainsProcessorState) {
 
     ASSERT_FALSE(node_json["processor_state"].is_null());
     ASSERT_THAT(node_json["processor_state"], Eq(proc_state_json));
+}
+
+TEST_F(AProcessorNode, SetStateUpdatesNodeId) {
+    auto node_id = "gain";
+    ProcessorNode gain_node(gain_proc);
+    gain_node.setNodeID(node_id);
+
+    auto gain_node_state = gain_node.getState();
+
+    ProcessorNode node(nullptr);
+    node.setState(gain_node_state.data(), gain_node_state.size());
+
+    ASSERT_THAT(node.getNodeID(), Eq(node_id));
 }
 
 TEST_F(AProcessorNode, SetStateRebuildInternalProcessor) {
