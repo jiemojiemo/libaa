@@ -17,7 +17,7 @@ class ProcessorValue : public DemoValue {
 public:
     void process(DemoContext &context) override {
         // setup processor
-        VibratorProcessor proc;
+        VibratoProcessor proc;
         proc.prepareToPlay(context.in_sample_rate, context.block_size);
 
         size_t num_param = (proc.getParameters() == nullptr)

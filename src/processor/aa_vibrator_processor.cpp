@@ -5,21 +5,21 @@
 #include "libaa/core/aa_audio_block.h"
 #include "libaa/processor/aa_processor_utilities.h"
 namespace libaa {
-VibratorProcessor::VibratorProcessor() {
+VibratoProcessor::VibratoProcessor() {
     param_.pushFloatParameter("Rate", 0.2f, 0.1f, 20.0f);
     param_.pushFloatParameter("Depth", 0.5f, 0.0f, 1.0f);
 }
 
-void VibratorProcessor::prepareToPlay(float sample_rate, int max_block_size) {
+void VibratoProcessor::prepareToPlay(float sample_rate, int max_block_size) {
     IAudioProcessor::prepareToPlay(sample_rate, max_block_size);
 
     utility_.prepare(sample_rate, max_block_size);
 }
 
-std::string VibratorProcessor::getName() const {
-    return {"Vibrator"};
+std::string VibratoProcessor::getName() const {
+    return {"Vibrato"};
 }
-void VibratorProcessor::processBlock(AudioBlock *input, AudioBlock *output) {
+void VibratoProcessor::processBlock(AudioBlock *input, AudioBlock *output) {
     output->buffer.copyFrom(&input->buffer);
     ProcessorUtilities::updateParameterFromParameterChanges(
         input->param_changes, param_);
@@ -29,13 +29,13 @@ void VibratorProcessor::processBlock(AudioBlock *input, AudioBlock *output) {
 
     utility_.process(&output->buffer, depth, rate);
 }
-const AudioProcessorParameters *VibratorProcessor::getParameters() const {
+const AudioProcessorParameters *VibratoProcessor::getParameters() const {
     return &param_;
 }
-void VibratorProcessor::setState(uint8_t *state, size_t size) {
+void VibratoProcessor::setState(uint8_t *state, size_t size) {
     ProcessorUtilities::updateParametersFromState(state, size, param_);
 }
-vector<uint8_t> VibratorProcessor::getState() const {
+vector<uint8_t> VibratoProcessor::getState() const {
     return ProcessorUtilities::serializeProcessorToBinaryArray(this);
 }
 } // namespace libaa

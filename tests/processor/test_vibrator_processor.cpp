@@ -11,11 +11,11 @@ using namespace libaa;
 
 class AVibratorProcessor : public Test {
 public:
-    VibratorProcessor proc;
+    VibratoProcessor proc;
 };
 
 TEST_F(AVibratorProcessor, CanReportCorrectName) {
-    ASSERT_THAT(proc.getName(), Eq("Vibrator"));
+    ASSERT_THAT(proc.getName(), Eq("Vibrato"));
 }
 
 TEST_F(AVibratorProcessor, HasParameters) {
