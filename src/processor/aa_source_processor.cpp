@@ -15,7 +15,7 @@ SourceProcessor::SourceProcessor(std::list<std::vector<float>> channel_data)
 }
 
 std::string SourceProcessor::getName() const {
-    return {"Source Processor"};
+    return {"Source"};
 }
 void SourceProcessor::processBlock(AudioBlock *input, AudioBlock *output) {
     (void)(input);

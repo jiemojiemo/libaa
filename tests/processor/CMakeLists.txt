@@ -12,6 +12,7 @@ add_libaa_test(aa_processor_unit_test
         test_moorer_reverb_processor.cpp
         test_source_processor.cpp
         test_source_callback_processor.cpp
+        test_processor_factory.cpp
         #        test_audio_filter_utilities.cpp
         #        test_audio_filter_processor.cpp
         )

@@ -1,8 +1,8 @@
 //
 // Created by user on 5/8/22.
 //
-#include "libaa/processor/aa_source_processor.h"
 #include "libaa/processor/aa_processor_utilities.h"
+#include "libaa/processor/aa_source_processor.h"
 #include <gmock/gmock.h>
 
 using namespace testing;
@@ -16,7 +16,7 @@ public:
 TEST_F(ASourceProcessor, CanReportCorrectName) {
     SourceProcessor proc;
 
-    ASSERT_THAT(proc.getName(), Eq("Source Processor"));
+    ASSERT_THAT(proc.getName(), Eq("Source"));
 }
 
 TEST_F(ASourceProcessor, HasNoParameters) {
@@ -47,7 +47,6 @@ TEST_F(ASourceProcessor, ProcessWillCopyChannelDataToOutput) {
     ASSERT_THAT(block.buffer.getReadPointer(0)[0], Eq(1));
     ASSERT_THAT(block.buffer.getReadPointer(1)[0], Eq(4));
 }
-
 
 TEST_F(ASourceProcessor, StateStringAsExpected) {
     SourceProcessor proc{

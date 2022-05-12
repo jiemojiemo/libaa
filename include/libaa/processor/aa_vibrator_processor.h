@@ -11,9 +11,9 @@
 #include "libaa/processor/aa_vibrator_processor_utilities.h"
 namespace libaa {
 class AudioBlock;
-class VibratorProcessor : public IAudioProcessor {
+class VibratoProcessor : public IAudioProcessor {
 public:
-    VibratorProcessor();
+    VibratoProcessor();
 
     virtual void prepareToPlay(float sample_rate, int max_block_size) override;
 
