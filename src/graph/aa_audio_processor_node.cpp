@@ -4,10 +4,11 @@
 
 #include "libaa/graph/aa_audio_processor_node.h"
 #include "libaa/graph/aa_parameter_change_port.h"
+#include "libaa/processor/aa_processor_factory.h"
 #include <nlohmann/json.hpp>
 namespace libaa {
 
-auto getTotalChannels(const std::initializer_list<int> &input_channels) {
+auto getTotalChannels(const std::vector<int> &input_channels) {
     return std::accumulate(input_channels.begin(), input_channels.end(), 0);
 }
 
@@ -28,6 +29,21 @@ auto getChannelsFromPorts(const std::vector<AudioPort> &audio_ports) {
         channels.push_back(audio_port.getNumberChannels());
     }
     return channels;
+}
+
+auto jsonToBinaryData(const nlohmann::json &j) {
+    auto j_str = nlohmann::to_string(j);
+    return std::vector<uint8_t>(j_str.begin(), j_str.end());
+}
+
+auto createProcessorWithState(const nlohmann::json& state_json)
+{
+    auto processor_name = state_json["processor_state"]["processor_name"];
+    auto proc = ProcessorFactory::create(processor_name);
+    auto processor_state = jsonToBinaryData(state_json["processor_state"]);
+    proc->setState(processor_state.data(), processor_state.size());
+
+    return proc;
 }
 
 ProcessorNode::ProcessorNode(std::shared_ptr<IAudioProcessor> proc)
@@ -140,8 +156,8 @@ const AudioBlock *ProcessorNode::getOutputBlock() const {
 }
 
 void ProcessorNode::initBlocksAndPorts(
-    const std::initializer_list<int> &input_channels,
-    const std::initializer_list<int> &output_channels) {
+    const std::vector<int> &input_channels,
+    const std::vector<int> &output_channels) {
     auto total_input_channels = getTotalChannels(input_channels);
     auto total_output_channels = getTotalChannels(output_channels);
     auto num_params = getNumberOfParameters(proc_);
@@ -159,8 +175,8 @@ void ProcessorNode::initBlocksAndPorts(
 }
 
 void ProcessorNode::initAudioPorts(
-    const std::initializer_list<int> &input_channels,
-    const std::initializer_list<int> &output_channels) {
+    const std::vector<int> &input_channels,
+    const std::vector<int> &output_channels) {
     size_t input_channel_offset = 0;
     for (auto c : input_channels) {
         input_audio_ports_.emplace_back(input_block_, c, input_channel_offset);
@@ -234,8 +250,15 @@ int ProcessorNode::getParameterChangeOutputPortSize() const {
     return output_pc_ports_.size();
 }
 void ProcessorNode::setState(uint8_t *state, size_t size) {
-    (void)(state);
-    (void)(size);
+    auto state_json = nlohmann::json::parse(state, state + size);
+    proc_ = createProcessorWithState(state_json);
+
+    // rebuild audio ports
+    input_audio_ports_.clear();
+    output_audio_ports_.clear();
+    auto input_channels = state_json["input_channels"].get<std::vector<int>>();
+    auto output_channels = state_json["output_channels"].get<std::vector<int>>();
+    initBlocksAndPorts(input_channels, output_channels);
 }
 std::vector<uint8_t> ProcessorNode::getState() const {
     nlohmann::json state_json;
@@ -244,8 +267,11 @@ std::vector<uint8_t> ProcessorNode::getState() const {
     state_json["output_channels"] = nlohmann::json(getChannelsFromPorts(output_audio_ports_));
     state_json["processor_state"] = nlohmann::json::parse(proc_->getState());
 
-    auto state_string = nlohmann::to_string(state_json);
-    return std::vector<uint8_t>{state_string.begin(), state_string.end()};
+    return jsonToBinaryData(state_json);
+}
+
+const IAudioProcessor *ProcessorNode::getProcessor() const {
+    return (proc_ != nullptr) ? (proc_.get()) : (nullptr);
 }
 
 } // namespace libaa
