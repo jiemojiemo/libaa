@@ -7,4 +7,5 @@ add_libaa_test(
         test_parameter_change_port.cpp
         test_parameter_change_connection.cpp
         test_connection.cpp
+        test_graph_builder.cpp
 )
