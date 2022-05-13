@@ -5,24 +5,13 @@
 #include "libaa/aa_version.h"
 #include "libaa/graph/aa_audio_processor_node.h"
 #include "libaa/graph/aa_node_serialization_utilities.h"
+#include "libaa/graph/aa_node_utilities.h"
 #include "libaa/graph/aa_parameter_change_connection.h"
 #include "libaa/graph/aa_port.h"
 #include "libaa/processor/aa_processor_factory.h"
-#include <iostream>
 #include <nlohmann/json.hpp>
 
 namespace libaa {
-namespace {
-// void to_json(nlohmann::json& j, const person& p) {
-//     j = json{{"name", p.name}, {"address", p.address}, {"age", p.age}};
-// }
-//
-// void from_json(const nlohmann::json& j, person& p) {
-//     j.at("name").get_to(p.name);
-//     j.at("address").get_to(p.address);
-//     j.at("age").get_to(p.age);
-// }
-}
 
 auto portTypeToString(PortType port_type) {
     if (port_type == PortType::kAudio) {
@@ -170,14 +159,6 @@ auto buildNodesFromJson(const nlohmann::json &nodes_json) {
     return nodes;
 }
 
-auto findNodeById(const std::vector<std::shared_ptr<INode>> &nodes, const std::string &node_id) -> std::shared_ptr<INode> {
-    for (auto &node : nodes) {
-        if (node->getNodeID() == node_id)
-            return node;
-    }
-    return nullptr;
-}
-
 auto buildPortsFromJson(const nlohmann::json &ports_json,
                         GraphNode::InputPortNodeConnections &input_audio_port_connections,
                         GraphNode::InputPortNodeConnections &input_param_change_port_connections,
@@ -237,7 +218,7 @@ auto buildPortsFromJson(const nlohmann::json &ports_json,
         auto port_index = port["port_index"].get<int>();
         auto port_type = port["port_type"].get<std::string>();
 
-        auto internal_node = findNodeById(nodes, internal_node_id);
+        auto internal_node = NodeUtilities::findNodeById(nodes, internal_node_id);
         GraphNode::PortNodeConnection port_node_conn{internal_node, internal_node_port_index};
 
         if (port_direction == "input") {
@@ -258,8 +239,7 @@ auto buildPortsFromJson(const nlohmann::json &ports_json,
     }
 }
 
-auto buildConnectionsForNodes(const nlohmann::json &connections_json, std::vector<std::shared_ptr<INode>> &nodes)
-{
+auto buildConnectionsForNodes(const nlohmann::json &connections_json, std::vector<std::shared_ptr<INode>> &nodes) {
     for (const auto &connection_json : connections_json) {
         auto downstream_node_id = connection_json["downstream_node_id"].get<std::string>();
         auto downstream_node_port = connection_json["downstream_node_port"].get<int>();
@@ -267,8 +247,8 @@ auto buildConnectionsForNodes(const nlohmann::json &connections_json, std::vecto
         auto upstream_node_port = connection_json["upstream_node_port"].get<int>();
         auto port_type = connection_json["port_type"].get<std::string>();
 
-        auto downstream_node = findNodeById(nodes, downstream_node_id);
-        auto upstream_node = findNodeById(nodes, upstream_node_id);
+        auto downstream_node = NodeUtilities::findNodeById(nodes, downstream_node_id);
+        auto upstream_node = NodeUtilities::findNodeById(nodes, upstream_node_id);
 
         if (port_type == "audio") {
             AudioConnection con{upstream_node, upstream_node_port, downstream_node_port};
@@ -279,7 +259,6 @@ auto buildConnectionsForNodes(const nlohmann::json &connections_json, std::vecto
         }
     }
 }
-
 
 GraphNode::GraphNode(std::vector<std::shared_ptr<INode>> nodes,
                      InputPortNodeConnections input_audio_port_connections,
