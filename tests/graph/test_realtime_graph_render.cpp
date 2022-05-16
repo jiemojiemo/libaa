@@ -1,120 +1,28 @@
 //
 // Created by user on 5/14/22.
 //
-#include "libaa/core/aa_audio_block.h"
-#include "libaa/graph/aa_audio_processor_node.h"
-#include "libaa/processor/aa_processor_factory.h"
-#include "libaa/processor/aa_source_callback_processor.h"
-
-#include "libaa/graph/aa_graph_builder.h"
 #include "libaa/graph/aa_node_serialization_utilities.h"
+#include "libaa/graph/aa_realtime_graph_render.h"
 #include "libaa_testing/aa_mock_node.h"
 #include <gmock/gmock.h>
 
 using namespace testing;
-
-namespace libaa {
-
-using AudioCallback = std::function<void(AudioBufferX<float> *buffer)>;
-using ParameterChangeCallback = std::function<void(ParameterChanges *params)>;
-
-auto buildSourceCallbackNodeWithAudioCallback = [](const AudioCallback &callback) {
-    auto source_callback_proc = std::make_shared<SourceCallbackProcessor>();
-    source_callback_proc->setSourceCallback([callback](AudioBlock *block) {
-        callback(&block->buffer);
-    });
-    return std::make_shared<ProcessorNode>(source_callback_proc);
-};
-
-auto buildSourceCallbackNodeWithPCCallback = [](const ParameterChangeCallback &callback) {
-    auto source_callback_proc = std::make_shared<SourceCallbackProcessor>();
-    source_callback_proc->setSourceCallback([callback](AudioBlock *block) {
-        callback(&block->param_changes);
-    });
-    return std::make_shared<ProcessorNode>(source_callback_proc);
-};
-
-auto buildGraphWithPorts(const std::shared_ptr<INode> &graph) {
-    GraphBuilder builder;
-    builder.insert("process_graph", graph);
-
-    int num_in_audio_ports = graph->getAudioInputPortSize();
-    for (int i = 0; i < num_in_audio_ports; ++i) {
-        builder.exposePort(PortDirection::kInput, PortType::kAudio, i, {graph, i});
-    }
-
-    int num_out_audio_ports = graph->getAudioOutputPortSize();
-    for (int i = 0; i < num_out_audio_ports; ++i) {
-        builder.exposePort(PortDirection::kOutput, PortType::kAudio, i, {graph, i});
-    }
-
-    int num_in_pc_ports = graph->getParameterChangeInputPortSize();
-    for (int i = 0; i < num_in_pc_ports; ++i) {
-        builder.exposePort(PortDirection::kInput, PortType::kParameterChange, i, {graph, i});
-    }
-
-    int num_out_pc_ports = graph->getParameterChangeOutputPortSize();
-    for (int i = 0; i < num_out_pc_ports; ++i) {
-        builder.exposePort(PortDirection::kOutput, PortType::kParameterChange, i, {graph, i});
-    }
-
-    return builder.build();
-}
-
-class RealtimeGraphRender {
-public:
-    RealtimeGraphRender(const std::shared_ptr<INode> &graph)
-        : graph_(buildGraphWithPorts(graph)) {
-    }
-
-    const std::shared_ptr<INode> &getGraph() const {
-        return graph_;
-    }
-
-    void setAudioCallback(int port_index, const AudioCallback &callback) {
-        AudioConnection audio_con{buildSourceCallbackNodeWithAudioCallback(callback), 0, port_index};
-        graph_->addUpstreamAudioConnection(audio_con);
-    }
-
-    void setParameterChangeCallback(int port_index, const ParameterChangeCallback &callback) {
-        ParameterChangeConnection pc_con{buildSourceCallbackNodeWithPCCallback(callback), 0, port_index};
-        graph_->addUpstreamParameterChangeConnection(pc_con);
-    }
-
-    enum PlaybackState {
-        kStopped = 0,
-        kPlaying
-    };
-    PlaybackState getPlaybackState() const {
-        return playback_state_;
-    }
-
-    void play() {
-        playback_state_ = PlaybackState::kPlaying;
-    }
-
-    void stop() {
-        playback_state_ = PlaybackState::kStopped;
-    }
-
-private:
-    std::shared_ptr<INode> graph_{nullptr};
-    PlaybackState playback_state_{PlaybackState::kStopped};
-};
-} // namespace libaa
-
 using namespace libaa;
 class ARealtimeGraphRender : public Test {
 public:
     std::shared_ptr<INode> buildTestGraph() {
         GraphBuilder builder;
+        auto source_proc = std::shared_ptr<IAudioProcessor>(new SourceProcessor({{1, 1, 1, 1, 1}, {2, 2, 2, 2, 2}}));
         auto gain_proc = ProcessorFactory::create("Gain");
         auto delay_proc = ProcessorFactory::create("Delay");
+        auto source_node = std::make_shared<ProcessorNode>(source_proc);
         auto gain_node = std::make_shared<ProcessorNode>(gain_proc);
         auto delay_node = std::make_shared<ProcessorNode>(delay_proc);
 
+        builder.insert("source_node", source_node);
         builder.insert("gain_node", gain_node);
         builder.insert("delay_node", delay_node);
+        builder.addConnection(ConnectionType::kAudioConnection, {source_node, 0}, {gain_node, 0});
         builder.addConnection(ConnectionType::kAudioConnection, {gain_node, 0}, {delay_node, 0});
 
         builder.exposePort(PortDirection::kInput, PortType::kAudio, 0, {gain_node, 0});
@@ -135,7 +43,20 @@ public:
         return upstream_proc->getName();
     }
 
+    auto isSilence(AudioPort &port) {
+        for (int c = 0; c < port.getNumberChannels(); ++c) {
+            float *data = port.getChannelData(c);
+            for (int i = 0; i < port.getNumberFrames(); ++i) {
+                if (data[i] != 0.0f)
+                    return false;
+            }
+        }
+        return true;
+    };
+
     std::shared_ptr<INode> graph = buildTestGraph();
+    float sample_rate = 44100;
+    int max_block_size = 128;
 };
 
 TEST_F(ARealtimeGraphRender, InitWillCreateAnotherInternalGraphToUse) {
@@ -175,7 +96,7 @@ TEST_F(ARealtimeGraphRender, SetAudioCallbackWillConnectSourceStreamNodeToIntern
     auto graph = buildTestGraph();
     RealtimeGraphRender render(graph);
 
-    auto mock_audio_callback = [](AudioBufferX<float> *buffer) {};
+    auto mock_audio_callback = [](AudioBufferX<float> *buffer, ProcessingContext &) {};
     render.setAudioCallback(0, mock_audio_callback);
 
     ASSERT_THAT(graph->getUpstreamAudioConnections().size(), Eq(1));
@@ -183,16 +104,56 @@ TEST_F(ARealtimeGraphRender, SetAudioCallbackWillConnectSourceStreamNodeToIntern
     ASSERT_THAT(getProcessorNameFromNode(graph->getUpstreamAudioConnections()[0].upstream_node), Eq("Source Callback"));
 }
 
+TEST_F(ARealtimeGraphRender, SetAudioCallbackIncreaseInternalSourceStreamNodeSize) {
+    auto graph = buildTestGraph();
+    RealtimeGraphRender render(graph);
+
+    auto mock_audio_callback = [](AudioBufferX<float> *buffer, ProcessingContext &) {};
+    render.setAudioCallback(0, mock_audio_callback);
+
+    ASSERT_THAT(render.getAudioCallbackNodeMap().size(), Eq(1));
+}
+
 TEST_F(ARealtimeGraphRender, SetParameterChangeCallbackWillConnectSourceStreamNodeToInternalNode) {
     auto graph = buildTestGraph();
     RealtimeGraphRender render(graph);
 
-    auto mock_pc_callback = [](ParameterChanges *params) {};
+    auto mock_pc_callback = [](ParameterChanges *params, ProcessingContext &) {};
     render.setParameterChangeCallback(0, mock_pc_callback);
 
     ASSERT_THAT(graph->getUpstreamParameterConnections().size(), Eq(1));
     ASSERT_THAT(graph->getUpstreamParameterConnections()[0].upstream_node->getNodeType(), Eq(NodeType::kProcessorNode));
     ASSERT_THAT(getProcessorNameFromNode(graph->getUpstreamParameterConnections()[0].upstream_node), Eq("Source Callback"));
+}
+
+TEST_F(ARealtimeGraphRender, SetParameterChangeCallbackIncreaseInternalSourceStreamNodeSize) {
+    int port_index = 0;
+    auto graph = buildTestGraph();
+    RealtimeGraphRender render(graph);
+    auto mock_pc_callback = [](ParameterChanges *params, ProcessingContext &) {};
+    auto mock_audio_callback = [](AudioBufferX<float> *buffer, ProcessingContext &) {};
+    render.setAudioCallback(port_index, mock_audio_callback);
+    render.setParameterChangeCallback(port_index, mock_pc_callback);
+
+    render.prepareToPlay(sample_rate, max_block_size);
+
+    auto internal_audio_stream_node = dynamic_cast<ProcessorNode *>(render.getAudioCallbackNodeMap().at(port_index).get());
+    auto internal_pc_stream_node = dynamic_cast<ProcessorNode *>(render.getAudioCallbackNodeMap().at(port_index).get());
+
+    ASSERT_THAT(internal_audio_stream_node->getInputBlock()->buffer.getNumberFrames(), Eq(max_block_size));
+    ASSERT_THAT(internal_audio_stream_node->getOutputBlock()->buffer.getNumberFrames(), Eq(max_block_size));
+    ASSERT_THAT(internal_pc_stream_node->getInputBlock()->buffer.getNumberFrames(), Eq(max_block_size));
+    ASSERT_THAT(internal_pc_stream_node->getOutputBlock()->buffer.getNumberFrames(), Eq(max_block_size));
+}
+
+TEST_F(ARealtimeGraphRender, PrepareWillAlsoPrepareSourceStreamNode) {
+    auto graph = buildTestGraph();
+    RealtimeGraphRender render(graph);
+
+    auto mock_pc_callback = [](ParameterChanges *params, ProcessingContext &) {};
+    render.setParameterChangeCallback(0, mock_pc_callback);
+
+    ASSERT_THAT(render.getParameterChangeCallbackNodeMap().size(), Eq(1));
 }
 
 TEST_F(ARealtimeGraphRender, DefaultStateIsStoped) {
@@ -221,23 +182,22 @@ TEST_F(ARealtimeGraphRender, StateChangeToStopAfterCallStop) {
     ASSERT_THAT(render.getPlaybackState(), Eq(RealtimeGraphRender::kStopped));
 }
 
-// TEST_F(ARealtimeGraphRender, )
+TEST_F(ARealtimeGraphRender, PrepareWillPrepareNode) {
+    auto mock_graph = std::make_shared<MockNode>();
+    RealtimeGraphRender render(mock_graph);
 
-//
-// TEST_F(ARealtimeGraphRender, XXX) {
-//    auto graph = buildTestGraph();
-//    RealtimeGraphRender render(graph);
-//
-//    //    auto a_json = NodeSerializationUtilities::binaryDataToJson(graph->getState());
-//
-//    //    std::cout << a_json << std::endl;
-//
-//    auto mock_audio_callback = [](AudioBufferX<float> *buffer) {};
-//    render.setAudioCallback(0, mock_audio_callback);
-//
-//    auto b_json = NodeSerializationUtilities::binaryDataToJson(graph->getState());
-//
-//    std::cout << b_json << std::endl;
-//
-//    //    ASSERT_THAT(a_json, Eq(b_json));
-//}
+    EXPECT_CALL(*mock_graph, prepareToPlay(sample_rate, max_block_size)).Times(1);
+
+    render.prepareToPlay(sample_rate, max_block_size);
+}
+
+TEST_F(ARealtimeGraphRender, CanPullNumSamples) {
+    int num_samples = 3;
+    auto graph = buildTestGraph();
+    RealtimeGraphRender render(graph);
+    render.prepareToPlay(sample_rate, max_block_size);
+
+    AudioPort &output = render.pull(num_samples);
+
+    ASSERT_THAT(output.getNumberFrames(), Eq(num_samples));
+}

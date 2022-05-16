@@ -40,6 +40,14 @@ TEST_F(AAudioPort, CanGetNumSamples) {
     ASSERT_THAT(port->getNumberFrames(), Eq(block->buffer.getNumberFrames()));
 }
 
+TEST_F(AAudioPort, NumSamplesSameWithProcessingContext)
+{
+    block->context.num_samples = 1;
+    auto port = std::make_unique<AudioPort>(block);
+
+    ASSERT_THAT(port->getNumberFrames(), Eq(block->context.num_samples));
+}
+
 TEST_F(AAudioPort, CanInitWithAudioBlockAndChannels) {
     int num_channels = 1;
     auto port = std::make_unique<AudioPort>(block, num_channels);

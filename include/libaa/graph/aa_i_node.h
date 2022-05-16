@@ -8,6 +8,7 @@
 #pragma once
 #include "libaa/graph/aa_node_type.h"
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -16,6 +17,7 @@ class AudioConnection;
 class AudioPort;
 class ParameterChangePort;
 class ParameterChangeConnection;
+class TransportContext;
 
 class INode {
 public:
@@ -44,6 +46,11 @@ public:
      */
     virtual void
     prepareToPlay(float sample_rate, int max_block_size) = 0;
+
+    /**
+     * Sets the transport context
+     */
+    virtual void setTransportContext(std::shared_ptr<TransportContext> transport_context) = 0;
 
     /**
      * Adds upstream audio connection

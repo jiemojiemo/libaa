@@ -30,6 +30,8 @@ public:
 
     NodeType getNodeType() const override;
 
+    void setTransportContext(std::shared_ptr<TransportContext> transport_context) override;
+
     void prepareToPlay(float sample_rate, int max_block_size) override;
 
     void addUpstreamAudioConnection(const AudioConnection &c) override;
@@ -78,7 +80,10 @@ private:
     void pullUpstreamAudio();
     void pullUpstreamParameterChange();
 
+    void updateBlockProcessingContext();
+
     std::shared_ptr<IAudioProcessor> proc_{nullptr};
+    std::shared_ptr<TransportContext> transport_context_{nullptr};
     std::vector<AudioPort> input_audio_ports_;
     std::vector<AudioPort> output_audio_ports_;
     std::vector<ParameterChangePort> input_pc_ports_;

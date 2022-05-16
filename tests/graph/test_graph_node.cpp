@@ -11,6 +11,7 @@
 #include "libaa/processor/aa_source_processor.h"
 #include "libaa_testing/aa_mock_node.h"
 #include "libaa_testing/aa_mock_processor.h"
+#include "libaa/graph/aa_transport_context.h"
 
 #include <gmock/gmock.h>
 #include <nlohmann/json.hpp>
@@ -150,6 +151,16 @@ TEST_F(AGraphNode, CanPrepareForNextBlockForEveryNode) {
     EXPECT_CALL(*node1, prepareForNextBlock).Times(1);
 
     node.prepareForNextBlock();
+}
+
+TEST_F(AGraphNode, CanSetTransportContextForEveryNode) {
+    auto transport_context = std::make_shared<TransportContext>();
+    GraphNode node{nodes, {}, {}};
+
+    EXPECT_CALL(*node0, setTransportContext).Times(1);
+    EXPECT_CALL(*node1, setTransportContext).Times(1);
+
+    node.setTransportContext(transport_context);
 }
 
 TEST_F(AGraphNode, HasProcessedReturnsTrueIfAllNodesProcessed) {
@@ -723,7 +734,6 @@ TEST_F(AGraphNode, SetStateRebuildNodeAudioConnections) {
     auto node_state_json = NodeSerializationUtilities::binaryDataToJson(node.getState());
     ASSERT_THAT(node_state_json["connections"], Eq(expected_json["connections"]));
 }
-
 
 TEST_F(AGraphNode, SetStateRebuildNodeParameterChangeConnections) {
     delay_node->addUpstreamParameterChangeConnection(ParameterChangeConnection{gain_node, 0, 0});

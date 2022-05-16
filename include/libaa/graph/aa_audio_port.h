@@ -47,7 +47,7 @@ public:
 
     size_t getNumberFrames() const {
         if (block_ != nullptr) {
-            return block_->buffer.getNumberFrames();
+            return block_->context.num_samples;
         }
         return 0;
     }

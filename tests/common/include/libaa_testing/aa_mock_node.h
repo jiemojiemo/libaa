@@ -19,6 +19,7 @@ class MockNode : public libaa::BaseNode {
 public:
     ~MockNode() override = default;
     MOCK_METHOD(void, prepareToPlay, (float, int), (override));
+    MOCK_METHOD(void, setTransportContext, (std::shared_ptr<TransportContext> transport_context), (override));
     MOCK_METHOD(void, addUpstreamAudioConnection,
                 (const libaa::AudioConnection &), (override));
     MOCK_METHOD(void, addUpstreamParameterChangeConnection,

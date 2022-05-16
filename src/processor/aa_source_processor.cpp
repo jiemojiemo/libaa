@@ -19,10 +19,10 @@ std::string SourceProcessor::getName() const {
 }
 void SourceProcessor::processBlock(AudioBlock *input, AudioBlock *output) {
     (void)(input);
-    assert(output->buffer.getNumberChannels() <= channel_data_->getNumberChannels());
-    assert(output->buffer.getNumberFrames() <= channel_data_->getNumberFrames());
+    assert(output->buffer.getNumberChannels() >= channel_data_->getNumberChannels());
+    assert(output->buffer.getNumberFrames() >= channel_data_->getNumberFrames());
 
-    output->buffer.copyFrom(channel_data_.get());
+    output->buffer.copyFrom(channel_data_.get(), channel_data_->getNumberChannels(), channel_data_->getNumberFrames(), 0, 0);
 }
 const AudioProcessorParameters *SourceProcessor::getParameters() const {
     return nullptr;

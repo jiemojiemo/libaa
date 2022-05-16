@@ -5,6 +5,7 @@
 #include "libaa/graph/aa_audio_processor_node.h"
 #include "libaa/graph/aa_node_serialization_utilities.h"
 #include "libaa/graph/aa_parameter_change_port.h"
+#include "libaa/graph/aa_transport_context.h"
 #include "libaa/processor/aa_processor_factory.h"
 #include <nlohmann/json.hpp>
 namespace libaa {
@@ -57,6 +58,10 @@ ProcessorNode::ProcessorNode(std::shared_ptr<IAudioProcessor> proc,
 
 NodeType ProcessorNode::getNodeType() const {
     return NodeType::kProcessorNode;
+}
+
+void ProcessorNode::setTransportContext(std::shared_ptr<TransportContext> transport_context) {
+    transport_context_ = std::move(transport_context);
 }
 
 void ProcessorNode::prepareToPlay(float sample_rate, int max_block_size) {
@@ -118,6 +123,19 @@ void ProcessorNode::pullUpstreamParameterChange() {
     }
 }
 
+void ProcessorNode::updateBlockProcessingContext() {
+    if (transport_context_ != nullptr) {
+        auto num_samples = transport_context_->num_samples.load();
+        auto sample_rate = transport_context_->sample_rate.load();
+
+        input_block_->context.num_samples = num_samples;
+        input_block_->context.sample_rate = sample_rate;
+
+        output_block_->context.num_samples = num_samples;
+        output_block_->context.sample_rate = sample_rate;
+    }
+}
+
 AudioPort &ProcessorNode::pullAudioPort(int output_audio_port) {
     pullUpstreamDataAndProcess();
 
@@ -140,6 +158,8 @@ void ProcessorNode::setProcessedState(bool is_processed) {
 
 void ProcessorNode::prepareForNextBlock() {
     setProcessedState(false);
+
+    updateBlockProcessingContext();
 }
 
 void ProcessorNode::addAudioInputPort(int num_in_channel) {
