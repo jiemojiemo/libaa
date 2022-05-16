@@ -6,8 +6,11 @@
 #define LIBAA_AA_I_NODE_H
 
 #pragma once
+#include "libaa/graph/aa_node_type.h"
+
 #include <string>
 #include <vector>
+
 namespace libaa {
 class AudioConnection;
 class AudioPort;
@@ -29,11 +32,18 @@ public:
     virtual std::string getNodeID() const = 0;
 
     /**
+     * Returns the node type
+     * @return
+     */
+    virtual NodeType getNodeType() const = 0;
+
+    /**
      * prepare to play
      * @param sample_rate the playback sample rate
      * @param max_block_size max number of samples during play
      */
-    virtual void prepareToPlay(float sample_rate, int max_block_size) = 0;
+    virtual void
+    prepareToPlay(float sample_rate, int max_block_size) = 0;
 
     /**
      * Adds upstream audio connection

@@ -41,6 +41,8 @@ public:
 
     ~GraphNode() override = default;
 
+    NodeType getNodeType() const override;
+
     void prepareToPlay(float sample_rate, int max_block_size) override;
 
     void addUpstreamAudioConnection(const AudioConnection &c) override;

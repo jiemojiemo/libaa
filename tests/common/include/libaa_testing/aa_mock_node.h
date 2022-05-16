@@ -36,6 +36,9 @@ public:
     MOCK_METHOD(int, getParameterChangeOutputPortSize, (), (override, const));
     MOCK_METHOD(void, setState, (uint8_t *, size_t), (override));
     MOCK_METHOD(std::vector<uint8_t>, getState, (), (override, const));
+    NodeType getNodeType() const override {
+        return NodeType::k_MockNode;
+    }
 };
 } // namespace libaa
 
