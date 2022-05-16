@@ -282,6 +282,10 @@ GraphNode::GraphNode(std::vector<std::shared_ptr<INode>> nodes,
 {
 }
 
+NodeType GraphNode::getNodeType() const {
+    return NodeType::kGraphNode;
+}
+
 void GraphNode::prepareToPlay(float sample_rate, int max_block_size) {
     for (auto &n : nodes_) {
         n->prepareToPlay(sample_rate, max_block_size);

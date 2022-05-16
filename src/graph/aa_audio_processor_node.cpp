@@ -55,6 +55,10 @@ ProcessorNode::ProcessorNode(std::shared_ptr<IAudioProcessor> proc,
     initBlocksAndPorts(input_channels, output_channels);
 }
 
+NodeType ProcessorNode::getNodeType() const {
+    return NodeType::kProcessorNode;
+}
+
 void ProcessorNode::prepareToPlay(float sample_rate, int max_block_size) {
     input_block_->buffer.resizeFrames(max_block_size);
     output_block_->buffer.resizeFrames(max_block_size);

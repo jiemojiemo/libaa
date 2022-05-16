@@ -28,6 +28,8 @@ public:
                            const std::initializer_list<int> &input_channels,
                            const std::initializer_list<int> &output_channels);
 
+    NodeType getNodeType() const override;
+
     void prepareToPlay(float sample_rate, int max_block_size) override;
 
     void addUpstreamAudioConnection(const AudioConnection &c) override;

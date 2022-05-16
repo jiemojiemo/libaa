@@ -57,7 +57,7 @@ auto checkPortValidAndThrows(PortDirection direction, PortType type, const std::
 
     if (direction == PortDirection::kInput) {
         if (type == PortType::kAudio) {
-            port_size = node->getAudioOutputPortSize();
+            port_size = node->getAudioInputPortSize();
         } else if (type == PortType::kParameterChange) {
             port_size = node->getParameterChangeInputPortSize();
         }
