@@ -26,5 +26,8 @@ target_link_libraries(wav_diff libaa)
 add_executable(audio_processor audio_processor.cpp)
 target_link_libraries(audio_processor libaa)
 
+add_executable(graph_test graph_test.cpp)
+target_link_libraries(graph_test libaa)
+
 
 
