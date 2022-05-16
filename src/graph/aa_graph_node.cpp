@@ -286,6 +286,12 @@ NodeType GraphNode::getNodeType() const {
     return NodeType::kGraphNode;
 }
 
+void GraphNode::setTransportContext(std::shared_ptr<TransportContext> transport_context) {
+    for (auto &n : nodes_) {
+        n->setTransportContext(transport_context);
+    }
+}
+
 void GraphNode::prepareToPlay(float sample_rate, int max_block_size) {
     for (auto &n : nodes_) {
         n->prepareToPlay(sample_rate, max_block_size);
@@ -439,4 +445,5 @@ std::vector<uint8_t> GraphNode::getState() const {
 
     return NodeSerializationUtilities::jsonToBinaryData(state_json);
 }
+
 } // namespace libaa

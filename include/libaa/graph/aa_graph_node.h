@@ -43,6 +43,8 @@ public:
 
     NodeType getNodeType() const override;
 
+    void setTransportContext(std::shared_ptr<TransportContext> transport_context) override;
+
     void prepareToPlay(float sample_rate, int max_block_size) override;
 
     void addUpstreamAudioConnection(const AudioConnection &c) override;

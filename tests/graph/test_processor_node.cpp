@@ -4,6 +4,7 @@
 
 #include "libaa/graph/aa_audio_processor_node.h"
 #include "libaa/graph/aa_node_serialization_utilities.h"
+#include "libaa/graph/aa_transport_context.h"
 #include "libaa/processor/aa_gain_processor.h"
 #include "libaa_testing/aa_mock_processor.h"
 #include <gmock/gmock.h>
@@ -307,6 +308,30 @@ TEST_F(AProcessorNode, PrepareForNextBlockResetTheProcessState) {
     node.prepareForNextBlock();
 
     ASSERT_FALSE(node.hasProcessed());
+}
+
+TEST_F(AProcessorNode, CanSetTransportContext) {
+    auto trans_context = std::make_shared<TransportContext>();
+    ProcessorNode node(proc);
+
+    node.setTransportContext(trans_context);
+
+    ASSERT_THAT(trans_context.use_count(), Eq(2));
+}
+
+TEST_F(AProcessorNode, PrepareForNextUpdateBlockContextFromTransportContext) {
+    auto trans_context = std::make_shared<TransportContext>();
+    ProcessorNode node(proc);
+    node.setTransportContext(trans_context);
+
+    trans_context->num_samples = 1;
+    trans_context->sample_rate = 10;
+    node.prepareForNextBlock();
+
+    ASSERT_THAT(node.getInputBlock()->context.sample_rate, FloatEq(trans_context->sample_rate));
+    ASSERT_THAT(node.getInputBlock()->context.num_samples, Eq(trans_context->num_samples.load()));
+    ASSERT_THAT(node.getOutputBlock()->context.sample_rate, FloatEq(trans_context->sample_rate));
+    ASSERT_THAT(node.getOutputBlock()->context.num_samples, Eq(trans_context->num_samples.load()));
 }
 
 TEST_F(AProcessorNode, PullAudioPortWillPullUpstreamBlock) {
