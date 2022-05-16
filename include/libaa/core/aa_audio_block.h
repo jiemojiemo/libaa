@@ -8,6 +8,7 @@
 #pragma once
 #include "libaa/core/aa_audio_buffer_new.h"
 #include "libaa/core/aa_parameter_changes.h"
+#include "libaa/core/aa_processing_context.h"
 
 namespace libaa {
 class AudioBlock {
@@ -21,8 +22,11 @@ public:
 
     explicit AudioBlock(std::list<std::vector<float>> &&init_list);
 
+    void resizeFrames(size_t num_frames);
+
     AudioBufferX<float> buffer;
     ParameterChanges param_changes;
+    ProcessingContext context;
 };
 
 } // namespace libaa

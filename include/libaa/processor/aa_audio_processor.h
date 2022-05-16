@@ -77,7 +77,7 @@ public:
      * @param state the binary data array
      * @param size the binary data size
      */
-    virtual void setState(uint8_t* state, size_t size) = 0;
+    virtual void setState(uint8_t *state, size_t size) = 0;
 
     /**
      * Returns the processor state, serialize processor to binary data, @see IAudioProcessor::setState

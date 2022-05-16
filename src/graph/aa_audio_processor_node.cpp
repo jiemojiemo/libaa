@@ -60,8 +60,8 @@ NodeType ProcessorNode::getNodeType() const {
 }
 
 void ProcessorNode::prepareToPlay(float sample_rate, int max_block_size) {
-    input_block_->buffer.resizeFrames(max_block_size);
-    output_block_->buffer.resizeFrames(max_block_size);
+    input_block_->resizeFrames(max_block_size);
+    output_block_->resizeFrames(max_block_size);
 
     proc_->prepareToPlay(sample_rate, max_block_size);
 }
