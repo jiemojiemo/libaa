@@ -60,10 +60,12 @@ public:
     void setState(uint8_t *state, size_t size) override;
     std::vector<uint8_t> getState() const override;
 
-    const IAudioProcessor *getProcessor() const;
+    IAudioProcessor *getProcessor() const;
     //** testing ***
     const AudioBlock *getInputBlock() const;
     const AudioBlock *getOutputBlock() const;
+
+    size_t getDefaultNumberParametersInBlock() const;
 
 private:
     void

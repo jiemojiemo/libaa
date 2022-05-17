@@ -5,13 +5,13 @@
 #include "libaa/graph/aa_audio_processor_node.h"
 #include "libaa/graph/aa_graph_node.h"
 #include "libaa/graph/aa_node_serialization_utilities.h"
+#include "libaa/graph/aa_transport_context.h"
 #include "libaa/processor/aa_delay_processor.h"
 #include "libaa/processor/aa_gain_processor.h"
 #include "libaa/processor/aa_source_callback_processor.h"
 #include "libaa/processor/aa_source_processor.h"
 #include "libaa_testing/aa_mock_node.h"
 #include "libaa_testing/aa_mock_processor.h"
-#include "libaa/graph/aa_transport_context.h"
 
 #include <gmock/gmock.h>
 #include <nlohmann/json.hpp>
@@ -298,7 +298,6 @@ TEST_F(AGraphNode, PullParameterChangePortWillPullUpstreamData) {
     ParameterChangePoint result{};
     port.getParameterChanges().pop(0, result);
 
-    ASSERT_THAT(port.getParameterChanges().getNumParameters(), Eq(proc0->getParameters()->size()));
     ASSERT_THAT(result.index, Eq(0));
     ASSERT_THAT(result.time, Eq(1));
     ASSERT_THAT(result.normalized_value, Eq(1));
