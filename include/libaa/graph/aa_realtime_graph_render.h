@@ -33,6 +33,8 @@ public:
 
     void setParameterChangeCallback(int port_index, const ParameterChangeCallback &callback);
 
+    void pushParameterChange(int port_index, int param_index, float norm_val);
+
     enum PlaybackState {
         kStopped = 0,
         kPlaying
@@ -47,6 +49,7 @@ public:
     const std::map<int, std::shared_ptr<INode>> &getParameterChangeCallbackNodeMap() const;
 
 private:
+    void initAndConnectCallbackNodes();
     void prepareCallbackNodes(float sample_rate, int max_block_size);
     void callbackNodesToPrepareForNextBlock();
     std::shared_ptr<INode> buildSourceCallbackNodeWithAudioCallback(const AudioCallback &callback);

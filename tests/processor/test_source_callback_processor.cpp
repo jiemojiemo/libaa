@@ -1,8 +1,8 @@
 //
 // Created by user on 5/9/22.
 //
+#include "libaa/processor/aa_processor_utilities.h"
 #include "libaa/processor/aa_source_callback_processor.h"
-
 #include <gmock/gmock.h>
 
 using namespace testing;
@@ -58,4 +58,35 @@ TEST_F(ASourceCallbackProcessor, PrcessoDoNothingIfCallbackIsNotSet) {
     ASSERT_THAT(proc.getSourceCallback(), IsNull());
     ASSERT_THAT(block.buffer.getReadPointer(0)[0], Eq(1));
     ASSERT_THAT(block.buffer.getReadPointer(1)[0], Eq(4));
+}
+
+TEST_F(ASourceCallbackProcessor, CanPushParameterChange) {
+    int num_params = 10;
+    int param_index = 0;
+    float norm_val = 0.5;
+    AudioBlock block{0, 0, num_params};
+    proc.prepareToPlay(44100, 128);
+    proc.pushParameterChange(param_index, norm_val);
+
+    proc.processBlock(&block, &block);
+
+    ParameterChangePoint result;
+    bool ok = block.param_changes.pop(0, result);
+    ASSERT_TRUE(ok);
+    ASSERT_THAT(result.index, Eq(param_index));
+    ASSERT_THAT(result.normalized_value, Eq(norm_val));
+}
+
+TEST_F(ASourceCallbackProcessor, StateStringAsExpected) {
+    auto state = proc.getState();
+
+    auto expected_string = ProcessorUtilities::serializeProcessorToString(&proc);
+
+    ASSERT_THAT(ProcessorUtilities::convertProcessorStateToString(state), Eq(expected_string));
+}
+
+TEST_F(ASourceCallbackProcessor, SetStateDonothing) {
+    auto state = proc.getState();
+
+    proc.setState(state.data(), state.size());
 }

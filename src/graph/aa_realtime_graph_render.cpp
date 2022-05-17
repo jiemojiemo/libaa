@@ -32,9 +32,15 @@ auto buildGraphWithPorts(const std::shared_ptr<INode> &graph) {
     return builder.build();
 }
 
+auto getSourceCallbackProcessorFromNode = [](std::shared_ptr<INode> node) {
+    auto *proc_node = dynamic_cast<ProcessorNode *>(node.get());
+    return dynamic_cast<SourceCallbackProcessor *>(proc_node->getProcessor());
+};
+
 RealtimeGraphRender::RealtimeGraphRender(const std::shared_ptr<INode> &graph)
     : graph_(buildGraphWithPorts(graph)),
       transport_context_(std::make_shared<TransportContext>()) {
+    initAndConnectCallbackNodes();
 }
 
 void RealtimeGraphRender::prepareToPlay(float sample_rate, int max_block_size) {
@@ -62,19 +68,22 @@ const std::shared_ptr<INode> &RealtimeGraphRender::getGraph() const {
 }
 
 void RealtimeGraphRender::setAudioCallback(int port_index, const AudioCallback &callback) {
-    auto stream_source_node = buildSourceCallbackNodeWithAudioCallback(callback);
-    audio_callback_node_map_[port_index] = stream_source_node;
-
-    AudioConnection audio_con{stream_source_node, 0, port_index};
-    graph_->addUpstreamAudioConnection(audio_con);
+    auto *source_callback_proc = getSourceCallbackProcessorFromNode(audio_callback_node_map_.at(port_index));
+    source_callback_proc->setSourceCallback([this, callback](AudioBlock *block) {
+        callback(&block->buffer, processing_context_);
+    });
 }
 
 void RealtimeGraphRender::setParameterChangeCallback(int port_index, const ParameterChangeCallback &callback) {
-    auto stream_source_node = buildSourceCallbackNodeWithPCCallback(callback);
-    pc_callback_node_map_[port_index] = stream_source_node;
+    auto *source_callback_proc = getSourceCallbackProcessorFromNode(pc_callback_node_map_.at(port_index));
+    source_callback_proc->setSourceCallback([this, callback](AudioBlock *block) {
+        callback(&block->param_changes, processing_context_);
+    });
+}
 
-    ParameterChangeConnection pc_con{stream_source_node, 0, port_index};
-    graph_->addUpstreamParameterChangeConnection(pc_con);
+void RealtimeGraphRender::pushParameterChange(int port_index, int param_index, float norm_val) {
+    auto *source_callback_proc = getSourceCallbackProcessorFromNode(pc_callback_node_map_.at(port_index));
+    source_callback_proc->pushParameterChange(param_index, norm_val);
 }
 
 RealtimeGraphRender::PlaybackState RealtimeGraphRender::getPlaybackState() const {
@@ -95,6 +104,24 @@ const std::map<int, std::shared_ptr<INode>> &RealtimeGraphRender::getAudioCallba
 
 const std::map<int, std::shared_ptr<INode>> &RealtimeGraphRender::getParameterChangeCallbackNodeMap() const {
     return pc_callback_node_map_;
+}
+
+void RealtimeGraphRender::initAndConnectCallbackNodes() {
+    int num_in_audio_ports = graph_->getAudioInputPortSize();
+    for (int i = 0; i < num_in_audio_ports; ++i) {
+        auto callback_src_node = std::make_shared<ProcessorNode>(std::make_shared<SourceCallbackProcessor>());
+        audio_callback_node_map_[i] = callback_src_node;
+        AudioConnection audio_con{callback_src_node, 0, i};
+        graph_->addUpstreamAudioConnection(audio_con);
+    }
+
+    int num_in_pc_ports = graph_->getParameterChangeInputPortSize();
+    for (int i = 0; i < num_in_pc_ports; ++i) {
+        auto callback_src_node = std::make_shared<ProcessorNode>(std::make_shared<SourceCallbackProcessor>());
+        pc_callback_node_map_[i] = callback_src_node;
+        ParameterChangeConnection param_change_con{callback_src_node, 0, i};
+        graph_->addUpstreamParameterChangeConnection(param_change_con);
+    }
 }
 
 void RealtimeGraphRender::prepareCallbackNodes(float sample_rate, int max_block_size) {

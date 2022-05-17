@@ -6,6 +6,7 @@
 #include "libaa/core/aa_audio_block.h"
 
 namespace libaa {
+
 AudioBlock::AudioBlock()
     : param_changes(0, 1) {}
 

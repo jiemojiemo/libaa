@@ -6,6 +6,7 @@
 #include "libaa/graph/aa_node_serialization_utilities.h"
 #include "libaa/graph/aa_parameter_change_port.h"
 #include "libaa/graph/aa_transport_context.h"
+#include "libaa/processor/aa_audio_processor.h"
 #include "libaa/processor/aa_processor_factory.h"
 #include <nlohmann/json.hpp>
 namespace libaa {
@@ -178,12 +179,20 @@ const AudioBlock *ProcessorNode::getOutputBlock() const {
     return output_block_.get();
 }
 
+size_t ProcessorNode::getDefaultNumberParametersInBlock() const {
+    return 64;
+}
+
 void ProcessorNode::initBlocksAndPorts(
     const std::vector<int> &input_channels,
     const std::vector<int> &output_channels) {
     auto total_input_channels = getTotalChannels(input_channels);
     auto total_output_channels = getTotalChannels(output_channels);
-    auto num_params = getNumberOfParameters(proc_);
+
+    // use a quite big number of parameters to init block
+    // so that the source callback processor can push parameter for node
+    const auto num_params = 64;
+    assert(getDefaultNumberParametersInBlock() >= getNumberOfParameters(proc_));
 
     const int init_num_frames = 0;
     input_block_ = std::make_shared<AudioBlock>(total_input_channels,
@@ -297,7 +306,7 @@ std::vector<uint8_t> ProcessorNode::getState() const {
     return NodeSerializationUtilities::jsonToBinaryData(state_json);
 }
 
-const IAudioProcessor *ProcessorNode::getProcessor() const {
+IAudioProcessor *ProcessorNode::getProcessor() const {
     return (proc_ != nullptr) ? (proc_.get()) : (nullptr);
 }
 

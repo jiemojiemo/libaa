@@ -79,7 +79,7 @@ TEST_F(AProcessorNode, InitWithProcessReallocateParameterChanges) {
 
     ProcessorNode node(proc);
     ASSERT_THAT(node.getInputBlock()->param_changes.getNumParameters(),
-                Eq(num_params));
+                Eq(node.getDefaultNumberParametersInBlock()));
 }
 
 TEST_F(AProcessorNode, HasDefalutOneStereoInputAudioPort) {
@@ -564,7 +564,6 @@ TEST_F(AProcessorNode, SetStateReallocateInternalInputBlock) {
     node.setState(gain_node_state.data(), gain_node_state.size());
 
     ASSERT_THAT(node.getInputBlock()->buffer.getNumberChannels(), Eq(3));
-    ASSERT_THAT(node.getInputBlock()->param_changes.getNumParameters(), Eq(gain_proc->getParameters()->size()));
 }
 
 TEST_F(AProcessorNode, SetStateReallocateInternalOutputBlock) {
@@ -576,5 +575,4 @@ TEST_F(AProcessorNode, SetStateReallocateInternalOutputBlock) {
     node.setState(gain_node_state.data(), gain_node_state.size());
 
     ASSERT_THAT(node.getOutputBlock()->buffer.getNumberChannels(), Eq(3));
-    ASSERT_THAT(node.getOutputBlock()->param_changes.getNumParameters(), Eq(gain_proc->getParameters()->size()));
 }
