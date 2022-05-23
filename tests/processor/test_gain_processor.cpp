@@ -52,7 +52,7 @@ TEST_F(AGainProcessor, HasZeroTailLengthSeconds) {
 
 TEST_F(AGainProcessor, ProcessChangeInputDb) {
     float boost_db = -20;
-    float boost_scale = dbToScale(boost_db);
+    float boost_scale = DbUtils::dbToScale(boost_db);
     GainProcessor proc(boost_db);
 
     AudioBlock block{
@@ -69,7 +69,7 @@ TEST_F(AGainProcessor, ProcessChangeInputDb) {
 
 TEST_F(AGainProcessor, ProcessChangeInputDbWithParameterChange) {
     float boost_db = -20;
-    float boost_scale = dbToScale(boost_db);
+    float boost_scale = DbUtils::dbToScale(boost_db);
     float normalized_db =
         proc.getParameters()->get(0).convertPlainValueToNormalizedValue(
             boost_db);

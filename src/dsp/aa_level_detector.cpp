@@ -8,6 +8,10 @@ namespace libaa {
 float LevelDetector::process(float xn) {
     float input = fabs(xn);
 
+    return processWithoutABS(input);
+}
+
+float LevelDetector::processWithoutABS(float input) {
     float current_level = 0.0f;
     if (param_.mode == LevelDetectorMode::kLevelDetectorMode_MS ||
         param_.mode == LevelDetectorMode::kLevelDetectorMode_RMS) {
@@ -45,4 +49,5 @@ float LevelDetector::process(float xn) {
 
     return 20 * log10(current_level);
 }
+
 } // namespace libaa

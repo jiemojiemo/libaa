@@ -12,16 +12,19 @@ namespace libaa {
 class ParameterChanges;
 class AudioProcessorParameters;
 namespace ProcessorUtilities {
-void updateParameterFromParameterChanges(ParameterChanges &param_changes,
+bool updateParameterFromParameterChanges(ParameterChanges &param_changes,
                                          AudioProcessorParameters &param) {
+    bool param_changed = false;
     if (param_changes.getNumParameters() != 0) {
         ParameterChangePoint point{0, 0, 0};
         for (size_t i = 0; i < param.size(); ++i) {
             if (param_changes.pop(i, point)) {
                 param.get(i).setNormalizedValue(point.normalized_value);
+                param_changed = true;
             }
         }
     }
+    return param_changed;
 }
 
 std::string serializeProcessorToString(const IAudioProcessor *proc) {

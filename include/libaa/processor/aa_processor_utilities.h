@@ -13,7 +13,7 @@ class ParameterChanges;
 class AudioProcessorParameters;
 class IAudioProcessor;
 namespace ProcessorUtilities {
-void updateParameterFromParameterChanges(ParameterChanges &param_changes,
+bool updateParameterFromParameterChanges(ParameterChanges &param_changes,
                                          AudioProcessorParameters &param);
 
 std::string serializeProcessorToString(const IAudioProcessor *proc);

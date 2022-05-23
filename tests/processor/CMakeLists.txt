@@ -13,6 +13,9 @@ add_libaa_test(aa_processor_unit_test
         test_source_processor.cpp
         test_source_callback_processor.cpp
         test_processor_factory.cpp
+        test_dynamic_processor_utilities.cpp
+        test_compressor_processor.cpp
+        test_limiter_processor.cpp
         #        test_audio_filter_utilities.cpp
         #        test_audio_filter_processor.cpp
         )

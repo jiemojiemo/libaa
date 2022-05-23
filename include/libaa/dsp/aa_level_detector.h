@@ -29,6 +29,8 @@ struct LevelDetectorParameters {
 
 class LevelDetector {
 public:
+    LevelDetector() = default;
+    
     LevelDetector(LevelDetectorParameters p)
         : param_(std::move(p)) {}
 
@@ -87,6 +89,7 @@ public:
     }
 
     float process(float xn);
+    float processWithoutABS(float xn_db);
 
 private:
     void updateAttackAlpha(float attack_time_ms) {

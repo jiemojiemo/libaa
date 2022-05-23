@@ -178,3 +178,15 @@ TEST_F(ALevelDetector, ReturnMinDbIfInputIsZero) {
     float expected = -96.0f;
     ASSERT_THAT(detector.process(xn), Eq(expected));
 }
+
+TEST_F(ALevelDetector, CanDetectWithDb) {
+    p.mode = LevelDetectorMode::kLevelDetectorMode_Peak;
+
+    LevelDetector detector(p);
+    detector.prepare(sample_rate);
+
+    float db = -20.0f;
+    float expected = -20.0f;
+
+    ASSERT_THAT(detector.processWithoutABS(db), Eq(expected));
+}
