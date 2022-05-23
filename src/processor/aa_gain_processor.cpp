@@ -38,7 +38,7 @@ void GainProcessor::updateGainParameter(AudioBlock *block) {
 
 void GainProcessor::applyGain(AudioBlock *block) {
     float db = parameters.get(0).getPlainValue();
-    float scale = dbToScale(db);
+    float scale = DbUtils::dbToScale(db);
     for (size_t c = 0; c < block->buffer.getNumberChannels(); ++c) {
         float *buffer = block->buffer.getWriterPointer(c);
         for (size_t i = 0; i < block->buffer.getNumberFrames(); ++i) {

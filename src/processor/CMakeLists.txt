@@ -10,6 +10,8 @@ set(PROCESSOR_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_source_processor.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_source_callback_processor.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_processor_factory.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/aa_compressor_processor.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/aa_limiter_processor.cpp
         )
 
 set(PROCESSOR_SRC ${PROCESSOR_SRC} PARENT_SCOPE)

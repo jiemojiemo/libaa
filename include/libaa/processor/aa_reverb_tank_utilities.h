@@ -87,8 +87,8 @@ public:
 
         const float kRT = params.get(kReverbTime).getPlainValue();
         bool thick = (params.get(kDensity).getInt() == 0);
-        const float dry_scale = dbToScale(params.get(kDryDB).getPlainValue());
-        const float wet_scale = dbToScale(params.get(kWetDB).getPlainValue());
+        const float dry_scale = DbUtils::dbToScale(params.get(kDryDB).getPlainValue());
+        const float wet_scale = DbUtils::dbToScale(params.get(kWetDB).getPlainValue());
 
         int num_channels = block->buffer.getNumberChannels();
         float *left_channel = block->buffer.getWriterPointer(0);
