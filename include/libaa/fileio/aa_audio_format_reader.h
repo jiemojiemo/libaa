@@ -14,7 +14,7 @@ public:
     explicit AudioFormatReader(std::unique_ptr<InputStream> in_stream)
         : in_stream_(std::move(in_stream)) {}
 
-    ~AudioFormatReader() = default;
+    virtual ~AudioFormatReader() = default;
 
     virtual bool isOpenOk();
 
