@@ -3,7 +3,7 @@
 //
 
 #include "libaa/graph/aa_audio_processor_node.h"
-#include "libaa/graph/aa_node_serialization_utilities.h"
+#include "libaa/core/aa_json_utilities.h"
 #include "libaa/graph/aa_parameter_change_port.h"
 #include "libaa/graph/aa_transport_context.h"
 #include "libaa/processor/aa_audio_processor.h"
@@ -35,7 +35,7 @@ auto getChannelsFromPorts(const std::vector<AudioPort> &audio_ports) {
 }
 
 auto jsonToBinaryData(const nlohmann::json &j) {
-    return NodeSerializationUtilities::jsonToBinaryData(j);
+    return JsonUtilities::jsonToBinaryData(j);
 }
 
 auto createProcessorWithState(const nlohmann::json &node_state_json) {
@@ -128,12 +128,15 @@ void ProcessorNode::updateBlockProcessingContext() {
     if (transport_context_ != nullptr) {
         auto num_samples = transport_context_->num_samples.load();
         auto sample_rate = transport_context_->sample_rate.load();
+        auto play_head_sample_index = transport_context_->play_head_sample_index.load();
 
         input_block_->context.num_samples = num_samples;
         input_block_->context.sample_rate = sample_rate;
+        input_block_->context.play_head_sample_index = play_head_sample_index;
 
         output_block_->context.num_samples = num_samples;
         output_block_->context.sample_rate = sample_rate;
+        output_block_->context.play_head_sample_index = play_head_sample_index;
     }
 }
 
@@ -303,7 +306,7 @@ std::vector<uint8_t> ProcessorNode::getState() const {
     state_json["output_channels"] = nlohmann::json(getChannelsFromPorts(output_audio_ports_));
     state_json["processor_state"] = nlohmann::json::parse(proc_->getState());
 
-    return NodeSerializationUtilities::jsonToBinaryData(state_json);
+    return JsonUtilities::jsonToBinaryData(state_json);
 }
 
 IAudioProcessor *ProcessorNode::getProcessor() const {

@@ -1,7 +1,7 @@
 //
 // Created by user on 5/14/22.
 //
-#include "libaa/graph/aa_node_serialization_utilities.h"
+#include "libaa/core/aa_json_utilities.h"
 #include "libaa/graph/aa_realtime_graph_render.h"
 #include "libaa/processor/aa_source_callback_processor.h"
 #include "libaa_testing/aa_mock_node.h"
@@ -68,8 +68,8 @@ public:
 TEST_F(ARealtimeGraphRender, InitWillCreateAnotherInternalGraphToUse) {
     RealtimeGraphRender render(graph);
 
-    auto graph_json = NodeSerializationUtilities::binaryDataToJson(graph->getState());
-    auto internal_graph_json = NodeSerializationUtilities::binaryDataToJson(render.getGraph()->getState());
+    auto graph_json = JsonUtilities::binaryDataToJson(graph->getState());
+    auto internal_graph_json = JsonUtilities::binaryDataToJson(render.getGraph()->getState());
 
     ASSERT_THAT(graph_json, Not(internal_graph_json));
 }
@@ -227,4 +227,15 @@ TEST_F(ARealtimeGraphRender, CanPushParameterChange) {
     auto gain_node = dynamic_cast<ProcessorNode *>(graph_node->getAllNodes()[1].get());
 
     ASSERT_THAT(gain_node->getProcessor()->getParameters()->get(0).getNormalizedValue(), Eq(1.0f));
+}
+
+TEST_F(ARealtimeGraphRender, PullWillIncreaseTransportPlayHeadSample) {
+    int num_samples = 3;
+    auto graph = buildTestGraph();
+    RealtimeGraphRender render(graph);
+    render.prepareToPlay(sample_rate, max_block_size);
+    ASSERT_THAT(render.getTransportContext()->play_head_sample_index.load(), Eq(0));
+
+    render.pull(10);
+    ASSERT_THAT(render.getTransportContext()->play_head_sample_index.load(), Eq(10));
 }

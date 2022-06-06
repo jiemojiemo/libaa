@@ -9,6 +9,17 @@
 #include <fstream>
 using namespace std;
 namespace libaa {
+
+auto makeMockSamples(size_t num_channel, size_t num_frames, float fill_val) {
+    std::vector<std::vector<float>> samples{num_channel};
+    for (auto c = 0u; c < num_channel; ++c) {
+        samples[c].resize(num_frames);
+        std::fill(samples[c].begin(), samples[c].end(), fill_val);
+    }
+
+    return samples;
+}
+
 ScopeFile::ScopeFile(std::string output_path)
     : output_path_(std::move(output_path)) {}
 
@@ -19,20 +30,23 @@ ScopeFile::~ScopeFile() {
 ScopeWaveFile::ScopeWaveFile(std::string output_path, size_t sample_rate,
                              size_t num_channel, size_t num_frames,
                              size_t num_bits, float fill_val)
-    : ScopeFile(std::move(output_path)) {
+    : ScopeWaveFile(output_path, sample_rate, makeMockSamples(num_channel, num_frames, fill_val), num_bits) {
+}
 
+ScopeWaveFile::ScopeWaveFile(std::string output_path, size_t sample_rate,
+                             const std::vector<std::vector<float>> &samples,
+                             size_t num_bits)
+    : ScopeFile(std::move(output_path)) {
+    auto num_channel = samples.size();
+    auto num_frames = samples[0].size();
     auto out_stream = std::make_unique<FileOutputStream>(output_path_);
     WavFormatWriter writer(std::move(out_stream), sample_rate, num_channel,
                            num_bits);
 
     assert(writer.isOpen() == true);
 
-    vector<vector<float>> samples(num_channel);
     vector<const float *> data_refer_to(num_channel);
     for (auto c = 0u; c < num_channel; ++c) {
-        samples[c].resize(num_frames);
-        std::fill(samples[c].begin(), samples[c].end(), fill_val);
-
         data_refer_to[c] = samples[c].data();
     }
 

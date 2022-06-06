@@ -8,4 +8,5 @@ add_libaa_test(aa_core_unit_test
         test_audio_block.cpp
         test_resource_path_finder.cpp
         test_clip.cpp
+        test_clip_factory.cpp
         )

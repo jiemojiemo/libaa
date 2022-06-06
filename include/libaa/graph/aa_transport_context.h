@@ -17,6 +17,7 @@ public:
 
     std::atomic<size_t> num_samples{0};
     std::atomic<float> sample_rate{0};
+    std::atomic<size_t> play_head_sample_index{0};
 };
 } // namespace libaa
 

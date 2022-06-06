@@ -6,6 +6,7 @@
 #include "libaa/core/aa_audio_buffer_new.h"
 #include "libaa/core/aa_parameter_change_ringbuffer.h"
 #include <gmock/gmock.h>
+#include <vector>
 using namespace testing;
 
 MATCHER_P(FloatNearPointwise, tol, "Out of range") {
@@ -38,6 +39,9 @@ public:
     ScopeWaveFile(std::string output_path, size_t sample_rate,
                   size_t num_channel, size_t num_frames, size_t num_bits,
                   float fill_val);
+    ScopeWaveFile(std::string output_path, size_t sample_rate,
+                  const std::vector<std::vector<float>> &samples,
+                  size_t num_bits);
 };
 
 class ScopeTextFile : public ScopeFile {

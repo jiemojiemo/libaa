@@ -40,7 +40,7 @@ public:
 
         GraphNode expected_node{{gain_node, delay_node}, input_audio_ports, input_pc_ports, output_audio_ports, output_pc_ports};
         auto expected_node_state = expected_node.getState();
-        auto expected_node_state_json = NodeSerializationUtilities::binaryDataToJson(expected_node_state);
+        auto expected_node_state_json = JsonUtilities::binaryDataToJson(expected_node_state);
 
         return expected_node_state_json;
     };
@@ -204,6 +204,6 @@ TEST_F(AGraphBuilder, CanBuildNodeExpected) {
     builder.exposePort(PortDirection::kOutput, PortType::kParameterChange, 1, {delay_node, 0});
 
     auto graph = builder.build();
-    auto graph_state_json = NodeSerializationUtilities::binaryDataToJson(graph->getState());
+    auto graph_state_json = JsonUtilities::binaryDataToJson(graph->getState());
     ASSERT_THAT(graph_state_json, Eq(expected_node_state_json));
 }

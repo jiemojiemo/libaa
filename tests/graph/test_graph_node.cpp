@@ -2,9 +2,9 @@
 // Created by user on 5/7/22.
 //
 #include "libaa/aa_version.h"
+#include "libaa/core/aa_json_utilities.h"
 #include "libaa/graph/aa_audio_processor_node.h"
 #include "libaa/graph/aa_graph_node.h"
-#include "libaa/graph/aa_node_serialization_utilities.h"
 #include "libaa/graph/aa_transport_context.h"
 #include "libaa/processor/aa_delay_processor.h"
 #include "libaa/processor/aa_gain_processor.h"
@@ -572,12 +572,12 @@ TEST_F(AGraphNode, NodeStateContainsInternalNodesState) {
         {gain_node, delay_node}, {}, {}};
 
     nlohmann::json expected_json;
-    auto gain_node_state_json = NodeSerializationUtilities::binaryDataToJson(gain_node->getState());
-    auto delay_node_state_json = NodeSerializationUtilities::binaryDataToJson(delay_node->getState());
+    auto gain_node_state_json = JsonUtilities::binaryDataToJson(gain_node->getState());
+    auto delay_node_state_json = JsonUtilities::binaryDataToJson(delay_node->getState());
     expected_json["nodes"].push_back(gain_node_state_json);
     expected_json["nodes"].push_back(delay_node_state_json);
 
-    auto node_json = NodeSerializationUtilities::binaryDataToJson(node.getState());
+    auto node_json = JsonUtilities::binaryDataToJson(node.getState());
 
     ASSERT_TRUE(node_json["nodes"].is_array());
     ASSERT_THAT(node_json["nodes"], Eq(expected_json["nodes"]));
@@ -607,9 +607,9 @@ TEST_F(AGraphNode, SetStateThrowsIfNodeTypeUnsupported) {
     GraphNode graph_node{
         {gain_node}, {}, {}};
 
-    auto other_node_state_json = NodeSerializationUtilities::binaryDataToJson(graph_node.getState());
+    auto other_node_state_json = JsonUtilities::binaryDataToJson(graph_node.getState());
     other_node_state_json["nodes"][0]["node_type"] = "unknown";
-    auto other_node_state = NodeSerializationUtilities::jsonToBinaryData(other_node_state_json);
+    auto other_node_state = JsonUtilities::jsonToBinaryData(other_node_state_json);
 
     GraphNode node{{}, {}, {}};
 
@@ -636,7 +636,7 @@ TEST_F(AGraphNode, SetStateRebuildInputAudioPorts) {
 
     GraphNode expected_node{{gain_node, delay_node}, input_audio_ports, {}};
     auto expected_node_state = expected_node.getState();
-    auto expected_node_state_json = NodeSerializationUtilities::binaryDataToJson(expected_node_state);
+    auto expected_node_state_json = JsonUtilities::binaryDataToJson(expected_node_state);
 
     GraphNode node{{}, {}, {}};
     node.setState(expected_node_state.data(), expected_node_state.size());
@@ -655,7 +655,7 @@ TEST_F(AGraphNode, SetStateRebuildOutputAudioPorts) {
 
     GraphNode expected_node{{gain_node, delay_node}, {}, output_audio_ports};
     auto expected_node_state = expected_node.getState();
-    auto expected_node_state_json = NodeSerializationUtilities::binaryDataToJson(expected_node_state);
+    auto expected_node_state_json = JsonUtilities::binaryDataToJson(expected_node_state);
 
     GraphNode node{{}, {}, {}};
     node.setState(expected_node_state.data(), expected_node_state.size());
@@ -675,7 +675,7 @@ TEST_F(AGraphNode, SetStateRebuildInputParameterChangePorts) {
 
     GraphNode expected_node{{gain_node, delay_node}, {}, input_pc_ports, {}, {}};
     auto expected_node_state = expected_node.getState();
-    auto expected_node_state_json = NodeSerializationUtilities::binaryDataToJson(expected_node_state);
+    auto expected_node_state_json = JsonUtilities::binaryDataToJson(expected_node_state);
 
     GraphNode node{{}, {}, {}};
     node.setState(expected_node_state.data(), expected_node_state.size());
@@ -694,7 +694,7 @@ TEST_F(AGraphNode, SetStateRebuildOutputParameterChangePorts) {
 
     GraphNode expected_node{{gain_node, delay_node}, {}, {}, {}, output_pc_ports};
     auto expected_node_state = expected_node.getState();
-    auto expected_node_state_json = NodeSerializationUtilities::binaryDataToJson(expected_node_state);
+    auto expected_node_state_json = JsonUtilities::binaryDataToJson(expected_node_state);
 
     GraphNode node{{}, {}, {}};
     node.setState(expected_node_state.data(), expected_node_state.size());
@@ -730,7 +730,7 @@ TEST_F(AGraphNode, SetStateRebuildNodeAudioConnections) {
     GraphNode node{{}, {}, {}};
     node.setState(expected_node_state.data(), expected_node_state.size());
 
-    auto node_state_json = NodeSerializationUtilities::binaryDataToJson(node.getState());
+    auto node_state_json = JsonUtilities::binaryDataToJson(node.getState());
     ASSERT_THAT(node_state_json["connections"], Eq(expected_json["connections"]));
 }
 
@@ -757,6 +757,6 @@ TEST_F(AGraphNode, SetStateRebuildNodeParameterChangeConnections) {
     GraphNode node{{}, {}, {}};
     node.setState(expected_node_state.data(), expected_node_state.size());
 
-    auto node_state_json = NodeSerializationUtilities::binaryDataToJson(node.getState());
+    auto node_state_json = JsonUtilities::binaryDataToJson(node.getState());
     ASSERT_THAT(node_state_json["connections"], Eq(expected_json["connections"]));
 }

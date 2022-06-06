@@ -11,6 +11,7 @@ namespace libaa {
 struct ProcessingContext {
     size_t num_samples{0};
     float sample_rate;
+    size_t play_head_sample_index{0};
 };
 } // namespace libaa
 

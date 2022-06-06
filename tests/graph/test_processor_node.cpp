@@ -2,8 +2,8 @@
 // Created by user on 4/28/22.
 //
 
+#include "libaa/core/aa_json_utilities.h"
 #include "libaa/graph/aa_audio_processor_node.h"
-#include "libaa/graph/aa_node_serialization_utilities.h"
 #include "libaa/graph/aa_transport_context.h"
 #include "libaa/processor/aa_gain_processor.h"
 #include "libaa_testing/aa_mock_processor.h"
@@ -326,12 +326,15 @@ TEST_F(AProcessorNode, PrepareForNextUpdateBlockContextFromTransportContext) {
 
     trans_context->num_samples = 1;
     trans_context->sample_rate = 10;
+    trans_context->play_head_sample_index = 3;
     node.prepareForNextBlock();
 
     ASSERT_THAT(node.getInputBlock()->context.sample_rate, FloatEq(trans_context->sample_rate));
     ASSERT_THAT(node.getInputBlock()->context.num_samples, Eq(trans_context->num_samples.load()));
+    ASSERT_THAT(node.getInputBlock()->context.play_head_sample_index, Eq(trans_context->play_head_sample_index.load()));
     ASSERT_THAT(node.getOutputBlock()->context.sample_rate, FloatEq(trans_context->sample_rate));
     ASSERT_THAT(node.getOutputBlock()->context.num_samples, Eq(trans_context->num_samples.load()));
+    ASSERT_THAT(node.getOutputBlock()->context.play_head_sample_index, Eq(trans_context->play_head_sample_index.load()));
 }
 
 TEST_F(AProcessorNode, PullAudioPortWillPullUpstreamBlock) {
@@ -437,7 +440,7 @@ TEST_F(AProcessorNode, NodeStateContainsNodeId) {
 TEST_F(AProcessorNode, NodeStateContainsNodeTypeString) {
     ProcessorNode node(proc);
 
-    auto node_json = NodeSerializationUtilities::binaryDataToJson(node.getState());
+    auto node_json = JsonUtilities::binaryDataToJson(node.getState());
 
     ASSERT_FALSE(node_json["node_type"].is_null());
     ASSERT_THAT(node_json["node_type"].get<std::string>(), Eq("processor_node"));
