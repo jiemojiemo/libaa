@@ -10,7 +10,7 @@ class WaveAudioFormatReader : public AudioFormatReader {
 public:
     explicit WaveAudioFormatReader(std::unique_ptr<InputStream> in_stream);
 
-    ~WaveAudioFormatReader() = default;
+    virtual ~WaveAudioFormatReader() = default;
 
     bool isOpenOk() override;
 
