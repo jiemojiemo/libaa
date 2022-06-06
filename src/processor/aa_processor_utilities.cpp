@@ -28,6 +28,10 @@ bool updateParameterFromParameterChanges(ParameterChanges &param_changes,
 }
 
 std::string serializeProcessorToString(const IAudioProcessor *proc) {
+    return serializeProcessorToJson(proc).dump();
+}
+
+nlohmann::json serializeProcessorToJson(const IAudioProcessor *proc) {
     nlohmann::json result;
     result["version"] = LIBAA_VERSION;
     result["processor_name"] = proc->getName();
@@ -50,7 +54,7 @@ std::string serializeProcessorToString(const IAudioProcessor *proc) {
         result["parameters"] = param_json;
     }
 
-    return result.dump();
+    return result;
 }
 
 std::vector<uint8_t> serializeProcessorToBinaryArray(const IAudioProcessor *proc) {

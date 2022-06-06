@@ -3,8 +3,8 @@
 //
 #include "libaa/graph/aa_graph_node.h"
 #include "libaa/aa_version.h"
+#include "libaa/core/aa_json_utilities.h"
 #include "libaa/graph/aa_audio_processor_node.h"
-#include "libaa/graph/aa_node_serialization_utilities.h"
 #include "libaa/graph/aa_node_utilities.h"
 #include "libaa/graph/aa_parameter_change_connection.h"
 #include "libaa/graph/aa_port.h"
@@ -129,7 +129,7 @@ auto serializeNodeConnectionsToJson(const std::vector<std::shared_ptr<INode>> &n
 auto serializeNodesToJson(const std::vector<std::shared_ptr<INode>> &nodes) {
     nlohmann::json nodes_json;
     for (const auto &n : nodes) {
-        auto node_json = NodeSerializationUtilities::binaryDataToJson(n->getState());
+        auto node_json = JsonUtilities::binaryDataToJson(n->getState());
         nodes_json.push_back(node_json);
     }
     return nodes_json;
@@ -140,7 +140,7 @@ auto buildNodesFromJson(const nlohmann::json &nodes_json) {
 
     for (auto &node_json : nodes_json) {
         auto node_type = node_json["node_type"].get<std::string>();
-        auto node_state = NodeSerializationUtilities::jsonToBinaryData(node_json);
+        auto node_state = JsonUtilities::jsonToBinaryData(node_json);
         if (node_type == "processor_node") {
             auto proc_node = std::make_shared<ProcessorNode>(nullptr);
             proc_node->setState(node_state.data(), node_state.size());
@@ -410,7 +410,7 @@ int GraphNode::getAudioOutputPortChannels(int port_index) const {
     return node_in_port_index->getAudioOutputPortChannels(node_port_index);
 }
 void GraphNode::setState(uint8_t *state, size_t size) {
-    auto state_json = NodeSerializationUtilities::binaryDataToJson(state, size);
+    auto state_json = JsonUtilities::binaryDataToJson(state, size);
 
     BaseNode::setNodeID(state_json["node_id"].get<std::string>());
 
@@ -443,7 +443,7 @@ std::vector<uint8_t> GraphNode::getState() const {
     state_json["connections"] = serializeNodeConnectionsToJson(nodes_);
     state_json["nodes"] = serializeNodesToJson(nodes_);
 
-    return NodeSerializationUtilities::jsonToBinaryData(state_json);
+    return JsonUtilities::jsonToBinaryData(state_json);
 }
 
 } // namespace libaa

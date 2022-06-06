@@ -60,7 +60,11 @@ AudioPort &RealtimeGraphRender::pull(int num_samples) {
     callbackNodesToPrepareForNextBlock();
 
     graph_->prepareForNextBlock();
-    return graph_->pullAudioPort(0);
+    auto& output_port = graph_->pullAudioPort(0);
+
+    updateTransportPlayHeadPosition(num_samples);
+
+    return output_port;
 }
 
 const std::shared_ptr<INode> &RealtimeGraphRender::getGraph() const {
@@ -104,6 +108,10 @@ const std::map<int, std::shared_ptr<INode>> &RealtimeGraphRender::getAudioCallba
 
 const std::map<int, std::shared_ptr<INode>> &RealtimeGraphRender::getParameterChangeCallbackNodeMap() const {
     return pc_callback_node_map_;
+}
+
+const std::shared_ptr<TransportContext> &RealtimeGraphRender::getTransportContext() const {
+    return transport_context_;
 }
 
 void RealtimeGraphRender::initAndConnectCallbackNodes() {
@@ -150,7 +158,7 @@ std::shared_ptr<INode> RealtimeGraphRender::buildSourceCallbackNodeWithAudioCall
         callback(&block->buffer, processing_context_);
     });
     return std::make_shared<ProcessorNode>(source_callback_proc);
-};
+}
 
 std::shared_ptr<INode> RealtimeGraphRender::buildSourceCallbackNodeWithPCCallback(const ParameterChangeCallback &callback) {
     auto source_callback_proc = std::make_shared<SourceCallbackProcessor>();
@@ -158,6 +166,12 @@ std::shared_ptr<INode> RealtimeGraphRender::buildSourceCallbackNodeWithPCCallbac
         callback(&block->param_changes, processing_context_);
     });
     return std::make_shared<ProcessorNode>(source_callback_proc);
-};
+}
+
+void RealtimeGraphRender::updateTransportPlayHeadPosition(int num_sample_increased)
+{
+    transport_context_->play_head_sample_index.fetch_add(num_sample_increased);
+}
+
 
 } // namespace libaa

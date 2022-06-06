@@ -47,6 +47,7 @@ public:
 
     const std::map<int, std::shared_ptr<INode>> &getAudioCallbackNodeMap() const;
     const std::map<int, std::shared_ptr<INode>> &getParameterChangeCallbackNodeMap() const;
+    const std::shared_ptr<TransportContext> &getTransportContext() const;
 
 private:
     void initAndConnectCallbackNodes();
@@ -54,6 +55,7 @@ private:
     void callbackNodesToPrepareForNextBlock();
     std::shared_ptr<INode> buildSourceCallbackNodeWithAudioCallback(const AudioCallback &callback);
     std::shared_ptr<INode> buildSourceCallbackNodeWithPCCallback(const ParameterChangeCallback &callback);
+    void updateTransportPlayHeadPosition(int num_sample_increased);
 
     std::shared_ptr<INode> graph_{nullptr};
     std::shared_ptr<TransportContext> transport_context_{nullptr};

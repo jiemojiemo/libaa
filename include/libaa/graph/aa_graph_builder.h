@@ -6,11 +6,11 @@
 #define LIBAA_AA_GRAPH_BUILDER_H
 
 #pragma once
+#include "libaa/core/aa_json_utilities.h"
 #include "libaa/graph/aa_audio_connection.h"
 #include "libaa/graph/aa_audio_processor_node.h"
 #include "libaa/graph/aa_graph_node.h"
 #include "libaa/graph/aa_i_node.h"
-#include "libaa/graph/aa_node_serialization_utilities.h"
 #include "libaa/graph/aa_node_utilities.h"
 #include "libaa/graph/aa_port.h"
 
