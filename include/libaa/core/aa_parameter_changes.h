@@ -14,9 +14,7 @@ namespace libaa {
 class ParameterChanges {
 public:
     explicit ParameterChanges(size_t num_params, size_t params_fifo_size);
-
-    ParameterChanges(const ParameterChanges &) = delete;
-
+    
     size_t getNumParameters() const;
 
     void resize(size_t num_params, size_t params_fifo_size);

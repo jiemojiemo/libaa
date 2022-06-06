@@ -7,4 +7,5 @@ add_libaa_test(aa_core_unit_test
         test_parameter_changes.cpp
         test_audio_block.cpp
         test_resource_path_finder.cpp
+        test_clip.cpp
         )
