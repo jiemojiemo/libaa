@@ -47,6 +47,12 @@ TEST_F(AGraphNode, CanInitWithNodes) {
     ASSERT_THAT(node.getAllNodes().size(), Eq(2));
 }
 
+TEST_F(AGraphNode, HasCorrectType) {
+    GraphNode node{nodes, {}, {}};
+
+    ASSERT_THAT(node.getNodeType(), Eq(NodeType::kGraphNode));
+}
+
 TEST_F(AGraphNode, CanInitWithNodesAndPorts) {
     GraphNode::InputPortNodeConnections input_audio_ports{{{node0, 0}},
                                                           {{node1, 0}}};
@@ -630,6 +636,8 @@ TEST_F(AGraphNode, SetStateUpdatesNodeId) {
 }
 
 TEST_F(AGraphNode, SetStateRebuildInputAudioPorts) {
+    gain_node->addAudioInputPort(2);
+    delay_node->addAudioInputPort(2);
     GraphNode::InputPortNodeConnections input_audio_ports{
         {{gain_node, 0}, {delay_node, 0}},
         {{gain_node, 1}, {delay_node, 1}}};
@@ -651,6 +659,7 @@ TEST_F(AGraphNode, SetStateRebuildInputAudioPorts) {
 }
 
 TEST_F(AGraphNode, SetStateRebuildOutputAudioPorts) {
+    delay_node->addAudioOutputPort(2);
     GraphNode::OutputPortNodeConnections output_audio_ports{{gain_node, 0}, {delay_node, 1}};
 
     GraphNode expected_node{{gain_node, delay_node}, {}, output_audio_ports};
@@ -671,7 +680,7 @@ TEST_F(AGraphNode, SetStateRebuildOutputAudioPorts) {
 TEST_F(AGraphNode, SetStateRebuildInputParameterChangePorts) {
     GraphNode::InputPortNodeConnections input_pc_ports{
         {{gain_node, 0}, {delay_node, 0}},
-        {{gain_node, 1}, {delay_node, 1}}};
+        {{gain_node, 0}, {delay_node, 0}}};
 
     GraphNode expected_node{{gain_node, delay_node}, {}, input_pc_ports, {}, {}};
     auto expected_node_state = expected_node.getState();
@@ -685,12 +694,12 @@ TEST_F(AGraphNode, SetStateRebuildInputParameterChangePorts) {
     ASSERT_THAT(node.getInputParameterChangePortConnections()[0].front().node_port_index, Eq(0));
     ASSERT_THAT(node.getInputParameterChangePortConnections()[0].back().node_port_index, Eq(0));
     ASSERT_THAT(node.getInputParameterChangePortConnections()[1].size(), Eq(2));
-    ASSERT_THAT(node.getInputParameterChangePortConnections()[1].front().node_port_index, Eq(1));
-    ASSERT_THAT(node.getInputParameterChangePortConnections()[1].back().node_port_index, Eq(1));
+    ASSERT_THAT(node.getInputParameterChangePortConnections()[1].front().node_port_index, Eq(0));
+    ASSERT_THAT(node.getInputParameterChangePortConnections()[1].back().node_port_index, Eq(0));
 }
 
 TEST_F(AGraphNode, SetStateRebuildOutputParameterChangePorts) {
-    GraphNode::OutputPortNodeConnections output_pc_ports{{gain_node, 0}, {delay_node, 1}};
+    GraphNode::OutputPortNodeConnections output_pc_ports{{gain_node, 0}, {delay_node, 0}};
 
     GraphNode expected_node{{gain_node, delay_node}, {}, {}, {}, output_pc_ports};
     auto expected_node_state = expected_node.getState();
@@ -704,7 +713,7 @@ TEST_F(AGraphNode, SetStateRebuildOutputParameterChangePorts) {
     ASSERT_THAT(node.getOutputParameterChangePortConnections()[0].node->getNodeID(), Eq(gain_node->getNodeID()));
     ASSERT_THAT(node.getOutputParameterChangePortConnections()[0].node_port_index, Eq(0));
     ASSERT_THAT(node.getOutputParameterChangePortConnections()[1].node->getNodeID(), Eq(delay_node->getNodeID()));
-    ASSERT_THAT(node.getOutputParameterChangePortConnections()[1].node_port_index, Eq(1));
+    ASSERT_THAT(node.getOutputParameterChangePortConnections()[1].node_port_index, Eq(0));
 }
 
 TEST_F(AGraphNode, SetStateRebuildNodeAudioConnections) {

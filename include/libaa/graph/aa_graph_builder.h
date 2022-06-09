@@ -23,10 +23,14 @@ public:
     bool addConnection(ConnectionType type,
                        std::pair<std::shared_ptr<INode>, int> upstream_node_port,
                        std::pair<std::shared_ptr<INode>, int> downstream_node_port);
+    bool addConnection(ConnectionType type,
+                       const std::pair<std::string, int> &upstream_node_port,
+                       const std::pair<std::string, int> &downstream_node_port);
 
     void exposePort(PortDirection direction, PortType type, int graph_port, const std::pair<std::shared_ptr<INode>, int> &node_and_port);
+    void exposePort(PortDirection direction, PortType type, int graph_port, const std::pair<std::string, int> &node_and_port);
 
-    std::shared_ptr<INode> build() const;
+    std::unique_ptr<INode> build() const;
 
     const std::vector<std::shared_ptr<INode>> &getNodes() const;
 

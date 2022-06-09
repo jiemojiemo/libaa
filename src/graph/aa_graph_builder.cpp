@@ -105,6 +105,18 @@ bool GraphBuilder::addConnection(ConnectionType type,
     }
 }
 
+bool GraphBuilder::addConnection(ConnectionType type,
+                                 const std::pair<std::string, int> &upstream_node_port,
+                                 const std::pair<std::string, int> &downstream_node_port) {
+    auto upstream_node = NodeUtilities::findNodeById(nodes_, upstream_node_port.first);
+    auto downstream_node = NodeUtilities::findNodeById(nodes_, downstream_node_port.first);
+    if (upstream_node == nullptr || downstream_node == nullptr) {
+        throw std::invalid_argument("addConnection failed: node id invalid");
+    }
+
+    return addConnection(type, {upstream_node, upstream_node_port.second}, {downstream_node, downstream_node_port.second});
+}
+
 void GraphBuilder::exposePort(PortDirection direction, PortType type, int graph_port, const std::pair<std::shared_ptr<INode>, int> &node_and_port) {
     checkPortValidAndThrows(direction, type, node_and_port);
 
@@ -124,8 +136,16 @@ void GraphBuilder::exposePort(PortDirection direction, PortType type, int graph_
     }
 }
 
-std::shared_ptr<INode> GraphBuilder::build() const {
-    return std::make_shared<GraphNode>(nodes_,
+void GraphBuilder::exposePort(PortDirection direction, PortType type, int graph_port, const std::pair<std::string, int> &node_and_port) {
+    auto node = NodeUtilities::findNodeById(nodes_, node_and_port.first);
+    if (node == nullptr) {
+        throw std::invalid_argument("exposePort failed: node id invalid");
+    }
+    exposePort(direction, type, graph_port, {node, node_and_port.second});
+}
+
+std::unique_ptr<INode> GraphBuilder::build() const {
+    return std::make_unique<GraphNode>(nodes_,
                                        InputPortsMapToGraphNodeInputPortNodeConnections(input_audio_ports_map_),
                                        InputPortsMapToGraphNodeInputPortNodeConnections(input_pc_ports_map_),
                                        OutputPortsMapToOutputPortNodeConnections(output_audio_ports_map_),

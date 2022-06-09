@@ -156,6 +156,24 @@ TEST_F(AProcessorNode, AddInputPortIncreaseThePortSize) {
     ASSERT_THAT(node.getAudioInputPortSize(), Eq(2));
 }
 
+TEST_F(AProcessorNode, AddAudioOutputPortWillReallocateOutputBuffer) {
+    ProcessorNode node(proc);
+    ASSERT_THAT(node.getOutputBlock()->buffer.getNumberChannels(), Eq(2));
+
+    node.addAudioOutputPort(2);
+
+    ASSERT_THAT(node.getOutputBlock()->buffer.getNumberChannels(), Eq(4));
+}
+
+TEST_F(AProcessorNode, AddOutputPortIncreaseThePortSize) {
+    ProcessorNode node(proc);
+    ASSERT_THAT(node.getAudioOutputPortSize(), Eq(1));
+
+    node.addAudioOutputPort(2);
+
+    ASSERT_THAT(node.getAudioOutputPortSize(), Eq(2));
+}
+
 TEST_F(AProcessorNode, DefaultIDIsEmpty) {
     ProcessorNode node(proc);
 
@@ -326,14 +344,21 @@ TEST_F(AProcessorNode, PrepareForNextUpdateBlockContextFromTransportContext) {
 
     trans_context->num_samples = 1;
     trans_context->sample_rate = 10;
+    trans_context->is_playing = true;
+    trans_context->is_final = false;
     trans_context->play_head_sample_index = 3;
     node.prepareForNextBlock();
 
     ASSERT_THAT(node.getInputBlock()->context.sample_rate, FloatEq(trans_context->sample_rate));
     ASSERT_THAT(node.getInputBlock()->context.num_samples, Eq(trans_context->num_samples.load()));
+    ASSERT_THAT(node.getInputBlock()->context.is_playing, Eq(trans_context->is_playing.load()));
+    ASSERT_THAT(node.getInputBlock()->context.is_final, Eq(trans_context->is_final.load()));
     ASSERT_THAT(node.getInputBlock()->context.play_head_sample_index, Eq(trans_context->play_head_sample_index.load()));
+
     ASSERT_THAT(node.getOutputBlock()->context.sample_rate, FloatEq(trans_context->sample_rate));
     ASSERT_THAT(node.getOutputBlock()->context.num_samples, Eq(trans_context->num_samples.load()));
+    ASSERT_THAT(node.getOutputBlock()->context.is_playing, Eq(trans_context->is_playing.load()));
+    ASSERT_THAT(node.getOutputBlock()->context.is_final, Eq(trans_context->is_final.load()));
     ASSERT_THAT(node.getOutputBlock()->context.play_head_sample_index, Eq(trans_context->play_head_sample_index.load()));
 }
 
@@ -409,6 +434,24 @@ TEST_F(AProcessorNode, PullAudioPortReturnsLastResultIfHasProcessed) {
                 Eq(port_second_time.getNumberChannels()));
     ASSERT_THAT(port_first_time.getChannelData(0),
                 Eq(port_second_time.getChannelData(0)));
+}
+
+TEST_F(AProcessorNode, AudioPortSynchronizeNumSamplesWhenPushPullMode) {
+    ProcessorNode node(proc);
+    AudioConnection connection{upstream_node, 0, 0};
+    node.addUpstreamAudioConnection(connection);
+    upstream_node->prepareToPlay(sr, max_block_size);
+    node.prepareToPlay(sr, max_block_size);
+    auto trans_context = std::make_shared<TransportContext>();
+    trans_context->is_push_pull_mode = true;
+    node.setTransportContext(trans_context);
+
+    EXPECT_CALL(*up_proc, processBlock).WillOnce([this](AudioBlock *input, AudioBlock *output) {
+        output->context.num_samples = 0.5 * max_block_size;
+    });
+
+    AudioPort &output_port = node.pullAudioPort(0);
+    ASSERT_THAT(output_port.getNumberFrames(), Eq(0.5 * max_block_size));
 }
 
 TEST_F(AProcessorNode, PullParameterChangePortReturnsLastResultIfHasProcessed) {

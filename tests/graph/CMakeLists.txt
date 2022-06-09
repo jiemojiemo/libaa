@@ -3,6 +3,9 @@ add_libaa_test(
         test_audio_connection.cpp
         test_audio_port.cpp
         test_graph_node.cpp
+        test_node_factory.cpp
+        test_node_serialization_utilities.cpp
+        test_node_utilities.cpp
         test_processor_node.cpp
         test_parameter_change_port.cpp
         test_parameter_change_connection.cpp

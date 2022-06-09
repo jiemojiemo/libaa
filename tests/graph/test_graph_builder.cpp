@@ -111,6 +111,29 @@ TEST_F(AGraphBuilder, AddConnectionFaildIfPortIndexInvalid) {
     ASSERT_FALSE(is_ok);
 }
 
+TEST_F(AGraphBuilder, CanAddConnectionWithNodeId) {
+    builder.insert("node0", gain_node);
+    builder.insert("node1", delay_node);
+
+    bool is_ok = builder.addConnection(ConnectionType::kParameterChangeConnection, {"node0", 0}, {"node1", 0});
+
+    ASSERT_TRUE(is_ok);
+}
+
+TEST_F(AGraphBuilder, AddConnectionThrowsIfCannotFindUpstreamNode) {
+    builder.insert("node0", gain_node);
+    builder.insert("node1", delay_node);
+
+    ASSERT_ANY_THROW(builder.addConnection(ConnectionType::kParameterChangeConnection, {"not_exist_node", 0}, {"node1", 0}));
+}
+
+TEST_F(AGraphBuilder, AddConnectionThrowsIfCannotFindDownstreamNode) {
+    builder.insert("node0", gain_node);
+    builder.insert("node1", delay_node);
+
+    ASSERT_ANY_THROW(builder.addConnection(ConnectionType::kParameterChangeConnection, {"node0", 0}, {"not_exist_node", 0}));
+}
+
 TEST_F(AGraphBuilder, HasNoInputAudioPortWhenInit) {
     ASSERT_TRUE(builder.getExposedInputAudioPorts().empty());
 }
@@ -181,6 +204,20 @@ TEST_F(AGraphBuilder, ExposeOutputParameterChangePortThrowsIfNodePortIndexInvali
 
     ASSERT_THAT(invalid_node_port, Ge(gain_node->getAudioInputPortSize()));
     ASSERT_ANY_THROW(builder.exposePort(PortDirection::kOutput, PortType::kParameterChange, 0, {gain_node, invalid_node_port}));
+}
+
+TEST_F(AGraphBuilder, CanExposePortWithNodeId) {
+    builder.insert("node0", gain_node);
+
+    builder.exposePort(PortDirection::kInput, PortType::kAudio, 0, {"node0", 0});
+
+    ASSERT_THAT(builder.getExposedInputAudioPorts().size(), Eq(1));
+}
+
+TEST_F(AGraphBuilder, ExposePortWithNodeIdThrowsIfNotSuchNode) {
+    builder.insert("node0", gain_node);
+
+    ASSERT_ANY_THROW(builder.exposePort(PortDirection::kInput, PortType::kAudio, 0, {"not_exist_node", 0}));
 }
 
 TEST_F(AGraphBuilder, CanBuildNodeExpected) {

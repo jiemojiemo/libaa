@@ -1,7 +1,7 @@
 //
 // Created by William on 3/25/22.
 //
-#include "libaa/processor/aa_vibrator_processor.h"
+#include "libaa/processor/aa_vibrato_processor.h"
 #include "libaa/core/aa_audio_block.h"
 #include "libaa/processor/aa_processor_utilities.h"
 namespace libaa {
