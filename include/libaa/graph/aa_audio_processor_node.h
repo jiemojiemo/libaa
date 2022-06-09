@@ -25,8 +25,8 @@ public:
     explicit ProcessorNode(std::shared_ptr<IAudioProcessor> proc);
 
     explicit ProcessorNode(std::shared_ptr<IAudioProcessor> proc,
-                           const std::initializer_list<int> &input_channels,
-                           const std::initializer_list<int> &output_channels);
+                           const std::vector<int> &input_channels,
+                           const std::vector<int> &output_channels);
 
     NodeType getNodeType() const override;
 
@@ -49,6 +49,8 @@ public:
     void prepareForNextBlock() override;
 
     void addAudioInputPort(int num_in_channel);
+
+    void addAudioOutputPort(int num_out_channel);
 
     int getAudioInputPortSize() const override;
     int getAudioOutputPortSize() const override;

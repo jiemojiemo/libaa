@@ -10,7 +10,9 @@
 namespace libaa {
 struct ProcessingContext {
     size_t num_samples{0};
-    float sample_rate;
+    float sample_rate{0.0f};
+    bool is_playing{false};
+    bool is_final{false};
     size_t play_head_sample_index{0};
 };
 } // namespace libaa

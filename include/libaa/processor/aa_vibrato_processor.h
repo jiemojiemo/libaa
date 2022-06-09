@@ -8,7 +8,7 @@
 #pragma once
 #include "libaa/core/aa_audio_processor_parameters.h"
 #include "libaa/processor/aa_audio_processor.h"
-#include "libaa/processor/aa_vibrator_processor_utilities.h"
+#include "libaa/processor/aa_vibrato_processor_utilities.h"
 namespace libaa {
 class AudioBlock;
 class VibratoProcessor : public IAudioProcessor {

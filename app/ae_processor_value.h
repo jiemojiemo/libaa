@@ -8,7 +8,7 @@
 #pragma once
 #include "ae_demo_value.h"
 #include "libaa/core/aa_audio_block.h"
-#include "libaa/processor/aa_vibrator_processor.h"
+#include "libaa/processor/aa_vibrato_processor.h"
 #include <vector>
 using namespace libaa;
 using namespace std;

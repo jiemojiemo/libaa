@@ -2,7 +2,7 @@
 // Created by William on 3/26/22.
 //
 
-#include "libaa/processor/aa_vibrator_processor_utilities.h"
+#include "libaa/processor/aa_vibrato_processor_utilities.h"
 #include <iostream>
 namespace libaa {
 void VibratorProcessorUtility::prepare(float sample_rate, int max_block_size) {

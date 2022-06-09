@@ -14,8 +14,8 @@ public:
     std::shared_ptr<INode> buildTestGraph() {
         GraphBuilder builder;
         auto source_proc = std::shared_ptr<IAudioProcessor>(new SourceProcessor({{1, 1, 1, 1, 1}, {2, 2, 2, 2, 2}}));
-        auto gain_proc = ProcessorFactory::create("Gain");
-        auto delay_proc = ProcessorFactory::create("Delay");
+        std::shared_ptr<IAudioProcessor> gain_proc = ProcessorFactory::create("Gain");
+        std::shared_ptr<IAudioProcessor> delay_proc = ProcessorFactory::create("Delay");
         auto source_node = std::make_shared<ProcessorNode>(source_proc);
         auto gain_node = std::make_shared<ProcessorNode>(gain_proc);
         auto delay_node = std::make_shared<ProcessorNode>(delay_proc);

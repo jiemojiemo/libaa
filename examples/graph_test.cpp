@@ -45,9 +45,9 @@ int main(int argc, char *argv[]) {
 
     AudioBlock mock_block{0, 0, 20};
 
-    auto vibrato_proc = ProcessorFactory::create("Vibrato");
-    auto pitch_shift_proc = ProcessorFactory::create("PitchShifter");
-    auto gain_proc = ProcessorFactory::create("Gain");
+    std::shared_ptr<IAudioProcessor> vibrato_proc = ProcessorFactory::create("Vibrato");
+    std::shared_ptr<IAudioProcessor> pitch_shift_proc = ProcessorFactory::create("PitchShifter");
+    std::shared_ptr<IAudioProcessor> gain_proc = ProcessorFactory::create("Gain");
 
     auto vibrato_node = std::make_shared<ProcessorNode>(vibrato_proc);
     auto pitch_shift_node = std::make_shared<ProcessorNode>(pitch_shift_proc);

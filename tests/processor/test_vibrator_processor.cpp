@@ -3,7 +3,7 @@
 //
 #include "aa_testing_helper.h"
 #include "libaa/processor/aa_processor_utilities.h"
-#include "libaa/processor/aa_vibrator_processor.h"
+#include "libaa/processor/aa_vibrato_processor.h"
 #include <gmock/gmock.h>
 #include <nlohmann/json.hpp>
 using namespace testing;

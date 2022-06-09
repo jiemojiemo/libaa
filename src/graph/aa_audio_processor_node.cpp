@@ -4,13 +4,14 @@
 
 #include "libaa/graph/aa_audio_processor_node.h"
 #include "libaa/core/aa_json_utilities.h"
+#include "libaa/graph/aa_node_factory.h"
 #include "libaa/graph/aa_parameter_change_port.h"
 #include "libaa/graph/aa_transport_context.h"
 #include "libaa/processor/aa_audio_processor.h"
 #include "libaa/processor/aa_processor_factory.h"
 #include <nlohmann/json.hpp>
-namespace libaa {
 
+namespace libaa {
 auto getTotalChannels(const std::vector<int> &input_channels) {
     return std::accumulate(input_channels.begin(), input_channels.end(), 0);
 }
@@ -34,25 +35,12 @@ auto getChannelsFromPorts(const std::vector<AudioPort> &audio_ports) {
     return channels;
 }
 
-auto jsonToBinaryData(const nlohmann::json &j) {
-    return JsonUtilities::jsonToBinaryData(j);
-}
-
-auto createProcessorWithState(const nlohmann::json &node_state_json) {
-    auto processor_name = node_state_json["processor_state"]["processor_name"];
-    auto proc = ProcessorFactory::create(processor_name);
-    auto processor_state = jsonToBinaryData(node_state_json["processor_state"]);
-    proc->setState(processor_state.data(), processor_state.size());
-
-    return proc;
-}
-
 ProcessorNode::ProcessorNode(std::shared_ptr<IAudioProcessor> proc)
     : ProcessorNode(std::move(proc), {2}, {2}) {}
 
 ProcessorNode::ProcessorNode(std::shared_ptr<IAudioProcessor> proc,
-                             const std::initializer_list<int> &input_channels,
-                             const std::initializer_list<int> &output_channels)
+                             const std::vector<int> &input_channels,
+                             const std::vector<int> &output_channels)
     : proc_(std::move(proc)) {
     initBlocksAndPorts(input_channels, output_channels);
 }
@@ -104,6 +92,16 @@ void ProcessorNode::pullUpstreamAudio() {
             audio_connections_[i].downstream_port_index;
         auto &downstream_port = input_audio_ports_[downstream_port_index];
 
+        auto upstream_num_samples = upstream_audio_port.getNumberFrames();
+        if (transport_context_ != nullptr && transport_context_->is_push_pull_mode) {
+            /**
+             * if is_push_pull_mode, the upstream output number samples may change(eg. resampler)
+             * so we synchronize input_block and output_block context.num_samples to make sure downstream node process correctly
+             */
+            assert(input_block_->buffer.getNumberFrames() >= upstream_num_samples);
+            input_block_->context.num_samples = upstream_num_samples;
+            output_block_->context.num_samples = upstream_num_samples;
+        }
         downstream_port.copyFrom(&upstream_audio_port);
     }
 }
@@ -125,18 +123,24 @@ void ProcessorNode::pullUpstreamParameterChange() {
 }
 
 void ProcessorNode::updateBlockProcessingContext() {
+
     if (transport_context_ != nullptr) {
         auto num_samples = transport_context_->num_samples.load();
         auto sample_rate = transport_context_->sample_rate.load();
-        auto play_head_sample_index = transport_context_->play_head_sample_index.load();
+        auto is_playing = transport_context_->is_playing.load();
+        auto is_final = transport_context_->is_final.load();
+        auto play_head_index = transport_context_->play_head_sample_index.load();
 
-        input_block_->context.num_samples = num_samples;
-        input_block_->context.sample_rate = sample_rate;
-        input_block_->context.play_head_sample_index = play_head_sample_index;
+        auto update_processing_context = [&](ProcessingContext &processing_context) {
+            processing_context.num_samples = num_samples;
+            processing_context.sample_rate = sample_rate;
+            processing_context.is_playing = is_playing;
+            processing_context.is_final = is_final;
+            processing_context.play_head_sample_index = play_head_index;
+        };
 
-        output_block_->context.num_samples = num_samples;
-        output_block_->context.sample_rate = sample_rate;
-        output_block_->context.play_head_sample_index = play_head_sample_index;
+        update_processing_context(input_block_->context);
+        update_processing_context(output_block_->context);
     }
 }
 
@@ -172,6 +176,14 @@ void ProcessorNode::addAudioInputPort(int num_in_channel) {
     input_block_->buffer.resize(new_channel_size, 0);
     input_audio_ports_.emplace_back(input_block_, num_in_channel,
                                     old_channel_size);
+}
+
+void ProcessorNode::addAudioOutputPort(int num_out_channel) {
+    auto old_channel_size = output_block_->buffer.getNumberChannels();
+    auto new_channel_size = old_channel_size + num_out_channel;
+    output_block_->buffer.resize(new_channel_size, 0);
+    output_audio_ports_.emplace_back(output_block_, num_out_channel,
+                                     old_channel_size);
 }
 
 const AudioBlock *ProcessorNode::getInputBlock() const {
@@ -286,17 +298,19 @@ int ProcessorNode::getParameterChangeOutputPortSize() const {
 }
 void ProcessorNode::setState(uint8_t *state, size_t size) {
     auto state_json = nlohmann::json::parse(state, state + size);
+    auto serialized_node = NodeFactory::build(state, size);
+    auto serialized_proc_node = dynamic_cast<ProcessorNode *>(serialized_node.get());
 
-    BaseNode::setNodeID(state_json["node_id"].get<std::string>());
+    BaseNode::setNodeID(serialized_proc_node->getNodeID());
 
-    proc_ = createProcessorWithState(state_json);
+    proc_ = std::move(serialized_proc_node->proc_);
 
-    // rebuild audio ports
-    input_audio_ports_.clear();
-    output_audio_ports_.clear();
-    auto input_channels = state_json["input_channels"].get<std::vector<int>>();
-    auto output_channels = state_json["output_channels"].get<std::vector<int>>();
-    initBlocksAndPorts(input_channels, output_channels);
+    input_audio_ports_ = std::move(serialized_proc_node->input_audio_ports_);
+    output_audio_ports_ = std::move(serialized_proc_node->output_audio_ports_);
+    input_pc_ports_ = std::move(serialized_proc_node->input_pc_ports_);
+    output_pc_ports_ = std::move(serialized_proc_node->output_pc_ports_);
+    input_block_ = std::move(serialized_proc_node->input_block_);
+    output_block_ = std::move(serialized_proc_node->output_block_);
 }
 std::vector<uint8_t> ProcessorNode::getState() const {
     nlohmann::json state_json;
@@ -310,7 +324,7 @@ std::vector<uint8_t> ProcessorNode::getState() const {
 }
 
 IAudioProcessor *ProcessorNode::getProcessor() const {
-    return (proc_ != nullptr) ? (proc_.get()) : (nullptr);
+    return proc_.get();
 }
 
 } // namespace libaa
