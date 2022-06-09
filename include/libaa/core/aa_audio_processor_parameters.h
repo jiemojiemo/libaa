@@ -25,6 +25,9 @@ public:
 
     int pushBoolParameter(std::string param_name, bool default_val);
 
+    int pushIntParameter(std::string param_name, int default_val,
+                         int min_plain_value, int max_plain_value);
+
     const AudioProcessorParameter &get(int param_id) const;
     AudioProcessorParameter &get(int param_id);
 

@@ -49,4 +49,6 @@ public:
     ScopeTextFile(std::string output_path, const std::string &txt);
 };
 
+std::unique_ptr<ScopeWaveFile> makeScopeWavFile(const std::string &file_uri);
+
 } // namespace libaa

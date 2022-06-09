@@ -16,6 +16,41 @@ public:
     NiceMock<MockProcessor> p;
 };
 
+TEST_F(AProcessorUtilities, CanUpdateParametersFromParameterChanges) {
+    AudioProcessorParameters parameters;
+    parameters.pushFloatParameter("A", 0, 0, 1);
+    int num_params = parameters.size();
+    ParameterChanges param_changes(num_params, 1);
+    param_changes.push(0, {0, 0, 1.0f});
+
+    ProcessorUtilities::updateParameterFromParameterChanges(param_changes, parameters);
+
+    ASSERT_THAT(parameters.get(0).getNormalizedValue(), Eq(1.0f));
+}
+
+TEST_F(AProcessorUtilities, ReturnsTrueIfParameterChanged) {
+    AudioProcessorParameters parameters;
+    parameters.pushFloatParameter("A", 0, 0, 1);
+    int num_params = parameters.size();
+    ParameterChanges param_changes(num_params, 1);
+    param_changes.push(0, {0, 0, 1.0f});
+
+    bool changed = ProcessorUtilities::updateParameterFromParameterChanges(param_changes, parameters);
+
+    ASSERT_TRUE(changed);
+}
+
+TEST_F(AProcessorUtilities, ReturnsFalseIfParameterChangesIsEmpty) {
+    AudioProcessorParameters parameters;
+    parameters.pushFloatParameter("A", 0, 0, 1);
+    int num_params = parameters.size();
+    ParameterChanges empty_param_changes(num_params, 1);
+
+    bool changed = ProcessorUtilities::updateParameterFromParameterChanges(empty_param_changes, parameters);
+
+    ASSERT_FALSE(changed);
+}
+
 TEST_F(AProcessorUtilities, CanSerializeProcessorWithVersion) {
     auto state_string = ProcessorUtilities::serializeProcessorToString(&p);
     auto state_json = nlohmann::json::parse(state_string);
@@ -153,4 +188,67 @@ TEST_F(AProcessorUtilities, CanUpdataChoiceParameter) {
 
     ASSERT_THAT(parameters.get(0).getChoiceString(), Eq("AAA"));
     ASSERT_THAT(parameters.get(1).getChoiceString(), Eq("BB"));
+}
+
+TEST_F(AProcessorUtilities, CanSerializeProcessorWithIntParameters) {
+    AudioProcessorParameters parameters;
+    parameters.pushIntParameter("A", 0, 0, 1);
+    parameters.pushIntParameter("B", 10, 0, 100);
+
+    EXPECT_CALL(p, getParameters).WillOnce(Return(&parameters));
+
+    auto state_string = ProcessorUtilities::serializeProcessorToString(&p);
+    auto expected_parameters_json = nlohmann::json::parse(R"(
+        {
+            "A" : 0,
+            "B" : 10
+        }
+    )");
+
+    auto state_json = nlohmann::json::parse(state_string);
+    ASSERT_THAT(state_json["parameters"], Eq(expected_parameters_json));
+}
+
+TEST_F(AProcessorUtilities, CanUpdataIntParameter) {
+    AudioProcessorParameters parameters;
+    parameters.pushIntParameter("A", 0, 0, 10);
+    parameters.pushIntParameter("B", 10, 0, 100);
+
+    auto new_param_json = nlohmann::json::parse(R"(
+    {
+        "parameters":
+        {
+            "A" : 5,
+            "B" : 50
+        }
+    }
+    )");
+    auto new_param_str = nlohmann::to_string(new_param_json);
+
+    ProcessorUtilities::updateParametersFromState((uint8_t *)(new_param_str.data()), new_param_str.size(), parameters);
+
+    ASSERT_THAT(parameters.get(0).getPlainValue(), Eq(5));
+    ASSERT_THAT(parameters.get(1).getPlainValue(), Eq(50));
+}
+
+TEST_F(AProcessorUtilities, CanUpdateParamtersFromJson) {
+    AudioProcessorParameters parameters;
+    parameters.pushIntParameter("A", 0, 0, 10);
+    parameters.pushIntParameter("B", 10, 0, 100);
+
+    auto new_param_json = nlohmann::json::parse(R"(
+    {
+        "parameters":
+        {
+            "A" : 5,
+            "B" : 50
+        }
+    }
+    )");
+    auto new_param_str = nlohmann::to_string(new_param_json);
+
+    ProcessorUtilities::updateParametersFromState(new_param_json, parameters);
+
+    ASSERT_THAT(parameters.get(0).getPlainValue(), Eq(5));
+    ASSERT_THAT(parameters.get(1).getPlainValue(), Eq(50));
 }

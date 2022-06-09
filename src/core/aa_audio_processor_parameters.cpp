@@ -32,7 +32,7 @@ int AudioProcessorParameters::pushChoiceParameter(
     int new_param_index = parameters_.size();
     parameters_.emplace_back(ParameterType::kChoice, new_param_index,
                              std::move(param_name), default_index, 0,
-                             choice_strings.size(), std::move(choice_strings));
+                             choice_strings.size() - 1, std::move(choice_strings));
 
     return new_param_index;
 }
@@ -43,6 +43,15 @@ int AudioProcessorParameters::pushBoolParameter(std::string param_name,
     parameters_.emplace_back(new_param_index, std::move(param_name),
                              default_val);
 
+    return new_param_index;
+}
+
+int AudioProcessorParameters::pushIntParameter(std::string param_name, int default_val,
+                                               int min_plain_value, int max_plain_value) {
+    int new_param_index = parameters_.size();
+    parameters_.emplace_back(ParameterType::kInt, new_param_index,
+                             std::move(param_name), default_val,
+                             min_plain_value, max_plain_value);
     return new_param_index;
 }
 
