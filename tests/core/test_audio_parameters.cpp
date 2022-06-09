@@ -58,7 +58,7 @@ TEST_F(AParameters, CanAddChoiceParameter) {
     AudioProcessorParameter &p = params.get(0);
     AudioProcessorParameter expected{
         ParameterType::kChoice, 0, "choice", 0, 0,
-        float(choices.size()), choices};
+        float(choices.size() - 1), choices};
 
     ASSERT_THAT(p, Eq(expected));
 }
@@ -86,4 +86,14 @@ TEST_F(AParameters, ReturnsNeg1IfCannotFindByName) {
     params.pushBoolParameter("B", true);
 
     ASSERT_THAT(params.findParameterIndexByName("C"), Eq(-1));
+}
+
+TEST_F(AParameters, CanAddIntParameter) {
+    params.pushIntParameter("int", 0, -1, 10);
+
+    AudioProcessorParameter &p = params.get(0);
+    AudioProcessorParameter expected{
+        ParameterType::kInt, 0, "int", 0, -1, 10.0f};
+
+    ASSERT_THAT(p, Eq(expected));
 }

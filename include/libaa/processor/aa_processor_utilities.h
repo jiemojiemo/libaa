@@ -26,6 +26,7 @@ std::vector<uint8_t> serializeProcessorToBinaryArray(const IAudioProcessor *proc
 std::string convertProcessorStateToString(const std::vector<uint8_t> &state);
 
 void updateParametersFromState(uint8_t *state, size_t size, AudioProcessorParameters &parameters);
+void updateParametersFromState(const nlohmann::json &state_json, AudioProcessorParameters &parameters);
 
 } // namespace ProcessorUtilities
 

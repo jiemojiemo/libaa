@@ -63,20 +63,23 @@ float AudioProcessorParameter::convertPlainValueToNormalizedValue(
 }
 
 float AudioProcessorParameter::convertPlainValueStringToNormalizedValue(const std::string &plain_value_str) const {
-    if (getParameterType() == ParameterType::kFloat) {
+    switch (type_) {
+    case ParameterType::kFloat:
+    case ParameterType::kInt: {
         return convertPlainValueToNormalizedValue(std::stof(plain_value_str));
-    } else if (getParameterType() == ParameterType::kBool) {
-        bool bool_value = (plain_value_str == "true");
-        return convertBoolToFloat(bool_value);
-    } else if (getParameterType() == ParameterType::kChoice) {
+    }
+    case ParameterType::kChoice: {
         auto find_or_not = std::find(choice_strings_.begin(), choice_strings_.end(), plain_value_str);
         if (find_or_not != choice_strings_.end()) {
             auto dist = std::distance(choice_strings_.begin(), find_or_not);
             return convertPlainValueToNormalizedValue(float(dist));
         }
     }
-
-    throw std::invalid_argument("invalid plain value string");
+    case ParameterType::kBool: {
+        bool bool_value = (plain_value_str == "true");
+        return convertBoolToFloat(bool_value);
+    }
+    }
 }
 
 float AudioProcessorParameter::convertNormalizedValueToPlainValue(
@@ -114,12 +117,12 @@ bool AudioProcessorParameter::getBool() const {
     return convertNormalizedValueToBool(current_normalized_value_);
 }
 
-int AudioProcessorParameter::getInt() const {
-    return static_cast<int>(getPlainValue());
-}
-
 std::string AudioProcessorParameter::getChoiceString() const {
     return convertNormalizedValueToChoiceString(current_normalized_value_);
+}
+
+int AudioProcessorParameter::getInt() const {
+    return static_cast<int>(getPlainValue());
 }
 
 std::string AudioProcessorParameter::getPlainValueString() const {
@@ -142,10 +145,6 @@ void AudioProcessorParameter::setNormalizedValue(float normalized_value) {
 void AudioProcessorParameter::setNormalizedValue(
     const std::string &normalized_value_str) {
     setNormalizedValue(std::stof(normalized_value_str));
-}
-
-void AudioProcessorParameter::setBoolValue(bool bool_value) {
-    setNormalizedValue(convertBoolToFloat(bool_value));
 }
 
 bool AudioProcessorParameter::isInRange(float v) const {

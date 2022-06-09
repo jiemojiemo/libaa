@@ -11,7 +11,8 @@
 namespace libaa {
 enum class ParameterType { kFloat = 0,
                            kChoice,
-                           kBool };
+                           kBool,
+                           kInt };
 
 class AudioProcessorParameter {
 public:
@@ -35,7 +36,7 @@ public:
 
     float convertPlainValueToNormalizedValue(float plain_value) const;
 
-    float convertPlainValueStringToNormalizedValue(const std::string& plain_val_str) const;
+    float convertPlainValueStringToNormalizedValue(const std::string &plain_val_str) const;
 
     float convertNormalizedValueToPlainValue(float norm_value) const;
 
