@@ -7,6 +7,7 @@ set(CORE_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_math_tools.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_resource_path_finder.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_clip.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/ae_clip_utilities.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_clip_factory.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_json_utilities.cpp
         )
