@@ -126,7 +126,17 @@ int AudioProcessorParameter::getInt() const {
 }
 
 std::string AudioProcessorParameter::getPlainValueString() const {
-    return std::to_string(getPlainValue());
+    switch (type_) {
+    case ParameterType::kFloat:
+        return std::to_string(getPlainValue());
+    case ParameterType::kChoice:
+        return getChoiceString();
+    case ParameterType::kBool:
+        return getBool() ? "true" : "false";
+    case ParameterType::kInt:
+        return std::to_string(getInt());
+    }
+    return "";
 }
 
 void AudioProcessorParameter::setPlainValue(float plain_value) {

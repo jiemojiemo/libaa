@@ -3,6 +3,7 @@ add_subdirectory(dsp)
 add_subdirectory(core)
 add_subdirectory(fileio)
 add_subdirectory(graph)
+add_subdirectory(mir)
 add_subdirectory(processor)
 set(GENERATOR_SRC audio_generator/aa_lfo_generator.cpp)
 
@@ -25,6 +26,7 @@ add_library(libaa
         ${GENERATOR_SRC}
         ${PROCESSOR_SRC}
         ${GRAPH_SRC}
+        ${MIR_SRC}
         )
 target_include_directories(libaa
         PUBLIC
