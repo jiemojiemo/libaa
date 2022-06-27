@@ -22,9 +22,9 @@
 */
 
 #include "FFT.h"
-#include "../system/Thread.h"
 #include "../base/Profiler.h"
 #include "../system/Allocators.h"
+#include "../system/Thread.h"
 #include "../system/VectorOps.h"
 #include "../system/VectorOpsComplex.h"
 
@@ -45,8 +45,8 @@
 #endif
 
 #ifdef HAVE_IPP
-#include <ippversion.h>
 #include <ipps.h>
+#include <ippversion.h>
 #endif
 
 #ifdef HAVE_FFTW3
@@ -74,10 +74,10 @@
 #endif
 
 #include <cmath>
-#include <iostream>
-#include <map>
 #include <cstdio>
 #include <cstdlib>
+#include <iostream>
+#include <map>
 #include <vector>
 
 #ifdef FFT_MEASUREMENT
@@ -90,15 +90,14 @@
 
 namespace RubberBand {
 
-class FFTImpl
-{
+class FFTImpl {
 public:
-    virtual ~FFTImpl() { }
+    virtual ~FFTImpl() {}
 
     virtual FFT::Precisions getSupportedPrecisions() const = 0;
 
     virtual int getSize() const = 0;
-    
+
     virtual void initFloat() = 0;
     virtual void initDouble() = 0;
 
@@ -111,6 +110,7 @@ public:
     virtual void forwardInterleaved(const float *BQ_R__ realIn, float *BQ_R__ complexOut) = 0;
     virtual void forwardPolar(const float *BQ_R__ realIn, float *BQ_R__ magOut, float *BQ_R__ phaseOut) = 0;
     virtual void forwardMagnitude(const float *BQ_R__ realIn, float *BQ_R__ magOut) = 0;
+    virtual void forwardComplex(const float *BQ_R__ realIn, std::complex<float> *BQ_R__ complexOut) = 0;
 
     virtual void inverse(const double *BQ_R__ realIn, const double *BQ_R__ imagIn, double *BQ_R__ realOut) = 0;
     virtual void inverseInterleaved(const double *BQ_R__ complexIn, double *BQ_R__ realOut) = 0;
@@ -121,19 +121,17 @@ public:
     virtual void inverseInterleaved(const float *BQ_R__ complexIn, float *BQ_R__ realOut) = 0;
     virtual void inversePolar(const float *BQ_R__ magIn, const float *BQ_R__ phaseIn, float *BQ_R__ realOut) = 0;
     virtual void inverseCepstral(const float *BQ_R__ magIn, float *BQ_R__ cepOut) = 0;
-};    
+};
 
 namespace FFTs {
 
 #ifdef HAVE_IPP
 
-class D_IPP : public FFTImpl
-{
+class D_IPP : public FFTImpl {
 public:
-    D_IPP(int size) :
-        m_size(size), m_fspec(0), m_dspec(0)
-    { 
-        for (int i = 0; ; ++i) {
+    D_IPP(int size)
+        : m_size(size), m_fspec(0), m_dspec(0) {
+        for (int i = 0;; ++i) {
             if (m_size & (1 << i)) {
                 m_order = i;
                 break;
@@ -167,7 +165,7 @@ public:
     int getSize() const {
         return m_size;
     }
-    
+
     FFT::Precisions
     getSupportedPrecisions() const {
         return FFT::SinglePrecision | FFT::DoublePrecision;
@@ -176,7 +174,8 @@ public:
     //!!! rv check
 
     void initFloat() {
-        if (m_fspec) return;
+        if (m_fspec)
+            return;
 #if (IPP_VERSION_MAJOR >= 9)
         int specSize, specBufferSize, bufferSize;
         ippsFFTGetSize_R_32f(m_order, IPP_FFT_NODIV_BY_ANY, ippAlgHintFast,
@@ -197,13 +196,14 @@ public:
         m_fbuf = ippsMalloc_8u(bufferSize);
         m_fpacked = ippsMalloc_32f(m_size + 2);
         m_fspare = ippsMalloc_32f(m_size / 2 + 1);
-        ippsFFTInitAlloc_R_32f(&m_fspec, m_order, IPP_FFT_NODIV_BY_ANY, 
+        ippsFFTInitAlloc_R_32f(&m_fspec, m_order, IPP_FFT_NODIV_BY_ANY,
                                ippAlgHintFast);
 #endif
     }
 
     void initDouble() {
-        if (m_dspec) return;
+        if (m_dspec)
+            return;
 #if (IPP_VERSION_MAJOR >= 9)
         int specSize, specBufferSize, bufferSize;
         ippsFFTGetSize_R_64f(m_order, IPP_FFT_NODIV_BY_ANY, ippAlgHintFast,
@@ -224,14 +224,14 @@ public:
         m_dbuf = ippsMalloc_8u(bufferSize);
         m_dpacked = ippsMalloc_64f(m_size + 2);
         m_dspare = ippsMalloc_64f(m_size / 2 + 1);
-        ippsFFTInitAlloc_R_64f(&m_dspec, m_order, IPP_FFT_NODIV_BY_ANY, 
+        ippsFFTInitAlloc_R_64f(&m_dspec, m_order, IPP_FFT_NODIV_BY_ANY,
                                ippAlgHintFast);
 #endif
     }
 
     void packFloat(const float *BQ_R__ re, const float *BQ_R__ im) {
         int index = 0;
-        const int hs = m_size/2;
+        const int hs = m_size / 2;
         for (int i = 0; i <= hs; ++i) {
             m_fpacked[index++] = re[i];
             index++;
@@ -252,7 +252,7 @@ public:
 
     void packDouble(const double *BQ_R__ re, const double *BQ_R__ im) {
         int index = 0;
-        const int hs = m_size/2;
+        const int hs = m_size / 2;
         for (int i = 0; i <= hs; ++i) {
             m_dpacked[index++] = re[i];
             index++;
@@ -273,7 +273,7 @@ public:
 
     void unpackFloat(float *re, float *BQ_R__ im) { // re may be equal to m_fpacked
         int index = 0;
-        const int hs = m_size/2;
+        const int hs = m_size / 2;
         if (im) {
             for (int i = 0; i <= hs; ++i) {
                 index++;
@@ -285,11 +285,11 @@ public:
             re[i] = m_fpacked[index++];
             index++;
         }
-    }        
+    }
 
     void unpackDouble(double *re, double *BQ_R__ im) { // re may be equal to m_dpacked
         int index = 0;
-        const int hs = m_size/2;
+        const int hs = m_size / 2;
         if (im) {
             for (int i = 0; i <= hs; ++i) {
                 index++;
@@ -301,107 +301,123 @@ public:
             re[i] = m_dpacked[index++];
             index++;
         }
-    }        
+    }
 
     void forward(const double *BQ_R__ realIn, double *BQ_R__ realOut, double *BQ_R__ imagOut) {
-        if (!m_dspec) initDouble();
+        if (!m_dspec)
+            initDouble();
         ippsFFTFwd_RToCCS_64f(realIn, m_dpacked, m_dspec, m_dbuf);
         unpackDouble(realOut, imagOut);
     }
 
     void forwardInterleaved(const double *BQ_R__ realIn, double *BQ_R__ complexOut) {
-        if (!m_dspec) initDouble();
+        if (!m_dspec)
+            initDouble();
         ippsFFTFwd_RToCCS_64f(realIn, complexOut, m_dspec, m_dbuf);
     }
 
     void forwardPolar(const double *BQ_R__ realIn, double *BQ_R__ magOut, double *BQ_R__ phaseOut) {
-        if (!m_dspec) initDouble();
+        if (!m_dspec)
+            initDouble();
         ippsFFTFwd_RToCCS_64f(realIn, m_dpacked, m_dspec, m_dbuf);
         unpackDouble(m_dpacked, m_dspare);
-        ippsCartToPolar_64f(m_dpacked, m_dspare, magOut, phaseOut, m_size/2+1);
+        ippsCartToPolar_64f(m_dpacked, m_dspare, magOut, phaseOut, m_size / 2 + 1);
     }
 
     void forwardMagnitude(const double *BQ_R__ realIn, double *BQ_R__ magOut) {
-        if (!m_dspec) initDouble();
+        if (!m_dspec)
+            initDouble();
         ippsFFTFwd_RToCCS_64f(realIn, m_dpacked, m_dspec, m_dbuf);
         unpackDouble(m_dpacked, m_dspare);
-        ippsMagnitude_64f(m_dpacked, m_dspare, magOut, m_size/2+1);
+        ippsMagnitude_64f(m_dpacked, m_dspare, magOut, m_size / 2 + 1);
     }
 
     void forward(const float *BQ_R__ realIn, float *BQ_R__ realOut, float *BQ_R__ imagOut) {
-        if (!m_fspec) initFloat();
+        if (!m_fspec)
+            initFloat();
         ippsFFTFwd_RToCCS_32f(realIn, m_fpacked, m_fspec, m_fbuf);
         unpackFloat(realOut, imagOut);
     }
 
     void forwardInterleaved(const float *BQ_R__ realIn, float *BQ_R__ complexOut) {
-        if (!m_fspec) initFloat();
+        if (!m_fspec)
+            initFloat();
         ippsFFTFwd_RToCCS_32f(realIn, complexOut, m_fspec, m_fbuf);
     }
 
     void forwardPolar(const float *BQ_R__ realIn, float *BQ_R__ magOut, float *BQ_R__ phaseOut) {
-        if (!m_fspec) initFloat();
+        if (!m_fspec)
+            initFloat();
         ippsFFTFwd_RToCCS_32f(realIn, m_fpacked, m_fspec, m_fbuf);
         unpackFloat(m_fpacked, m_fspare);
-        ippsCartToPolar_32f(m_fpacked, m_fspare, magOut, phaseOut, m_size/2+1);
+        ippsCartToPolar_32f(m_fpacked, m_fspare, magOut, phaseOut, m_size / 2 + 1);
     }
 
     void forwardMagnitude(const float *BQ_R__ realIn, float *BQ_R__ magOut) {
-        if (!m_fspec) initFloat();
+        if (!m_fspec)
+            initFloat();
         ippsFFTFwd_RToCCS_32f(realIn, m_fpacked, m_fspec, m_fbuf);
         unpackFloat(m_fpacked, m_fspare);
-        ippsMagnitude_32f(m_fpacked, m_fspare, magOut, m_size/2+1);
+        ippsMagnitude_32f(m_fpacked, m_fspare, magOut, m_size / 2 + 1);
     }
 
     void inverse(const double *BQ_R__ realIn, const double *BQ_R__ imagIn, double *BQ_R__ realOut) {
-        if (!m_dspec) initDouble();
+        if (!m_dspec)
+            initDouble();
         packDouble(realIn, imagIn);
         ippsFFTInv_CCSToR_64f(m_dpacked, realOut, m_dspec, m_dbuf);
     }
 
     void inverseInterleaved(const double *BQ_R__ complexIn, double *BQ_R__ realOut) {
-        if (!m_dspec) initDouble();
+        if (!m_dspec)
+            initDouble();
         ippsFFTInv_CCSToR_64f(complexIn, realOut, m_dspec, m_dbuf);
     }
 
     void inversePolar(const double *BQ_R__ magIn, const double *BQ_R__ phaseIn, double *BQ_R__ realOut) {
-        if (!m_dspec) initDouble();
-        ippsPolarToCart_64f(magIn, phaseIn, realOut, m_dspare, m_size/2+1);
+        if (!m_dspec)
+            initDouble();
+        ippsPolarToCart_64f(magIn, phaseIn, realOut, m_dspare, m_size / 2 + 1);
         packDouble(realOut, m_dspare); // to m_dpacked
         ippsFFTInv_CCSToR_64f(m_dpacked, realOut, m_dspec, m_dbuf);
     }
 
     void inverseCepstral(const double *BQ_R__ magIn, double *BQ_R__ cepOut) {
-        if (!m_dspec) initDouble();
-        const int hs1 = m_size/2 + 1;
+        if (!m_dspec)
+            initDouble();
+        const int hs1 = m_size / 2 + 1;
         ippsCopy_64f(magIn, m_dspare, hs1);
         ippsAddC_64f_I(0.000001, m_dspare, hs1);
         ippsLn_64f_I(m_dspare, hs1);
         packDouble(m_dspare, 0);
         ippsFFTInv_CCSToR_64f(m_dpacked, cepOut, m_dspec, m_dbuf);
     }
-    
+
     void inverse(const float *BQ_R__ realIn, const float *BQ_R__ imagIn, float *BQ_R__ realOut) {
-        if (!m_fspec) initFloat();
+        if (!m_fspec)
+            initFloat();
         packFloat(realIn, imagIn);
         ippsFFTInv_CCSToR_32f(m_fpacked, realOut, m_fspec, m_fbuf);
     }
 
     void inverseInterleaved(const float *BQ_R__ complexIn, float *BQ_R__ realOut) {
-        if (!m_fspec) initFloat();
+        if (!m_fspec)
+            initFloat();
         ippsFFTInv_CCSToR_32f(complexIn, realOut, m_fspec, m_fbuf);
     }
 
     void inversePolar(const float *BQ_R__ magIn, const float *BQ_R__ phaseIn, float *BQ_R__ realOut) {
-        if (!m_fspec) initFloat();
-        ippsPolarToCart_32f(magIn, phaseIn, realOut, m_fspare, m_size/2+1);
+        if (!m_fspec)
+            initFloat();
+        ippsPolarToCart_32f(magIn, phaseIn, realOut, m_fspare, m_size / 2 + 1);
         packFloat(realOut, m_fspare); // to m_fpacked
         ippsFFTInv_CCSToR_32f(m_fpacked, realOut, m_fspec, m_fbuf);
     }
 
     void inverseCepstral(const float *BQ_R__ magIn, float *BQ_R__ cepOut) {
-        if (!m_fspec) initFloat();
-        const int hs1 = m_size/2 + 1;
+        if (!m_fspec)
+            initFloat();
+        const int hs1 = m_size / 2 + 1;
         ippsCopy_32f(magIn, m_fspare, hs1);
         ippsAddC_32f_I(0.000001f, m_fspare, hs1);
         ippsLn_32f_I(m_fspare, hs1);
@@ -428,15 +444,13 @@ private:
 
 #ifdef HAVE_VDSP
 
-class D_VDSP : public FFTImpl
-{
+class D_VDSP : public FFTImpl {
 public:
-    D_VDSP(int size) :
-        m_size(size), m_fspec(0), m_dspec(0),
-        m_fpacked(0), m_fspare(0),
-        m_dpacked(0), m_dspare(0)
-    { 
-        for (int i = 0; ; ++i) {
+    D_VDSP(int size)
+        : m_size(size), m_fspec(0), m_dspec(0),
+          m_fpacked(0), m_fspare(0),
+          m_dpacked(0), m_dspare(0) {
+        for (int i = 0;; ++i) {
             if (m_size & (1 << i)) {
                 m_order = i;
                 break;
@@ -481,7 +495,8 @@ public:
     //!!! rv check
 
     void initFloat() {
-        if (m_fspec) return;
+        if (m_fspec)
+            return;
         m_fspec = vDSP_create_fftsetup(m_order, FFT_RADIX2);
         m_fbuf = new DSPSplitComplex;
         //!!! "If possible, tempBuffer->realp and tempBuffer->imagp should be 32-byte aligned for best performance."
@@ -495,7 +510,8 @@ public:
     }
 
     void initDouble() {
-        if (m_dspec) return;
+        if (m_dspec)
+            return;
         m_dspec = vDSP_create_fftsetupD(m_order, FFT_RADIX2);
         m_dbuf = new DSPDoubleSplitComplex;
         //!!! "If possible, tempBuffer->realp and tempBuffer->imagp should be 32-byte aligned for best performance."
@@ -509,83 +525,91 @@ public:
     }
 
     void packReal(const float *BQ_R__ const re) {
-        // Pack input for forward transform 
-        vDSP_ctoz((DSPComplex *)re, 2, m_fpacked, 1, m_size/2);
+        // Pack input for forward transform
+        vDSP_ctoz((DSPComplex *)re, 2, m_fpacked, 1, m_size / 2);
     }
     void packComplex(const float *BQ_R__ const re, const float *BQ_R__ const im) {
-        // Pack input for inverse transform 
-        if (re) v_copy(m_fpacked->realp, re, m_size/2 + 1);
-        else v_zero(m_fpacked->realp, m_size/2 + 1);
-        if (im) v_copy(m_fpacked->imagp, im, m_size/2 + 1);
-        else v_zero(m_fpacked->imagp, m_size/2 + 1);
+        // Pack input for inverse transform
+        if (re)
+            v_copy(m_fpacked->realp, re, m_size / 2 + 1);
+        else
+            v_zero(m_fpacked->realp, m_size / 2 + 1);
+        if (im)
+            v_copy(m_fpacked->imagp, im, m_size / 2 + 1);
+        else
+            v_zero(m_fpacked->imagp, m_size / 2 + 1);
         fnyq();
     }
 
     void unpackReal(float *BQ_R__ const re) {
         // Unpack output for inverse transform
-        vDSP_ztoc(m_fpacked, 1, (DSPComplex *)re, 2, m_size/2);
+        vDSP_ztoc(m_fpacked, 1, (DSPComplex *)re, 2, m_size / 2);
     }
     void unpackComplex(float *BQ_R__ const re, float *BQ_R__ const im) {
         // Unpack output for forward transform
         // vDSP forward FFTs are scaled 2x (for some reason)
         float two = 2.f;
-        vDSP_vsdiv(m_fpacked->realp, 1, &two, re, 1, m_size/2 + 1);
-        vDSP_vsdiv(m_fpacked->imagp, 1, &two, im, 1, m_size/2 + 1);
+        vDSP_vsdiv(m_fpacked->realp, 1, &two, re, 1, m_size / 2 + 1);
+        vDSP_vsdiv(m_fpacked->imagp, 1, &two, im, 1, m_size / 2 + 1);
     }
     void unpackComplex(float *BQ_R__ const cplx) {
         // Unpack output for forward transform
         // vDSP forward FFTs are scaled 2x (for some reason)
-        const int hs1 = m_size/2 + 1;
+        const int hs1 = m_size / 2 + 1;
         for (int i = 0; i < hs1; ++i) {
-            cplx[i*2] = m_fpacked->realp[i] * 0.5f;
-            cplx[i*2+1] = m_fpacked->imagp[i] * 0.5f;
+            cplx[i * 2] = m_fpacked->realp[i] * 0.5f;
+            cplx[i * 2 + 1] = m_fpacked->imagp[i] * 0.5f;
         }
     }
 
     void packReal(const double *BQ_R__ const re) {
         // Pack input for forward transform
-        vDSP_ctozD((DSPDoubleComplex *)re, 2, m_dpacked, 1, m_size/2);
+        vDSP_ctozD((DSPDoubleComplex *)re, 2, m_dpacked, 1, m_size / 2);
     }
     void packComplex(const double *BQ_R__ const re, const double *BQ_R__ const im) {
         // Pack input for inverse transform
-        if (re) v_copy(m_dpacked->realp, re, m_size/2 + 1);
-        else v_zero(m_dpacked->realp, m_size/2 + 1);
-        if (im) v_copy(m_dpacked->imagp, im, m_size/2 + 1);
-        else v_zero(m_dpacked->imagp, m_size/2 + 1);
+        if (re)
+            v_copy(m_dpacked->realp, re, m_size / 2 + 1);
+        else
+            v_zero(m_dpacked->realp, m_size / 2 + 1);
+        if (im)
+            v_copy(m_dpacked->imagp, im, m_size / 2 + 1);
+        else
+            v_zero(m_dpacked->imagp, m_size / 2 + 1);
         dnyq();
     }
 
     void unpackReal(double *BQ_R__ const re) {
         // Unpack output for inverse transform
-        vDSP_ztocD(m_dpacked, 1, (DSPDoubleComplex *)re, 2, m_size/2);
+        vDSP_ztocD(m_dpacked, 1, (DSPDoubleComplex *)re, 2, m_size / 2);
     }
     void unpackComplex(double *BQ_R__ const re, double *BQ_R__ const im) {
         // Unpack output for forward transform
         // vDSP forward FFTs are scaled 2x (for some reason)
         double two = 2.0;
-        vDSP_vsdivD(m_dpacked->realp, 1, &two, re, 1, m_size/2 + 1);
-        vDSP_vsdivD(m_dpacked->imagp, 1, &two, im, 1, m_size/2 + 1);
+        vDSP_vsdivD(m_dpacked->realp, 1, &two, re, 1, m_size / 2 + 1);
+        vDSP_vsdivD(m_dpacked->imagp, 1, &two, im, 1, m_size / 2 + 1);
     }
     void unpackComplex(double *BQ_R__ const cplx) {
         // Unpack output for forward transform
         // vDSP forward FFTs are scaled 2x (for some reason)
-        const int hs1 = m_size/2 + 1;
+        const int hs1 = m_size / 2 + 1;
         for (int i = 0; i < hs1; ++i) {
-            cplx[i*2] = m_dpacked->realp[i] * 0.5;
-            cplx[i*2+1] = m_dpacked->imagp[i] * 0.5;
+            cplx[i * 2] = m_dpacked->realp[i] * 0.5;
+            cplx[i * 2 + 1] = m_dpacked->imagp[i] * 0.5;
         }
     }
 
     void fdenyq() {
         // for fft result in packed form, unpack the DC and Nyquist bins
-        const int hs = m_size/2;
+        const int hs = m_size / 2;
         m_fpacked->realp[hs] = m_fpacked->imagp[0];
         m_fpacked->imagp[hs] = 0.f;
         m_fpacked->imagp[0] = 0.f;
     }
     void ddenyq() {
         // for fft result in packed form, unpack the DC and Nyquist bins
-        const int hs = m_size/2;
+        const int hs = m_size / 2;
         m_dpacked->realp[hs] = m_dpacked->imagp[0];
         m_dpacked->imagp[hs] = 0.;
         m_dpacked->imagp[0] = 0.;
@@ -593,21 +617,22 @@ public:
 
     void fnyq() {
         // for ifft input in packed form, pack the DC and Nyquist bins
-        const int hs = m_size/2;
+        const int hs = m_size / 2;
         m_fpacked->imagp[0] = m_fpacked->realp[hs];
         m_fpacked->realp[hs] = 0.f;
         m_fpacked->imagp[hs] = 0.f;
     }
     void dnyq() {
         // for ifft input in packed form, pack the DC and Nyquist bins
-        const int hs = m_size/2;
+        const int hs = m_size / 2;
         m_dpacked->imagp[0] = m_dpacked->realp[hs];
         m_dpacked->realp[hs] = 0.;
         m_dpacked->imagp[hs] = 0.;
     }
 
     void forward(const double *BQ_R__ realIn, double *BQ_R__ realOut, double *BQ_R__ imagOut) {
-        if (!m_dspec) initDouble();
+        if (!m_dspec)
+            initDouble();
         packReal(realIn);
         vDSP_fft_zriptD(m_dspec, m_dpacked, 1, m_dbuf, m_order, FFT_FORWARD);
         ddenyq();
@@ -615,7 +640,8 @@ public:
     }
 
     void forwardInterleaved(const double *BQ_R__ realIn, double *BQ_R__ complexOut) {
-        if (!m_dspec) initDouble();
+        if (!m_dspec)
+            initDouble();
         packReal(realIn);
         vDSP_fft_zriptD(m_dspec, m_dpacked, 1, m_dbuf, m_order, FFT_FORWARD);
         ddenyq();
@@ -623,24 +649,28 @@ public:
     }
 
     void forwardPolar(const double *BQ_R__ realIn, double *BQ_R__ magOut, double *BQ_R__ phaseOut) {
-        if (!m_dspec) initDouble();
-        const int hs1 = m_size/2+1;
+        if (!m_dspec)
+            initDouble();
+        const int hs1 = m_size / 2 + 1;
         packReal(realIn);
         vDSP_fft_zriptD(m_dspec, m_dpacked, 1, m_dbuf, m_order, FFT_FORWARD);
         ddenyq();
         // vDSP forward FFTs are scaled 2x (for some reason)
-        for (int i = 0; i < hs1; ++i) m_dpacked->realp[i] *= 0.5;
-        for (int i = 0; i < hs1; ++i) m_dpacked->imagp[i] *= 0.5;
+        for (int i = 0; i < hs1; ++i)
+            m_dpacked->realp[i] *= 0.5;
+        for (int i = 0; i < hs1; ++i)
+            m_dpacked->imagp[i] *= 0.5;
         v_cartesian_to_polar(magOut, phaseOut,
                              m_dpacked->realp, m_dpacked->imagp, hs1);
     }
 
     void forwardMagnitude(const double *BQ_R__ realIn, double *BQ_R__ magOut) {
-        if (!m_dspec) initDouble();
+        if (!m_dspec)
+            initDouble();
         packReal(realIn);
         vDSP_fft_zriptD(m_dspec, m_dpacked, 1, m_dbuf, m_order, FFT_FORWARD);
         ddenyq();
-        const int hs1 = m_size/2+1;
+        const int hs1 = m_size / 2 + 1;
         vDSP_zvmagsD(m_dpacked, 1, m_dspare, 1, hs1);
         vvsqrt(m_dspare2, m_dspare, &hs1);
         // vDSP forward FFTs are scaled 2x (for some reason)
@@ -649,7 +679,8 @@ public:
     }
 
     void forward(const float *BQ_R__ realIn, float *BQ_R__ realOut, float *BQ_R__ imagOut) {
-        if (!m_fspec) initFloat();
+        if (!m_fspec)
+            initFloat();
         packReal(realIn);
         vDSP_fft_zript(m_fspec, m_fpacked, 1, m_fbuf, m_order, FFT_FORWARD);
         fdenyq();
@@ -657,7 +688,8 @@ public:
     }
 
     void forwardInterleaved(const float *BQ_R__ realIn, float *BQ_R__ complexOut) {
-        if (!m_fspec) initFloat();
+        if (!m_fspec)
+            initFloat();
         packReal(realIn);
         vDSP_fft_zript(m_fspec, m_fpacked, 1, m_fbuf, m_order, FFT_FORWARD);
         fdenyq();
@@ -665,104 +697,134 @@ public:
     }
 
     void forwardPolar(const float *BQ_R__ realIn, float *BQ_R__ magOut, float *BQ_R__ phaseOut) {
-        if (!m_fspec) initFloat();
-        const int hs1 = m_size/2+1;
+        if (!m_fspec)
+            initFloat();
+        const int hs1 = m_size / 2 + 1;
         packReal(realIn);
         vDSP_fft_zript(m_fspec, m_fpacked, 1, m_fbuf, m_order, FFT_FORWARD);
         fdenyq();
         // vDSP forward FFTs are scaled 2x (for some reason)
-        for (int i = 0; i < hs1; ++i) m_fpacked->realp[i] *= 0.5f;
-        for (int i = 0; i < hs1; ++i) m_fpacked->imagp[i] *= 0.5f;
+        for (int i = 0; i < hs1; ++i)
+            m_fpacked->realp[i] *= 0.5f;
+        for (int i = 0; i < hs1; ++i)
+            m_fpacked->imagp[i] *= 0.5f;
         v_cartesian_to_polar(magOut, phaseOut,
                              m_fpacked->realp, m_fpacked->imagp, hs1);
     }
 
     void forwardMagnitude(const float *BQ_R__ realIn, float *BQ_R__ magOut) {
-        if (!m_fspec) initFloat();
+        if (!m_fspec)
+            initFloat();
         packReal(realIn);
         vDSP_fft_zript(m_fspec, m_fpacked, 1, m_fbuf, m_order, FFT_FORWARD);
         fdenyq();
-        const int hs1 = m_size/2 + 1;
+        const int hs1 = m_size / 2 + 1;
         vDSP_zvmags(m_fpacked, 1, m_fspare, 1, hs1);
         vvsqrtf(m_fspare2, m_fspare, &hs1);
         // vDSP forward FFTs are scaled 2x (for some reason)
         float two = 2.f;
         vDSP_vsdiv(m_fspare2, 1, &two, magOut, 1, hs1);
     }
+    void forwardComplex(const float *realIn, std::complex<float> *complexOut) {
+        if (!m_fspec)
+            initFloat();
+        const int hs1 = m_size / 2 + 1;
+        packReal(realIn);
+        vDSP_fft_zript(m_fspec, m_fpacked, 1, m_fbuf, m_order, FFT_FORWARD);
+        fdenyq();
+        for (int i = 0; i < hs1; ++i) {
+            complexOut[i].real(m_fpacked->realp[i] * 0.5);
+            complexOut[i].imag(m_fpacked->imagp[i] * 0.5);
+        }
+    }
 
     void inverse(const double *BQ_R__ realIn, const double *BQ_R__ imagIn, double *BQ_R__ realOut) {
-        if (!m_dspec) initDouble();
+        if (!m_dspec)
+            initDouble();
         packComplex(realIn, imagIn);
         vDSP_fft_zriptD(m_dspec, m_dpacked, 1, m_dbuf, m_order, FFT_INVERSE);
         unpackReal(realOut);
     }
 
     void inverseInterleaved(const double *BQ_R__ complexIn, double *BQ_R__ realOut) {
-        if (!m_dspec) initDouble();
-        double *d[2] = { m_dpacked->realp, m_dpacked->imagp };
-        v_deinterleave(d, complexIn, 2, m_size/2 + 1);
+        if (!m_dspec)
+            initDouble();
+        double *d[2] = {m_dpacked->realp, m_dpacked->imagp};
+        v_deinterleave(d, complexIn, 2, m_size / 2 + 1);
         dnyq();
         vDSP_fft_zriptD(m_dspec, m_dpacked, 1, m_dbuf, m_order, FFT_INVERSE);
         unpackReal(realOut);
     }
 
     void inversePolar(const double *BQ_R__ magIn, const double *BQ_R__ phaseIn, double *BQ_R__ realOut) {
-        if (!m_dspec) initDouble();
-        const int hs1 = m_size/2+1;
+        if (!m_dspec)
+            initDouble();
+        const int hs1 = m_size / 2 + 1;
         vvsincos(m_dpacked->imagp, m_dpacked->realp, phaseIn, &hs1);
         double *const rp = m_dpacked->realp;
         double *const ip = m_dpacked->imagp;
-        for (int i = 0; i < hs1; ++i) rp[i] *= magIn[i];
-        for (int i = 0; i < hs1; ++i) ip[i] *= magIn[i];
+        for (int i = 0; i < hs1; ++i)
+            rp[i] *= magIn[i];
+        for (int i = 0; i < hs1; ++i)
+            ip[i] *= magIn[i];
         dnyq();
         vDSP_fft_zriptD(m_dspec, m_dpacked, 1, m_dbuf, m_order, FFT_INVERSE);
         unpackReal(realOut);
     }
 
     void inverseCepstral(const double *BQ_R__ magIn, double *BQ_R__ cepOut) {
-        if (!m_dspec) initDouble();
-        const int hs1 = m_size/2 + 1;
+        if (!m_dspec)
+            initDouble();
+        const int hs1 = m_size / 2 + 1;
         v_copy(m_dspare, magIn, hs1);
-        for (int i = 0; i < hs1; ++i) m_dspare[i] += 0.000001;
+        for (int i = 0; i < hs1; ++i)
+            m_dspare[i] += 0.000001;
         vvlog(m_dspare2, m_dspare, &hs1);
         inverse(m_dspare2, 0, cepOut);
     }
-    
+
     void inverse(const float *BQ_R__ realIn, const float *BQ_R__ imagIn, float *BQ_R__ realOut) {
-        if (!m_fspec) initFloat();
+        if (!m_fspec)
+            initFloat();
         packComplex(realIn, imagIn);
         vDSP_fft_zript(m_fspec, m_fpacked, 1, m_fbuf, m_order, FFT_INVERSE);
         unpackReal(realOut);
     }
 
     void inverseInterleaved(const float *BQ_R__ complexIn, float *BQ_R__ realOut) {
-        if (!m_fspec) initFloat();
-        float *f[2] = { m_fpacked->realp, m_fpacked->imagp };
-        v_deinterleave(f, complexIn, 2, m_size/2 + 1);
+        if (!m_fspec)
+            initFloat();
+        float *f[2] = {m_fpacked->realp, m_fpacked->imagp};
+        v_deinterleave(f, complexIn, 2, m_size / 2 + 1);
         fnyq();
         vDSP_fft_zript(m_fspec, m_fpacked, 1, m_fbuf, m_order, FFT_INVERSE);
         unpackReal(realOut);
     }
 
     void inversePolar(const float *BQ_R__ magIn, const float *BQ_R__ phaseIn, float *BQ_R__ realOut) {
-        if (!m_fspec) initFloat();
+        if (!m_fspec)
+            initFloat();
 
-        const int hs1 = m_size/2+1;
+        const int hs1 = m_size / 2 + 1;
         vvsincosf(m_fpacked->imagp, m_fpacked->realp, phaseIn, &hs1);
         float *const rp = m_fpacked->realp;
         float *const ip = m_fpacked->imagp;
-        for (int i = 0; i < hs1; ++i) rp[i] *= magIn[i];
-        for (int i = 0; i < hs1; ++i) ip[i] *= magIn[i];
+        for (int i = 0; i < hs1; ++i)
+            rp[i] *= magIn[i];
+        for (int i = 0; i < hs1; ++i)
+            ip[i] *= magIn[i];
         fnyq();
         vDSP_fft_zript(m_fspec, m_fpacked, 1, m_fbuf, m_order, FFT_INVERSE);
         unpackReal(realOut);
     }
 
     void inverseCepstral(const float *BQ_R__ magIn, float *BQ_R__ cepOut) {
-        if (!m_fspec) initFloat();
-        const int hs1 = m_size/2 + 1;
+        if (!m_fspec)
+            initFloat();
+        const int hs1 = m_size / 2 + 1;
         v_copy(m_fspare, magIn, hs1);
-        for (int i = 0; i < hs1; ++i) m_fspare[i] += 0.000001f;
+        for (int i = 0; i < hs1; ++i)
+            m_fspare[i] += 0.000001f;
         vvlogf(m_fspare2, m_fspare, &hs1);
         inverse(m_fspare2, 0, cepOut);
     }
@@ -849,23 +911,23 @@ private:
 #define fft_double_type double
 #endif /* FFTW_SINGLE_ONLY */
 
-class D_FFTW : public FFTImpl
-{
+class D_FFTW : public FFTImpl {
 public:
-    D_FFTW(int size) :
-        m_fplanf(0), m_dplanf(0), m_size(size)
-    {
+    D_FFTW(int size)
+        : m_fplanf(0), m_dplanf(0), m_size(size) {
     }
 
     ~D_FFTW() {
         if (m_fplanf) {
             lock();
             bool save = false;
-            if (m_extantf > 0 && --m_extantf == 0) save = true;
+            if (m_extantf > 0 && --m_extantf == 0)
+                save = true;
             (void)save; // avoid compiler warning
 #ifdef USE_FFTW_WISDOM
 #ifndef FFTW_DOUBLE_ONLY
-            if (save) saveWisdom('f');
+            if (save)
+                saveWisdom('f');
 #endif
 #endif
             fftwf_destroy_plan(m_fplanf);
@@ -877,11 +939,13 @@ public:
         if (m_dplanf) {
             lock();
             bool save = false;
-            if (m_extantd > 0 && --m_extantd == 0) save = true;
+            if (m_extantd > 0 && --m_extantd == 0)
+                save = true;
             (void)save; // avoid compiler warning
 #ifdef USE_FFTW_WISDOM
 #ifndef FFTW_SINGLE_ONLY
-            if (save) saveWisdom('d');
+            if (save)
+                saveWisdom('d');
 #endif
 #endif
             fftw_destroy_plan(m_dplanf);
@@ -920,113 +984,133 @@ public:
     }
 
     void initFloat() {
-        if (m_fplanf) return;
+        if (m_fplanf)
+            return;
         bool load = false;
         lock();
-        if (m_extantf++ == 0) load = true;
+        if (m_extantf++ == 0)
+            load = true;
         (void)load; // avoid compiler warning
 #ifdef USE_FFTW_WISDOM
 #ifdef FFTW_DOUBLE_ONLY
-        if (load) loadWisdom('d');
+        if (load)
+            loadWisdom('d');
 #else
-        if (load) loadWisdom('f');
+        if (load)
+            loadWisdom('f');
 #endif
 #endif
         m_fbuf = (fft_float_type *)fftw_malloc(m_size * sizeof(fft_float_type));
-        m_fpacked = (fftwf_complex *)fftw_malloc
-            ((m_size/2 + 1) * sizeof(fftwf_complex));
+        m_fpacked = (fftwf_complex *)fftw_malloc((m_size / 2 + 1) * sizeof(fftwf_complex));
 #ifdef USE_FFTW_WISDOM
-        m_fplanf = fftwf_plan_dft_r2c_1d
-            (m_size, m_fbuf, m_fpacked, FFTW_MEASURE);
-        m_fplani = fftwf_plan_dft_c2r_1d
-            (m_size, m_fpacked, m_fbuf, FFTW_MEASURE);
+        m_fplanf = fftwf_plan_dft_r2c_1d(m_size, m_fbuf, m_fpacked, FFTW_MEASURE);
+        m_fplani = fftwf_plan_dft_c2r_1d(m_size, m_fpacked, m_fbuf, FFTW_MEASURE);
 #else
-        m_fplanf = fftwf_plan_dft_r2c_1d
-            (m_size, m_fbuf, m_fpacked, FFTW_ESTIMATE);
-        m_fplani = fftwf_plan_dft_c2r_1d
-            (m_size, m_fpacked, m_fbuf, FFTW_ESTIMATE);
+        m_fplanf = fftwf_plan_dft_r2c_1d(m_size, m_fbuf, m_fpacked, FFTW_ESTIMATE);
+        m_fplani = fftwf_plan_dft_c2r_1d(m_size, m_fpacked, m_fbuf, FFTW_ESTIMATE);
 #endif
         unlock();
     }
 
     void initDouble() {
-        if (m_dplanf) return;
+        if (m_dplanf)
+            return;
         bool load = false;
         lock();
-        if (m_extantd++ == 0) load = true;
+        if (m_extantd++ == 0)
+            load = true;
         (void)load; // avoid compiler warning
 #ifdef USE_FFTW_WISDOM
 #ifdef FFTW_SINGLE_ONLY
-        if (load) loadWisdom('f');
+        if (load)
+            loadWisdom('f');
 #else
-        if (load) loadWisdom('d');
+        if (load)
+            loadWisdom('d');
 #endif
 #endif
         m_dbuf = (fft_double_type *)fftw_malloc(m_size * sizeof(fft_double_type));
-        m_dpacked = (fftw_complex *)fftw_malloc
-            ((m_size/2 + 1) * sizeof(fftw_complex));
+        m_dpacked = (fftw_complex *)fftw_malloc((m_size / 2 + 1) * sizeof(fftw_complex));
 #ifdef USE_FFTW_WISDOM
-        m_dplanf = fftw_plan_dft_r2c_1d
-            (m_size, m_dbuf, m_dpacked, FFTW_MEASURE);
-        m_dplani = fftw_plan_dft_c2r_1d
-            (m_size, m_dpacked, m_dbuf, FFTW_MEASURE);
+        m_dplanf = fftw_plan_dft_r2c_1d(m_size, m_dbuf, m_dpacked, FFTW_MEASURE);
+        m_dplani = fftw_plan_dft_c2r_1d(m_size, m_dpacked, m_dbuf, FFTW_MEASURE);
 #else
-        m_dplanf = fftw_plan_dft_r2c_1d
-            (m_size, m_dbuf, m_dpacked, FFTW_ESTIMATE);
-        m_dplani = fftw_plan_dft_c2r_1d
-            (m_size, m_dpacked, m_dbuf, FFTW_ESTIMATE);
+        m_dplanf = fftw_plan_dft_r2c_1d(m_size, m_dbuf, m_dpacked, FFTW_ESTIMATE);
+        m_dplani = fftw_plan_dft_c2r_1d(m_size, m_dpacked, m_dbuf, FFTW_ESTIMATE);
 #endif
         unlock();
     }
 
-    void loadWisdom(char type) { wisdom(false, type); }
-    void saveWisdom(char type) { wisdom(true, type); }
+    void loadWisdom(char type) {
+        wisdom(false, type);
+    }
+    void saveWisdom(char type) {
+        wisdom(true, type);
+    }
 
     void wisdom(bool save, char type) {
 #ifdef USE_FFTW_WISDOM
 #ifdef FFTW_DOUBLE_ONLY
-        if (type == 'f') return;
+        if (type == 'f')
+            return;
 #endif
 #ifdef FFTW_SINGLE_ONLY
-        if (type == 'd') return;
+        if (type == 'd')
+            return;
 #endif
 
         const char *home = getenv("HOME");
-        if (!home) return;
+        if (!home)
+            return;
 
         char fn[256];
         snprintf(fn, 256, "%s/%s.%c", home, ".bqfft.wisdom", type);
 
         FILE *f = fopen(fn, save ? "wb" : "rb");
-        if (!f) return;
+        if (!f)
+            return;
 
         if (save) {
             switch (type) {
 #ifdef FFTW_DOUBLE_ONLY
-            case 'f': break;
+            case 'f':
+                break;
 #else
-            case 'f': fftwf_export_wisdom_to_file(f); break;
+            case 'f':
+                fftwf_export_wisdom_to_file(f);
+                break;
 #endif
 #ifdef FFTW_SINGLE_ONLY
-            case 'd': break;
+            case 'd':
+                break;
 #else
-            case 'd': fftw_export_wisdom_to_file(f); break;
+            case 'd':
+                fftw_export_wisdom_to_file(f);
+                break;
 #endif
-            default: break;
+            default:
+                break;
             }
         } else {
             switch (type) {
 #ifdef FFTW_DOUBLE_ONLY
-            case 'f': break;
+            case 'f':
+                break;
 #else
-            case 'f': fftwf_import_wisdom_from_file(f); break;
+            case 'f':
+                fftwf_import_wisdom_from_file(f);
+                break;
 #endif
 #ifdef FFTW_SINGLE_ONLY
-            case 'd': break;
+            case 'd':
+                break;
 #else
-            case 'd': fftw_import_wisdom_from_file(f); break;
+            case 'd':
+                fftw_import_wisdom_from_file(f);
+                break;
 #endif
-            default: break;
+            default:
+                break;
             }
         }
 
@@ -1038,8 +1122,8 @@ public:
     }
 
     void packFloat(const float *BQ_R__ re, const float *BQ_R__ im) {
-        const int hs = m_size/2;
-        fftwf_complex *const BQ_R__ fpacked = m_fpacked; 
+        const int hs = m_size / 2;
+        fftwf_complex *const BQ_R__ fpacked = m_fpacked;
         for (int i = 0; i <= hs; ++i) {
             fpacked[i][0] = re[i];
         }
@@ -1051,12 +1135,12 @@ public:
             for (int i = 0; i <= hs; ++i) {
                 fpacked[i][1] = 0.f;
             }
-        }                
+        }
     }
 
     void packDouble(const double *BQ_R__ re, const double *BQ_R__ im) {
-        const int hs = m_size/2;
-        fftw_complex *const BQ_R__ dpacked = m_dpacked; 
+        const int hs = m_size / 2;
+        fftw_complex *const BQ_R__ dpacked = m_dpacked;
         for (int i = 0; i <= hs; ++i) {
             dpacked[i][0] = re[i];
         }
@@ -1072,7 +1156,7 @@ public:
     }
 
     void unpackFloat(float *BQ_R__ re, float *BQ_R__ im) {
-        const int hs = m_size/2;
+        const int hs = m_size / 2;
         for (int i = 0; i <= hs; ++i) {
             re[i] = m_fpacked[i][0];
         }
@@ -1081,10 +1165,10 @@ public:
                 im[i] = m_fpacked[i][1];
             }
         }
-    }        
+    }
 
     void unpackDouble(double *BQ_R__ re, double *BQ_R__ im) {
-        const int hs = m_size/2;
+        const int hs = m_size / 2;
         for (int i = 0; i <= hs; ++i) {
             re[i] = m_dpacked[i][0];
         }
@@ -1093,14 +1177,15 @@ public:
                 im[i] = m_dpacked[i][1];
             }
         }
-    }        
+    }
 
     void forward(const double *BQ_R__ realIn, double *BQ_R__ realOut, double *BQ_R__ imagOut) {
-        if (!m_dplanf) initDouble();
+        if (!m_dplanf)
+            initDouble();
         const int sz = m_size;
         fft_double_type *const BQ_R__ dbuf = m_dbuf;
 #ifndef FFTW_SINGLE_ONLY
-        if (realIn != dbuf) 
+        if (realIn != dbuf)
 #endif
             for (int i = 0; i < sz; ++i) {
                 dbuf[i] = realIn[i];
@@ -1110,11 +1195,12 @@ public:
     }
 
     void forwardInterleaved(const double *BQ_R__ realIn, double *BQ_R__ complexOut) {
-        if (!m_dplanf) initDouble();
+        if (!m_dplanf)
+            initDouble();
         const int sz = m_size;
         fft_double_type *const BQ_R__ dbuf = m_dbuf;
 #ifndef FFTW_SINGLE_ONLY
-        if (realIn != dbuf) 
+        if (realIn != dbuf)
 #endif
             for (int i = 0; i < sz; ++i) {
                 dbuf[i] = realIn[i];
@@ -1124,7 +1210,8 @@ public:
     }
 
     void forwardPolar(const double *BQ_R__ realIn, double *BQ_R__ magOut, double *BQ_R__ phaseOut) {
-        if (!m_dplanf) initDouble();
+        if (!m_dplanf)
+            initDouble();
         fft_double_type *const BQ_R__ dbuf = m_dbuf;
         const int sz = m_size;
 #ifndef FFTW_SINGLE_ONLY
@@ -1134,12 +1221,12 @@ public:
                 dbuf[i] = realIn[i];
             }
         fftw_execute(m_dplanf);
-        v_cartesian_interleaved_to_polar
-            (magOut, phaseOut, (const fft_double_type *)m_dpacked, m_size/2+1);
+        v_cartesian_interleaved_to_polar(magOut, phaseOut, (const fft_double_type *)m_dpacked, m_size / 2 + 1);
     }
 
     void forwardMagnitude(const double *BQ_R__ realIn, double *BQ_R__ magOut) {
-        if (!m_dplanf) initDouble();
+        if (!m_dplanf)
+            initDouble();
         fft_double_type *const BQ_R__ dbuf = m_dbuf;
         const int sz = m_size;
 #ifndef FFTW_SINGLE_ONLY
@@ -1149,12 +1236,12 @@ public:
                 dbuf[i] = realIn[i];
             }
         fftw_execute(m_dplanf);
-        v_cartesian_interleaved_to_magnitudes
-            (magOut, (const fft_double_type *)m_dpacked, m_size/2+1);
+        v_cartesian_interleaved_to_magnitudes(magOut, (const fft_double_type *)m_dpacked, m_size / 2 + 1);
     }
 
     void forward(const float *BQ_R__ realIn, float *BQ_R__ realOut, float *BQ_R__ imagOut) {
-        if (!m_fplanf) initFloat();
+        if (!m_fplanf)
+            initFloat();
         fft_float_type *const BQ_R__ fbuf = m_fbuf;
         const int sz = m_size;
 #ifndef FFTW_DOUBLE_ONLY
@@ -1168,7 +1255,8 @@ public:
     }
 
     void forwardInterleaved(const float *BQ_R__ realIn, float *BQ_R__ complexOut) {
-        if (!m_fplanf) initFloat();
+        if (!m_fplanf)
+            initFloat();
         fft_float_type *const BQ_R__ fbuf = m_fbuf;
         const int sz = m_size;
 #ifndef FFTW_DOUBLE_ONLY
@@ -1182,22 +1270,8 @@ public:
     }
 
     void forwardPolar(const float *BQ_R__ realIn, float *BQ_R__ magOut, float *BQ_R__ phaseOut) {
-        if (!m_fplanf) initFloat();
-        fft_float_type *const BQ_R__ fbuf = m_fbuf;
-        const int sz = m_size;
-#ifndef FFTW_DOUBLE_ONLY
-        if (realIn != fbuf) 
-#endif
-            for (int i = 0; i < sz; ++i) {
-                fbuf[i] = realIn[i];
-            }
-        fftwf_execute(m_fplanf);
-        v_cartesian_interleaved_to_polar
-            (magOut, phaseOut, (const fft_float_type *)m_fpacked, m_size/2+1);
-    }
-
-    void forwardMagnitude(const float *BQ_R__ realIn, float *BQ_R__ magOut) {
-        if (!m_fplanf) initFloat();
+        if (!m_fplanf)
+            initFloat();
         fft_float_type *const BQ_R__ fbuf = m_fbuf;
         const int sz = m_size;
 #ifndef FFTW_DOUBLE_ONLY
@@ -1207,18 +1281,33 @@ public:
                 fbuf[i] = realIn[i];
             }
         fftwf_execute(m_fplanf);
-        v_cartesian_interleaved_to_magnitudes
-            (magOut, (const fft_float_type *)m_fpacked, m_size/2+1);
+        v_cartesian_interleaved_to_polar(magOut, phaseOut, (const fft_float_type *)m_fpacked, m_size / 2 + 1);
+    }
+
+    void forwardMagnitude(const float *BQ_R__ realIn, float *BQ_R__ magOut) {
+        if (!m_fplanf)
+            initFloat();
+        fft_float_type *const BQ_R__ fbuf = m_fbuf;
+        const int sz = m_size;
+#ifndef FFTW_DOUBLE_ONLY
+        if (realIn != fbuf)
+#endif
+            for (int i = 0; i < sz; ++i) {
+                fbuf[i] = realIn[i];
+            }
+        fftwf_execute(m_fplanf);
+        v_cartesian_interleaved_to_magnitudes(magOut, (const fft_float_type *)m_fpacked, m_size / 2 + 1);
     }
 
     void inverse(const double *BQ_R__ realIn, const double *BQ_R__ imagIn, double *BQ_R__ realOut) {
-        if (!m_dplanf) initDouble();
+        if (!m_dplanf)
+            initDouble();
         packDouble(realIn, imagIn);
         fftw_execute(m_dplani);
         const int sz = m_size;
         fft_double_type *const BQ_R__ dbuf = m_dbuf;
 #ifndef FFTW_SINGLE_ONLY
-        if (realOut != dbuf) 
+        if (realOut != dbuf)
 #endif
             for (int i = 0; i < sz; ++i) {
                 realOut[i] = dbuf[i];
@@ -1226,13 +1315,14 @@ public:
     }
 
     void inverseInterleaved(const double *BQ_R__ complexIn, double *BQ_R__ realOut) {
-        if (!m_dplanf) initDouble();
+        if (!m_dplanf)
+            initDouble();
         v_convert((fft_double_type *)m_dpacked, complexIn, m_size + 2);
         fftw_execute(m_dplani);
         const int sz = m_size;
         fft_double_type *const BQ_R__ dbuf = m_dbuf;
 #ifndef FFTW_SINGLE_ONLY
-        if (realOut != dbuf) 
+        if (realOut != dbuf)
 #endif
             for (int i = 0; i < sz; ++i) {
                 realOut[i] = dbuf[i];
@@ -1240,9 +1330,9 @@ public:
     }
 
     void inversePolar(const double *BQ_R__ magIn, const double *BQ_R__ phaseIn, double *BQ_R__ realOut) {
-        if (!m_dplanf) initDouble();
-        v_polar_to_cartesian_interleaved
-            ((fft_double_type *)m_dpacked, magIn, phaseIn, m_size/2+1);
+        if (!m_dplanf)
+            initDouble();
+        v_polar_to_cartesian_interleaved((fft_double_type *)m_dpacked, magIn, phaseIn, m_size / 2 + 1);
         fftw_execute(m_dplani);
         const int sz = m_size;
         fft_double_type *const BQ_R__ dbuf = m_dbuf;
@@ -1255,10 +1345,11 @@ public:
     }
 
     void inverseCepstral(const double *BQ_R__ magIn, double *BQ_R__ cepOut) {
-        if (!m_dplanf) initDouble();
+        if (!m_dplanf)
+            initDouble();
         fft_double_type *const BQ_R__ dbuf = m_dbuf;
         fftw_complex *const BQ_R__ dpacked = m_dpacked;
-        const int hs = m_size/2;
+        const int hs = m_size / 2;
         for (int i = 0; i <= hs; ++i) {
             dpacked[i][0] = log(magIn[i] + 0.000001);
         }
@@ -1276,7 +1367,8 @@ public:
     }
 
     void inverse(const float *BQ_R__ realIn, const float *BQ_R__ imagIn, float *BQ_R__ realOut) {
-        if (!m_fplanf) initFloat();
+        if (!m_fplanf)
+            initFloat();
         packFloat(realIn, imagIn);
         fftwf_execute(m_fplani);
         const int sz = m_size;
@@ -1290,7 +1382,8 @@ public:
     }
 
     void inverseInterleaved(const float *BQ_R__ complexIn, float *BQ_R__ realOut) {
-        if (!m_fplanf) initFloat();
+        if (!m_fplanf)
+            initFloat();
         v_convert((fft_float_type *)m_fpacked, complexIn, m_size + 2);
         fftwf_execute(m_fplani);
         const int sz = m_size;
@@ -1304,9 +1397,9 @@ public:
     }
 
     void inversePolar(const float *BQ_R__ magIn, const float *BQ_R__ phaseIn, float *BQ_R__ realOut) {
-        if (!m_fplanf) initFloat();
-        v_polar_to_cartesian_interleaved
-            ((fft_float_type *)m_fpacked, magIn, phaseIn, m_size/2+1);
+        if (!m_fplanf)
+            initFloat();
+        v_polar_to_cartesian_interleaved((fft_float_type *)m_fpacked, magIn, phaseIn, m_size / 2 + 1);
         fftwf_execute(m_fplani);
         const int sz = m_size;
         fft_float_type *const BQ_R__ fbuf = m_fbuf;
@@ -1319,8 +1412,9 @@ public:
     }
 
     void inverseCepstral(const float *BQ_R__ magIn, float *BQ_R__ cepOut) {
-        if (!m_fplanf) initFloat();
-        const int hs = m_size/2;
+        if (!m_fplanf)
+            initFloat();
+        const int hs = m_size / 2;
         fftwf_complex *const BQ_R__ fpacked = m_fpacked;
         for (int i = 0; i <= hs; ++i) {
             fpacked[i][0] = logf(magIn[i] + 0.000001f);
@@ -1365,22 +1459,30 @@ private:
 #else
 #ifdef _WIN32
     static HANDLE m_commonMutex;
-    void lock() { WaitForSingleObject(m_commonMutex, INFINITE); }
-    void unlock() { ReleaseMutex(m_commonMutex); }
+    void lock() {
+        WaitForSingleObject(m_commonMutex, INFINITE);
+    }
+    void unlock() {
+        ReleaseMutex(m_commonMutex);
+    }
 #else
     static pthread_mutex_t m_commonMutex;
     static bool m_haveMutex;
-    void lock() { pthread_mutex_lock(&m_commonMutex); }
-    void unlock() { pthread_mutex_unlock(&m_commonMutex); }
+    void lock() {
+        pthread_mutex_lock(&m_commonMutex);
+    }
+    void unlock() {
+        pthread_mutex_unlock(&m_commonMutex);
+    }
 #endif
 #endif
 };
 
 int
-D_FFTW::m_extantf = 0;
+    D_FFTW::m_extantf = 0;
 
 int
-D_FFTW::m_extantd = 0;
+    D_FFTW::m_extantd = 0;
 
 #ifndef NO_THREADING
 #ifdef _WIN32
@@ -1395,16 +1497,16 @@ pthread_mutex_t D_FFTW::m_commonMutex = PTHREAD_MUTEX_INITIALIZER;
 
 #ifdef FFTW_DOUBLE_ONLY
 #undef fftwf_complex
-#undef fftwf_plan 
+#undef fftwf_plan
 #undef fftwf_plan_dft_r2c_1d
 #undef fftwf_plan_dft_c2r_1d
-#undef fftwf_destroy_plan 
-#undef fftwf_malloc 
-#undef fftwf_free 
+#undef fftwf_destroy_plan
+#undef fftwf_malloc
+#undef fftwf_free
 #undef fftwf_execute
-#undef atan2f 
-#undef sqrtf 
-#undef cosf 
+#undef atan2f
+#undef sqrtf
+#undef cosf
 #undef sinf
 #endif /* FFTW_DOUBLE_ONLY */
 
@@ -1412,7 +1514,7 @@ pthread_mutex_t D_FFTW::m_commonMutex = PTHREAD_MUTEX_INITIALIZER;
 #undef fftw_complex
 #undef fftw_plan
 #undef fftw_plan_dft_r2c_1d
-#undef fftw_plan_dft_c2r_1d 
+#undef fftw_plan_dft_c2r_1d
 #undef fftw_destroy_plan
 #undef fftw_malloc
 #undef fftw_free
@@ -1427,14 +1529,12 @@ pthread_mutex_t D_FFTW::m_commonMutex = PTHREAD_MUTEX_INITIALIZER;
 
 #ifdef HAVE_KISSFFT
 
-class D_KISSFFT : public FFTImpl
-{
+class D_KISSFFT : public FFTImpl {
 public:
-    D_KISSFFT(int size) :
-        m_size(size),
-        m_fplanf(0),  
-        m_fplani(0)
-    {
+    D_KISSFFT(int size)
+        : m_size(size),
+          m_fplanf(0),
+          m_fplani(0) {
 #ifdef FIXED_POINT
 #error KISSFFT is not configured for float values
 #endif
@@ -1466,11 +1566,11 @@ public:
         return FFT::SinglePrecision;
     }
 
-    void initFloat() { }
-    void initDouble() { }
+    void initFloat() {}
+    void initDouble() {}
 
     void packFloat(const float *BQ_R__ re, const float *BQ_R__ im) {
-        const int hs = m_size/2;
+        const int hs = m_size / 2;
         for (int i = 0; i <= hs; ++i) {
             m_fpacked[i].r = re[i];
         }
@@ -1486,7 +1586,7 @@ public:
     }
 
     void unpackFloat(float *BQ_R__ re, float *BQ_R__ im) {
-        const int hs = m_size/2;
+        const int hs = m_size / 2;
         for (int i = 0; i <= hs; ++i) {
             re[i] = m_fpacked[i].r;
         }
@@ -1495,10 +1595,10 @@ public:
                 im[i] = m_fpacked[i].i;
             }
         }
-    }        
+    }
 
     void packDouble(const double *BQ_R__ re, const double *BQ_R__ im) {
-        const int hs = m_size/2;
+        const int hs = m_size / 2;
         for (int i = 0; i <= hs; ++i) {
             m_fpacked[i].r = float(re[i]);
         }
@@ -1514,7 +1614,7 @@ public:
     }
 
     void unpackDouble(double *BQ_R__ re, double *BQ_R__ im) {
-        const int hs = m_size/2;
+        const int hs = m_size / 2;
         for (int i = 0; i <= hs; ++i) {
             re[i] = double(m_fpacked[i].r);
         }
@@ -1523,7 +1623,7 @@ public:
                 im[i] = double(m_fpacked[i].i);
             }
         }
-    }        
+    }
 
     void forward(const double *BQ_R__ realIn, double *BQ_R__ realOut, double *BQ_R__ imagOut) {
         v_convert(m_fbuf, realIn, m_size);
@@ -1540,15 +1640,13 @@ public:
     void forwardPolar(const double *BQ_R__ realIn, double *BQ_R__ magOut, double *BQ_R__ phaseOut) {
         v_convert(m_fbuf, realIn, m_size);
         kiss_fftr(m_fplanf, m_fbuf, m_fpacked);
-        v_cartesian_interleaved_to_polar
-            (magOut, phaseOut, (float *)m_fpacked, m_size/2+1);
+        v_cartesian_interleaved_to_polar(magOut, phaseOut, (float *)m_fpacked, m_size / 2 + 1);
     }
 
     void forwardMagnitude(const double *BQ_R__ realIn, double *BQ_R__ magOut) {
         v_convert(m_fbuf, realIn, m_size);
         kiss_fftr(m_fplanf, m_fbuf, m_fpacked);
-        v_cartesian_interleaved_to_magnitudes
-            (magOut, (float *)m_fpacked, m_size/2+1);
+        v_cartesian_interleaved_to_magnitudes(magOut, (float *)m_fpacked, m_size / 2 + 1);
     }
 
     void forward(const float *BQ_R__ realIn, float *BQ_R__ realOut, float *BQ_R__ imagOut) {
@@ -1562,14 +1660,16 @@ public:
 
     void forwardPolar(const float *BQ_R__ realIn, float *BQ_R__ magOut, float *BQ_R__ phaseOut) {
         kiss_fftr(m_fplanf, realIn, m_fpacked);
-        v_cartesian_interleaved_to_polar
-            (magOut, phaseOut, (float *)m_fpacked, m_size/2+1);
+        v_cartesian_interleaved_to_polar(magOut, phaseOut, (float *)m_fpacked, m_size / 2 + 1);
     }
 
     void forwardMagnitude(const float *BQ_R__ realIn, float *BQ_R__ magOut) {
         kiss_fftr(m_fplanf, realIn, m_fpacked);
-        v_cartesian_interleaved_to_magnitudes
-            (magOut, (float *)m_fpacked, m_size/2+1);
+        v_cartesian_interleaved_to_magnitudes(magOut, (float *)m_fpacked, m_size / 2 + 1);
+    }
+
+    void forwardComplex(const float *realIn, std::complex<float> *complexOut) {
+        kiss_fftr(m_fplanf, realIn, (kiss_fft_cpx *)(complexOut));
     }
 
     void inverse(const double *BQ_R__ realIn, const double *BQ_R__ imagIn, double *BQ_R__ realOut) {
@@ -1585,14 +1685,13 @@ public:
     }
 
     void inversePolar(const double *BQ_R__ magIn, const double *BQ_R__ phaseIn, double *BQ_R__ realOut) {
-        v_polar_to_cartesian_interleaved
-            ((float *)m_fpacked, magIn, phaseIn, m_size/2+1);
+        v_polar_to_cartesian_interleaved((float *)m_fpacked, magIn, phaseIn, m_size / 2 + 1);
         kiss_fftri(m_fplani, m_fpacked, m_fbuf);
         v_convert(realOut, m_fbuf, m_size);
     }
 
     void inverseCepstral(const double *BQ_R__ magIn, double *BQ_R__ cepOut) {
-        const int hs = m_size/2;
+        const int hs = m_size / 2;
         for (int i = 0; i <= hs; ++i) {
             m_fpacked[i].r = float(log(magIn[i] + 0.000001));
             m_fpacked[i].i = 0.0f;
@@ -1600,7 +1699,7 @@ public:
         kiss_fftri(m_fplani, m_fpacked, m_fbuf);
         v_convert(cepOut, m_fbuf, m_size);
     }
-    
+
     void inverse(const float *BQ_R__ realIn, const float *BQ_R__ imagIn, float *BQ_R__ realOut) {
         packFloat(realIn, imagIn);
         kiss_fftri(m_fplani, m_fpacked, realOut);
@@ -1612,13 +1711,12 @@ public:
     }
 
     void inversePolar(const float *BQ_R__ magIn, const float *BQ_R__ phaseIn, float *BQ_R__ realOut) {
-        v_polar_to_cartesian_interleaved
-            ((float *)m_fpacked, magIn, phaseIn, m_size/2+1);
+        v_polar_to_cartesian_interleaved((float *)m_fpacked, magIn, phaseIn, m_size / 2 + 1);
         kiss_fftri(m_fplani, m_fpacked, realOut);
     }
 
     void inverseCepstral(const float *BQ_R__ magIn, float *BQ_R__ cepOut) {
-        const int hs = m_size/2;
+        const int hs = m_size / 2;
         for (int i = 0; i <= hs; ++i) {
             m_fpacked[i].r = logf(magIn[i] + 0.000001f);
             m_fpacked[i].i = 0.0f;
@@ -1638,15 +1736,13 @@ private:
 
 #ifdef USE_BUILTIN_FFT
 
-class D_Builtin : public FFTImpl
-{
+class D_Builtin : public FFTImpl {
 public:
-    D_Builtin(int size) :
-        m_size(size),
-        m_half(size/2),
-        m_blockTableSize(16),
-        m_maxTabledBlock(1 << m_blockTableSize)
-    {
+    D_Builtin(int size)
+        : m_size(size),
+          m_half(size / 2),
+          m_blockTableSize(16),
+          m_maxTabledBlock(1 << m_blockTableSize) {
         m_table = allocate_and_zero<int>(m_half);
         m_sincos = allocate_and_zero<double>(m_blockTableSize * 4);
         m_sincos_r = allocate_and_zero<double>(m_half);
@@ -1684,8 +1780,8 @@ public:
         return FFT::DoublePrecision;
     }
 
-    void initFloat() { }
-    void initDouble() { }
+    void initFloat() {}
+    void initDouble() {}
 
     void forward(const double *BQ_R__ realIn,
                  double *BQ_R__ realOut, double *BQ_R__ imagOut) {
@@ -1720,8 +1816,10 @@ public:
     void forwardInterleaved(const float *BQ_R__ realIn,
                             float *BQ_R__ complexOut) {
         transformF(realIn, m_c, m_d);
-        for (int i = 0; i <= m_half; ++i) complexOut[i*2] = m_c[i];
-        for (int i = 0; i <= m_half; ++i) complexOut[i*2+1] = m_d[i];
+        for (int i = 0; i <= m_half; ++i)
+            complexOut[i * 2] = m_c[i];
+        for (int i = 0; i <= m_half; ++i)
+            complexOut[i * 2 + 1] = m_d[i];
     }
 
     void forwardPolar(const float *BQ_R__ realIn,
@@ -1772,8 +1870,10 @@ public:
 
     void inverseInterleaved(const float *BQ_R__ complexIn,
                             float *BQ_R__ realOut) {
-        for (int i = 0; i <= m_half; ++i) m_a[i] = complexIn[i*2];
-        for (int i = 0; i <= m_half; ++i) m_b[i] = complexIn[i*2+1];
+        for (int i = 0; i <= m_half; ++i)
+            m_a[i] = complexIn[i * 2];
+        for (int i = 0; i <= m_half; ++i)
+            m_b[i] = complexIn[i * 2 + 1];
         transformI(m_a, m_b, realOut);
     }
 
@@ -1814,19 +1914,19 @@ private:
 
         // main table for complex fft - this is of size m_half,
         // because we are at heart a real-complex fft only
-        
+
         int bits;
         int i, j, k, m;
 
         int n = m_half;
-        
-        for (i = 0; ; ++i) {
+
+        for (i = 0;; ++i) {
             if (n & (1 << i)) {
                 bits = i;
                 break;
             }
         }
-        
+
         for (i = 0; i < n; ++i) {
             m = i;
             for (j = k = 0; j < bits; ++j) {
@@ -1845,15 +1945,15 @@ private:
             m_sincos[ix++] = cos(phase);
             m_sincos[ix++] = cos(2.0 * phase);
         }
-        
+
         // sin and cos tables for real-complex transform
         ix = 0;
-        for (i = 0; i < n/2; ++i) {
+        for (i = 0; i < n / 2; ++i) {
             double phase = M_PI * (double(i + 1) / double(m_half) + 0.5);
             m_sincos_r[ix++] = sin(phase);
             m_sincos_r[ix++] = cos(phase);
         }
-    }        
+    }
 
     // Uses m_a and m_b internally; does not touch m_c or m_d
     template <typename T>
@@ -1872,7 +1972,7 @@ private:
         int ix = 0;
         for (int i = 0; i < halfhalf; ++i) {
             double s = -m_sincos_r[ix++];
-            double c =  m_sincos_r[ix++];
+            double c = m_sincos_r[ix++];
             int k = i + 1;
             double r0 = m_vr[k];
             double i0 = m_vi[k];
@@ -1891,7 +1991,7 @@ private:
     template <typename T>
     void transformI(const double *BQ_R__ ri, const double *BQ_R__ ii,
                     T *BQ_R__ ro) {
-        
+
         int halfhalf = m_half / 2;
         m_vr[0] = ri[0] + ri[m_half];
         m_vi[0] = ri[0] - ri[m_half];
@@ -1913,18 +2013,18 @@ private:
         }
         transformComplex(m_vr, m_vi, m_c, m_d, true);
         for (int i = 0; i < m_half; ++i) {
-            ro[i*2] = m_c[i];
-            ro[i*2+1] = m_d[i];
+            ro[i * 2] = m_c[i];
+            ro[i * 2 + 1] = m_d[i];
         }
     }
-    
+
     void transformComplex(const double *BQ_R__ ri, const double *BQ_R__ ii,
                           double *BQ_R__ ro, double *BQ_R__ io,
                           bool inverse) {
 
         // Following Don Cross's 1998 implementation, described by its
         // author as public domain.
-        
+
         // Because we are at heart a real-complex fft only, and we know that:
         const int n = m_half;
 
@@ -1933,11 +2033,11 @@ private:
             ro[j] = ri[i];
             io[j] = ii[i];
         }
-        
+
         int ix = 0;
         int blockEnd = 1;
         double ifactor = (inverse ? -1.0 : 1.0);
-        
+
         for (int blockSize = 2; blockSize <= n; blockSize <<= 1) {
 
             double sm1, sm2, cm1, cm2;
@@ -1954,22 +2054,22 @@ private:
                 cm1 = cos(phase);
                 cm2 = cos(2.0 * phase);
             }
-            
+
             double w = 2 * cm1;
             double ar[3], ai[3];
-            
+
             for (int i = 0; i < n; i += blockSize) {
-                
+
                 ar[2] = cm2;
                 ar[1] = cm1;
-                
+
                 ai[2] = sm2;
                 ai[1] = sm1;
 
                 int j = i;
-                
+
                 for (int m = 0; m < blockEnd; ++m) {
-                    
+
                     ar[0] = w * ar[1] - ar[2];
                     ar[2] = ar[1];
                     ar[1] = ar[0];
@@ -1999,15 +2099,14 @@ private:
 
 #endif /* USE_BUILTIN_FFT */
 
-class D_DFT : public FFTImpl
-{
+class D_DFT : public FFTImpl {
 private:
     template <typename T>
-    class DFT
-    {
+    class DFT {
     public:
-        DFT(int size) : m_size(size), m_bins(size/2 + 1) {
-            
+        DFT(int size)
+            : m_size(size), m_bins(size / 2 + 1) {
+
             m_sin = allocate_channels<double>(m_size, m_size);
             m_cos = allocate_channels<double>(m_size, m_size);
 
@@ -2031,8 +2130,10 @@ private:
         void forward(const T *BQ_R__ realIn, T *BQ_R__ realOut, T *BQ_R__ imagOut) {
             for (int i = 0; i < m_bins; ++i) {
                 double re = 0.0, im = 0.0;
-                for (int j = 0; j < m_size; ++j) re += realIn[j] * m_cos[i][j];
-                for (int j = 0; j < m_size; ++j) im -= realIn[j] * m_sin[i][j];
+                for (int j = 0; j < m_size; ++j)
+                    re += realIn[j] * m_cos[i][j];
+                for (int j = 0; j < m_size; ++j)
+                    im -= realIn[j] * m_sin[i][j];
                 realOut[i] = T(re);
                 imagOut[i] = T(im);
             }
@@ -2041,10 +2142,12 @@ private:
         void forwardInterleaved(const T *BQ_R__ realIn, T *BQ_R__ complexOut) {
             for (int i = 0; i < m_bins; ++i) {
                 double re = 0.0, im = 0.0;
-                for (int j = 0; j < m_size; ++j) re += realIn[j] * m_cos[i][j];
-                for (int j = 0; j < m_size; ++j) im -= realIn[j] * m_sin[i][j];
-                complexOut[i*2] = T(re);
-                complexOut[i*2 + 1] = T(im);
+                for (int j = 0; j < m_size; ++j)
+                    re += realIn[j] * m_cos[i][j];
+                for (int j = 0; j < m_size; ++j)
+                    im -= realIn[j] * m_sin[i][j];
+                complexOut[i * 2] = T(re);
+                complexOut[i * 2 + 1] = T(im);
             }
         }
 
@@ -2059,8 +2162,10 @@ private:
         void forwardMagnitude(const T *BQ_R__ realIn, T *BQ_R__ magOut) {
             for (int i = 0; i < m_bins; ++i) {
                 double re = 0.0, im = 0.0;
-                for (int j = 0; j < m_size; ++j) re += realIn[j] * m_cos[i][j];
-                for (int j = 0; j < m_size; ++j) im -= realIn[j] * m_sin[i][j];
+                for (int j = 0; j < m_size; ++j)
+                    re += realIn[j] * m_cos[i][j];
+                for (int j = 0; j < m_size; ++j)
+                    im -= realIn[j] * m_sin[i][j];
                 magOut[i] = T(sqrt(re * re + im * im));
             }
         }
@@ -2078,16 +2183,18 @@ private:
                 double re = 0.0;
                 const double *const cos = m_cos[i];
                 const double *const sin = m_sin[i];
-                for (int j = 0; j < m_size; ++j) re += m_tmp[0][j] * cos[j];
-                for (int j = 0; j < m_size; ++j) re -= m_tmp[1][j] * sin[j];
+                for (int j = 0; j < m_size; ++j)
+                    re += m_tmp[0][j] * cos[j];
+                for (int j = 0; j < m_size; ++j)
+                    re -= m_tmp[1][j] * sin[j];
                 realOut[i] = T(re);
             }
         }
 
         void inverseInterleaved(const T *BQ_R__ complexIn, T *BQ_R__ realOut) {
             for (int i = 0; i < m_bins; ++i) {
-                m_tmp[0][i] = complexIn[i*2];
-                m_tmp[1][i] = complexIn[i*2+1];
+                m_tmp[0][i] = complexIn[i * 2];
+                m_tmp[1][i] = complexIn[i * 2 + 1];
             }
             for (int i = m_bins; i < m_size; ++i) {
                 m_tmp[0][i] = complexIn[(m_size - i) * 2];
@@ -2097,8 +2204,10 @@ private:
                 double re = 0.0;
                 const double *const cos = m_cos[i];
                 const double *const sin = m_sin[i];
-                for (int j = 0; j < m_size; ++j) re += m_tmp[0][j] * cos[j];
-                for (int j = 0; j < m_size; ++j) re -= m_tmp[1][j] * sin[j];
+                for (int j = 0; j < m_size; ++j)
+                    re += m_tmp[0][j] * cos[j];
+                for (int j = 0; j < m_size; ++j)
+                    re -= m_tmp[1][j] * sin[j];
                 realOut[i] = T(re);
             }
         }
@@ -2113,7 +2222,7 @@ private:
         void inverseCepstral(const T *BQ_R__ magIn, T *BQ_R__ cepOut) {
             T *complexIn = allocate_and_zero<T>(m_bins * 2);
             for (int i = 0; i < m_bins; ++i) {
-                complexIn[i*2] = T(log(magIn[i] + 0.000001));
+                complexIn[i * 2] = T(log(magIn[i] + 0.000001));
             }
             inverseInterleaved(complexIn, cepOut);
             deallocate(complexIn);
@@ -2126,9 +2235,10 @@ private:
         double **m_cos;
         double **m_tmp;
     };
-    
+
 public:
-    D_DFT(int size) : m_size(size), m_double(0), m_float(0) { }
+    D_DFT(int size)
+        : m_size(size), m_double(0), m_float(0) {}
 
     ~D_DFT() {
         delete m_double;
@@ -2149,7 +2259,7 @@ public:
             m_float = new DFT<float>(m_size);
         }
     }
-        
+
     void initDouble() {
         if (!m_double) {
             m_double = new DFT<double>(m_size);
@@ -2194,6 +2304,9 @@ public:
     void forwardMagnitude(const float *BQ_R__ realIn, float *BQ_R__ magOut) {
         initFloat();
         m_float->forwardMagnitude(realIn, magOut);
+    }
+    void forwardComplex(const float *realIn, std::complex<float> *complexOut) override {
+        abort();
     }
 
     void inverse(const double *BQ_R__ realIn, const double *BQ_R__ imagIn, double *BQ_R__ realOut) {
@@ -2245,9 +2358,9 @@ private:
 } /* end namespace FFTs */
 
 enum SizeConstraint {
-    SizeConstraintNone           = 0x0,
-    SizeConstraintEven           = 0x1,
-    SizeConstraintPowerOfTwo     = 0x2,
+    SizeConstraintNone = 0x0,
+    SizeConstraintEven = 0x1,
+    SizeConstraintPowerOfTwo = 0x2,
     SizeConstraintEvenPowerOfTwo = 0x3 // i.e. 0x1 | 0x2. Excludes size 1 obvs
 };
 
@@ -2256,10 +2369,9 @@ typedef std::map<std::string, SizeConstraint> ImplMap;
 static std::string defaultImplementation;
 
 static ImplMap
-getImplementationDetails()
-{
+getImplementationDetails() {
     ImplMap impls;
-    
+
 #ifdef HAVE_IPP
     impls["ipp"] = SizeConstraintEvenPowerOfTwo;
 #endif
@@ -2282,11 +2394,10 @@ getImplementationDetails()
 }
 
 static std::string
-pickImplementation(int size)
-{
+pickImplementation(int size) {
     ImplMap impls = getImplementationDetails();
 
-    bool isPowerOfTwo = !(size & (size-1));
+    bool isPowerOfTwo = !(size & (size - 1));
     bool isEven = !(size & 1);
 
     if (defaultImplementation != "") {
@@ -2294,11 +2405,11 @@ pickImplementation(int size)
         if (itr != impls.end()) {
             if (((itr->second & SizeConstraintPowerOfTwo) && !isPowerOfTwo) ||
                 ((itr->second & SizeConstraintEven) && !isEven)) {
-//                std::cerr << "NOTE: bqfft: Explicitly-set default "
-//                          << "implementation \"" << defaultImplementation
-//                          << "\" does not support size " << size
-//                          << ", trying other compiled-in implementations"
-//                          << std::endl;
+                //                std::cerr << "NOTE: bqfft: Explicitly-set default "
+                //                          << "implementation \"" << defaultImplementation
+                //                          << "\" does not support size " << size
+                //                          << ", trying other compiled-in implementations"
+                //                          << std::endl;
             } else {
                 return defaultImplementation;
             }
@@ -2307,13 +2418,12 @@ pickImplementation(int size)
                       << defaultImplementation << "\" is not compiled in"
                       << std::endl;
         }
-    } 
-    
-    std::string preference[] = {
-        "ipp", "vdsp", "fftw", "builtin", "kissfft"
-    };
+    }
 
-    for (int i = 0; i < int(sizeof(preference)/sizeof(preference[0])); ++i) {
+    std::string preference[] = {
+        "ipp", "vdsp", "fftw", "builtin", "kissfft"};
+
+    for (int i = 0; i < int(sizeof(preference) / sizeof(preference[0])); ++i) {
         ImplMap::const_iterator itr = impls.find(preference[i]);
         if (itr != impls.end()) {
             if ((itr->second & SizeConstraintPowerOfTwo) &&
@@ -2334,13 +2444,12 @@ pickImplementation(int size)
 
     std::cerr << "WARNING: bqfft: No compiled-in implementation supports size "
               << size << ", falling back to slow DFT" << std::endl;
-    
+
     return "dft";
 }
 
 std::set<std::string>
-FFT::getImplementations()
-{
+FFT::getImplementations() {
     ImplMap impls = getImplementationDetails();
     std::set<std::string> toReturn;
     for (ImplMap::const_iterator i = impls.begin(); i != impls.end(); ++i) {
@@ -2350,18 +2459,15 @@ FFT::getImplementations()
 }
 
 std::string
-FFT::getDefaultImplementation()
-{
+FFT::getDefaultImplementation() {
     return defaultImplementation;
 }
 
-void
-FFT::setDefaultImplementation(std::string i)
-{
+void FFT::setDefaultImplementation(std::string i) {
     if (i == "") {
         defaultImplementation = i;
         return;
-    } 
+    }
     ImplMap impls = getImplementationDetails();
     ImplMap::const_iterator itr = impls.find(i);
     if (itr == impls.end()) {
@@ -2373,9 +2479,8 @@ FFT::setDefaultImplementation(std::string i)
     }
 }
 
-FFT::FFT(int size, int debugLevel) :
-    d(0)
-{
+FFT::FFT(int size, int debugLevel)
+    : d(0) {
     std::string impl = pickImplementation(size);
 
     if (debugLevel > 0) {
@@ -2391,7 +2496,7 @@ FFT::FFT(int size, int debugLevel) :
 #ifdef HAVE_FFTW3
         d = new FFTs::D_FFTW(size);
 #endif
-    } else if (impl == "kissfft") {        
+    } else if (impl == "kissfft") {
 #ifdef HAVE_KISSFFT
         d = new FFTs::D_KISSFFT(size);
 #endif
@@ -2418,183 +2523,149 @@ FFT::FFT(int size, int debugLevel) :
     }
 }
 
-FFT::~FFT()
-{
+FFT::~FFT() {
     delete d;
 }
 
 #ifndef NO_EXCEPTIONS
-#define CHECK_NOT_NULL(x) \
-    if (!(x)) { \
-        std::cerr << "FFT: ERROR: Null argument " #x << std::endl;  \
-        throw NullArgument; \
+#define CHECK_NOT_NULL(x)                                          \
+    if (!(x)) {                                                    \
+        std::cerr << "FFT: ERROR: Null argument " #x << std::endl; \
+        throw NullArgument;                                        \
     }
 #else
-#define CHECK_NOT_NULL(x) \
-    if (!(x)) { \
-        std::cerr << "FFT: ERROR: Null argument " #x << std::endl;  \
-        std::cerr << "FFT: Would be throwing NullArgument here, if exceptions were not disabled" << std::endl;  \
-        return; \
+#define CHECK_NOT_NULL(x)                                                                                      \
+    if (!(x)) {                                                                                                \
+        std::cerr << "FFT: ERROR: Null argument " #x << std::endl;                                             \
+        std::cerr << "FFT: Would be throwing NullArgument here, if exceptions were not disabled" << std::endl; \
+        return;                                                                                                \
     }
 #endif
 
-void
-FFT::forward(const double *BQ_R__ realIn, double *BQ_R__ realOut, double *BQ_R__ imagOut)
-{
+void FFT::forward(const double *BQ_R__ realIn, double *BQ_R__ realOut, double *BQ_R__ imagOut) {
     CHECK_NOT_NULL(realIn);
     CHECK_NOT_NULL(realOut);
     CHECK_NOT_NULL(imagOut);
     d->forward(realIn, realOut, imagOut);
 }
 
-void
-FFT::forwardInterleaved(const double *BQ_R__ realIn, double *BQ_R__ complexOut)
-{
+void FFT::forwardInterleaved(const double *BQ_R__ realIn, double *BQ_R__ complexOut) {
     CHECK_NOT_NULL(realIn);
     CHECK_NOT_NULL(complexOut);
     d->forwardInterleaved(realIn, complexOut);
 }
 
-void
-FFT::forwardPolar(const double *BQ_R__ realIn, double *BQ_R__ magOut, double *BQ_R__ phaseOut)
-{
+void FFT::forwardPolar(const double *BQ_R__ realIn, double *BQ_R__ magOut, double *BQ_R__ phaseOut) {
     CHECK_NOT_NULL(realIn);
     CHECK_NOT_NULL(magOut);
     CHECK_NOT_NULL(phaseOut);
     d->forwardPolar(realIn, magOut, phaseOut);
 }
 
-void
-FFT::forwardMagnitude(const double *BQ_R__ realIn, double *BQ_R__ magOut)
-{
+void FFT::forwardMagnitude(const double *BQ_R__ realIn, double *BQ_R__ magOut) {
     CHECK_NOT_NULL(realIn);
     CHECK_NOT_NULL(magOut);
     d->forwardMagnitude(realIn, magOut);
 }
 
-void
-FFT::forward(const float *BQ_R__ realIn, float *BQ_R__ realOut, float *BQ_R__ imagOut)
-{
+void FFT::forward(const float *BQ_R__ realIn, float *BQ_R__ realOut, float *BQ_R__ imagOut) {
     CHECK_NOT_NULL(realIn);
     CHECK_NOT_NULL(realOut);
     CHECK_NOT_NULL(imagOut);
     d->forward(realIn, realOut, imagOut);
 }
 
-void
-FFT::forwardInterleaved(const float *BQ_R__ realIn, float *BQ_R__ complexOut)
-{
+void FFT::forwardInterleaved(const float *BQ_R__ realIn, float *BQ_R__ complexOut) {
     CHECK_NOT_NULL(realIn);
     CHECK_NOT_NULL(complexOut);
     d->forwardInterleaved(realIn, complexOut);
 }
 
-void
-FFT::forwardPolar(const float *BQ_R__ realIn, float *BQ_R__ magOut, float *BQ_R__ phaseOut)
-{
+void FFT::forwardPolar(const float *BQ_R__ realIn, float *BQ_R__ magOut, float *BQ_R__ phaseOut) {
     CHECK_NOT_NULL(realIn);
     CHECK_NOT_NULL(magOut);
     CHECK_NOT_NULL(phaseOut);
     d->forwardPolar(realIn, magOut, phaseOut);
 }
 
-void
-FFT::forwardMagnitude(const float *BQ_R__ realIn, float *BQ_R__ magOut)
-{
+void FFT::forwardMagnitude(const float *BQ_R__ realIn, float *BQ_R__ magOut) {
     CHECK_NOT_NULL(realIn);
     CHECK_NOT_NULL(magOut);
     d->forwardMagnitude(realIn, magOut);
 }
 
-void
-FFT::inverse(const double *BQ_R__ realIn, const double *BQ_R__ imagIn, double *BQ_R__ realOut)
-{
+void FFT::forwardComplex(const float *R__ realIn, std::complex<float> *R__ complexOut) {
+    CHECK_NOT_NULL(realIn);
+    CHECK_NOT_NULL(complexOut);
+    d->forwardComplex(realIn, complexOut);
+}
+
+void FFT::inverse(const double *BQ_R__ realIn, const double *BQ_R__ imagIn, double *BQ_R__ realOut) {
     CHECK_NOT_NULL(realIn);
     CHECK_NOT_NULL(imagIn);
     CHECK_NOT_NULL(realOut);
     d->inverse(realIn, imagIn, realOut);
 }
 
-void
-FFT::inverseInterleaved(const double *BQ_R__ complexIn, double *BQ_R__ realOut)
-{
+void FFT::inverseInterleaved(const double *BQ_R__ complexIn, double *BQ_R__ realOut) {
     CHECK_NOT_NULL(complexIn);
     CHECK_NOT_NULL(realOut);
     d->inverseInterleaved(complexIn, realOut);
 }
 
-void
-FFT::inversePolar(const double *BQ_R__ magIn, const double *BQ_R__ phaseIn, double *BQ_R__ realOut)
-{
+void FFT::inversePolar(const double *BQ_R__ magIn, const double *BQ_R__ phaseIn, double *BQ_R__ realOut) {
     CHECK_NOT_NULL(magIn);
     CHECK_NOT_NULL(phaseIn);
     CHECK_NOT_NULL(realOut);
     d->inversePolar(magIn, phaseIn, realOut);
 }
 
-void
-FFT::inverseCepstral(const double *BQ_R__ magIn, double *BQ_R__ cepOut)
-{
+void FFT::inverseCepstral(const double *BQ_R__ magIn, double *BQ_R__ cepOut) {
     CHECK_NOT_NULL(magIn);
     CHECK_NOT_NULL(cepOut);
     d->inverseCepstral(magIn, cepOut);
 }
 
-void
-FFT::inverse(const float *BQ_R__ realIn, const float *BQ_R__ imagIn, float *BQ_R__ realOut)
-{
+void FFT::inverse(const float *BQ_R__ realIn, const float *BQ_R__ imagIn, float *BQ_R__ realOut) {
     CHECK_NOT_NULL(realIn);
     CHECK_NOT_NULL(imagIn);
     CHECK_NOT_NULL(realOut);
     d->inverse(realIn, imagIn, realOut);
 }
 
-void
-FFT::inverseInterleaved(const float *BQ_R__ complexIn, float *BQ_R__ realOut)
-{
+void FFT::inverseInterleaved(const float *BQ_R__ complexIn, float *BQ_R__ realOut) {
     CHECK_NOT_NULL(complexIn);
     CHECK_NOT_NULL(realOut);
     d->inverseInterleaved(complexIn, realOut);
 }
 
-void
-FFT::inversePolar(const float *BQ_R__ magIn, const float *BQ_R__ phaseIn, float *BQ_R__ realOut)
-{
+void FFT::inversePolar(const float *BQ_R__ magIn, const float *BQ_R__ phaseIn, float *BQ_R__ realOut) {
     CHECK_NOT_NULL(magIn);
     CHECK_NOT_NULL(phaseIn);
     CHECK_NOT_NULL(realOut);
     d->inversePolar(magIn, phaseIn, realOut);
 }
 
-void
-FFT::inverseCepstral(const float *BQ_R__ magIn, float *BQ_R__ cepOut)
-{
+void FFT::inverseCepstral(const float *BQ_R__ magIn, float *BQ_R__ cepOut) {
     CHECK_NOT_NULL(magIn);
     CHECK_NOT_NULL(cepOut);
     d->inverseCepstral(magIn, cepOut);
 }
 
-void
-FFT::initFloat() 
-{
+void FFT::initFloat() {
     d->initFloat();
 }
 
-void
-FFT::initDouble() 
-{
+void FFT::initDouble() {
     d->initDouble();
 }
 
-int
-FFT::getSize() const
-{
+int FFT::getSize() const {
     return d->getSize();
 }
 
 FFT::Precisions
-FFT::getSupportedPrecisions() const
-{
+FFT::getSupportedPrecisions() const {
     return d->getSupportedPrecisions();
 }
 
@@ -2605,8 +2676,7 @@ std::string
 #else
 void
 #endif
-FFT::tune()
-{
+FFT::tune() {
 #ifdef FFT_MEASUREMENT_RETURN_RESULT_TEXT
     std::ostringstream os;
 #else
@@ -2622,7 +2692,7 @@ FFT::tune()
     sizes.push_back(1024);
     sizes.push_back(2048);
     sizes.push_back(4096);
-    
+
     for (unsigned int si = 0; si < sizes.size(); ++si) {
 
         int size = sizes[si];
@@ -2633,7 +2703,7 @@ FFT::tune()
         }
 
         FFTImpl *d;
-        
+
 #ifdef HAVE_IPP
         os << "Constructing new IPP FFT object for size " << size << "..." << std::endl;
         d = new FFTs::D_IPP(size);
@@ -2641,7 +2711,7 @@ FFT::tune()
         d->initDouble();
         candidates["ipp"] = d;
 #endif
-        
+
 #ifdef HAVE_FFTW3
         os << "Constructing new FFTW3 FFT object for size " << size << "..." << std::endl;
         d = new FFTs::D_FFTW(size);
@@ -2656,7 +2726,7 @@ FFT::tune()
         d->initFloat();
         d->initDouble();
         candidates["kissfft"] = d;
-#endif        
+#endif
 
 #ifdef USE_BUILTIN_FFT
         os << "Constructing new Builtin FFT object for size " << size << "..." << std::endl;
@@ -2665,7 +2735,7 @@ FFT::tune()
         d->initDouble();
         candidates["builtin"] = d;
 #endif
-        
+
 #ifdef HAVE_VDSP
         os << "Constructing new vDSP FFT object for size " << size << "..." << std::endl;
         d = new FFTs::D_VDSP(size);
@@ -2682,7 +2752,7 @@ FFT::tune()
 
         os << "CLOCKS_PER_SEC = " << CLOCKS_PER_SEC << std::endl;
         float divisor = float(CLOCKS_PER_SEC) / 1000.f;
-        
+
         os << "Timing order is: ";
         for (std::map<std::string, FFTImpl *>::iterator ci = candidates.begin();
              ci != candidates.end(); ++ci) {
@@ -2708,7 +2778,7 @@ FFT::tune()
         float *fj = new float[size + 2];
 
         for (int type = 0; type < 16; ++type) {
-    
+
             //!!!
             if ((type > 3 && type < 8) ||
                 (type > 11)) {
@@ -2724,7 +2794,7 @@ FFT::tune()
                     db[i] = drand48() * size;
                     fb[i] = db[i];
                 }
-            } else {    
+            } else {
                 for (int i = 0; i < size; ++i) {
                     da[i] = drand48();
                     fa[i] = da[i];
@@ -2732,7 +2802,7 @@ FFT::tune()
                     fb[i] = db[i];
                 }
             }
-                
+
             for (int i = 0; i < size + 2; ++i) {
                 di[i] = drand48();
                 fi[i] = di[i];
@@ -2759,8 +2829,7 @@ FFT::tune()
                 "Inverse Cartesian Float",
                 "Inverse Interleaved Float",
                 "Inverse Polar Float",
-                "Inverse Cepstral Float"
-            };
+                "Inverse Cepstral Float"};
             os << names[type] << " :: ";
 
             for (std::map<std::string, FFTImpl *>::iterator ci = candidates.begin();
@@ -2771,7 +2840,7 @@ FFT::tune()
                 double mean = 0;
 
                 clock_t start = clock();
-                
+
                 for (int i = 0; i < iterations; ++i) {
 
                     if (i == 0) {
@@ -2786,22 +2855,54 @@ FFT::tune()
                     }
 
                     switch (type) {
-                    case 0: d->forward(da, dc, dd); break;
-                    case 1: d->forwardInterleaved(da, dj); break;
-                    case 2: d->forwardPolar(da, dc, dd); break;
-                    case 3: d->forwardMagnitude(da, dc); break;
-                    case 4: d->forward(fa, fc, fd); break;
-                    case 5: d->forwardInterleaved(fa, fj); break;
-                    case 6: d->forwardPolar(fa, fc, fd); break;
-                    case 7: d->forwardMagnitude(fa, fc); break;
-                    case 8: d->inverse(da, db, dc); break;
-                    case 9: d->inverseInterleaved(di, dc); break;
-                    case 10: d->inversePolar(da, db, dc); break;
-                    case 11: d->inverseCepstral(da, dc); break;
-                    case 12: d->inverse(fa, fb, fc); break;
-                    case 13: d->inverseInterleaved(fi, fc); break;
-                    case 14: d->inversePolar(fa, fb, fc); break;
-                    case 15: d->inverseCepstral(fa, fc); break;
+                    case 0:
+                        d->forward(da, dc, dd);
+                        break;
+                    case 1:
+                        d->forwardInterleaved(da, dj);
+                        break;
+                    case 2:
+                        d->forwardPolar(da, dc, dd);
+                        break;
+                    case 3:
+                        d->forwardMagnitude(da, dc);
+                        break;
+                    case 4:
+                        d->forward(fa, fc, fd);
+                        break;
+                    case 5:
+                        d->forwardInterleaved(fa, fj);
+                        break;
+                    case 6:
+                        d->forwardPolar(fa, fc, fd);
+                        break;
+                    case 7:
+                        d->forwardMagnitude(fa, fc);
+                        break;
+                    case 8:
+                        d->inverse(da, db, dc);
+                        break;
+                    case 9:
+                        d->inverseInterleaved(di, dc);
+                        break;
+                    case 10:
+                        d->inversePolar(da, db, dc);
+                        break;
+                    case 11:
+                        d->inverseCepstral(da, dc);
+                        break;
+                    case 12:
+                        d->inverse(fa, fb, fc);
+                        break;
+                    case 13:
+                        d->inverseInterleaved(fi, fc);
+                        break;
+                    case 14:
+                        d->inversePolar(fa, fb, fc);
+                        break;
+                    case 15:
+                        d->inverseCepstral(fa, fc);
+                        break;
                     }
 
                     if (i == 0) {
@@ -2820,7 +2921,7 @@ FFT::tune()
 
                 clock_t end = clock();
 
-                os << float(end - start)/divisor << " (" << mean << ") ";
+                os << float(end - start) / divisor << " (" << mean << ") ";
 
                 if (low == "" || (end - start) < lowscore) {
                     low = ci->first;
@@ -2830,11 +2931,11 @@ FFT::tune()
 
             os << std::endl;
 
-            os << "  size " << size << ", type " << type << ": fastest is " << low << " (time " << float(lowscore)/divisor << ")" << std::endl;
+            os << "  size " << size << ", type " << type << ": fastest is " << low << " (time " << float(lowscore) / divisor << ")" << std::endl;
 
             wins[low]++;
         }
-        
+
         delete[] fa;
         delete[] fb;
         delete[] fc;
@@ -2869,4 +2970,4 @@ FFT::tune()
 
 #endif
 
-}
+} // namespace RubberBand

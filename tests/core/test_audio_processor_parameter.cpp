@@ -283,3 +283,70 @@ TEST_F(AAudioProcessorParameter, CanBoolParameterConstructInASimpleWay) {
 TEST_F(AAudioProcessorParameter, CanGetIntFromPlainValue) {
     ASSERT_THAT(param->getInt(), Eq(int(param->getPlainValue())));
 }
+
+
+TEST_F(AAudioProcessorParameter, CanConstructWithIntType) {
+    param = std::make_unique<AudioProcessorParameter>(
+        ParameterType::kInt, param_id, "int", 0, 0, 1.0);
+
+    ASSERT_THAT(param->getParameterType(), Eq(ParameterType::kInt));
+}
+
+TEST_F(AAudioProcessorParameter, CanConvertFloatStringToNormalizedValue) {
+    param = std::make_unique<AudioProcessorParameter>(
+        ParameterType::kFloat, param_id, "float", 0.0, 0, 1.0);
+
+    ASSERT_THAT(param->convertPlainValueStringToNormalizedValue("1.0"), Eq(1.0f));
+}
+
+TEST_F(AAudioProcessorParameter, CanConvertIntStringToNormalizedValue) {
+    param = std::make_unique<AudioProcessorParameter>(
+        ParameterType::kInt, param_id, "int", 0, 0, 1);
+
+    ASSERT_THAT(param->convertPlainValueStringToNormalizedValue("1"), Eq(1.0f));
+}
+
+TEST_F(AAudioProcessorParameter, CanConvertBoolStringToNormalizedValue) {
+    param = std::make_unique<AudioProcessorParameter>(
+        ParameterType::kBool, param_id, "bool", 0, 0, 1);
+
+    ASSERT_THAT(param->convertPlainValueStringToNormalizedValue("true"), Eq(1.0f));
+    ASSERT_THAT(param->convertPlainValueStringToNormalizedValue("false"), Eq(0.0f));
+}
+
+TEST_F(AAudioProcessorParameter, CanConvertChoiceStringToNormalizedValue) {
+    param = std::make_unique<AudioProcessorParameter>(
+        ParameterType::kChoice, param_id, "choices", 0, 0,
+        choices_strings.size(), choices_strings);
+
+    ASSERT_THAT(param->convertPlainValueStringToNormalizedValue("A"), Eq(0.0f));
+}
+
+TEST_F(AAudioProcessorParameter, CanGetFloatStringPlainValue) {
+    param = std::make_unique<AudioProcessorParameter>(
+        ParameterType::kFloat, param_id, "float", 0.0, 0, 1.0);
+
+    ASSERT_THAT(param->getPlainValueString(), Eq(std::to_string(0.0f)));
+}
+
+TEST_F(AAudioProcessorParameter, CanGetIntStringPlainValue) {
+    param = std::make_unique<AudioProcessorParameter>(
+        ParameterType::kInt, param_id, "int", 0, 0, 1);
+
+    ASSERT_THAT(param->getPlainValueString(), Eq(std::to_string(0)));
+}
+
+TEST_F(AAudioProcessorParameter, CanGetBoolPlainValue) {
+    param = std::make_unique<AudioProcessorParameter>(
+        ParameterType::kBool, param_id, "bool", 0, 0, 1);
+
+    ASSERT_THAT(param->getPlainValueString(), Eq("false"));
+}
+
+TEST_F(AAudioProcessorParameter, CanGetChoicePlainValue) {
+    param = std::make_unique<AudioProcessorParameter>(
+        ParameterType::kChoice, param_id, "choices", 0, 0,
+        choices_strings.size(), choices_strings);
+
+    ASSERT_THAT(param->getPlainValueString(), Eq("A"));
+}

@@ -8,8 +8,10 @@ if (APPLE OR IOS)
 endif ()
 
 target_compile_definitions(rubberband PRIVATE HAVE_LIBSAMPLERATE)
+target_link_libraries(rubberband PRIVATE kissfft)
 
 target_include_directories(rubberband
         PRIVATE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/rubberband>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/kissfft>
         )

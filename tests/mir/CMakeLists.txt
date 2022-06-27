@@ -1,0 +1,23 @@
+add_libaa_test(
+        aa_mir_unit_tests
+        test_fft.cpp
+        test_magnitude.cpp
+        test_max_filter.cpp
+        test_mir_algorithm_base.cpp
+        test_mir_algorithm_factory.cpp
+        test_mir_input.cpp
+        test_mir_output.cpp
+        test_moving_average.cpp
+        test_spectrum.cpp
+        test_superflux_novelty.cpp
+        test_superflux_peaks.cpp
+        test_triangular_bands.cpp
+        test_windowing.cpp
+)
+
+target_link_libraries(aa_mir_unit_tests PRIVATE rubberband eigen)
+target_include_directories(aa_mir_unit_tests
+        PRIVATE
+        $<BUILD_INTERFACE:${LIBAA_3RD_DIR}/rubberband-2.0.2/rubberband>
+        $<BUILD_INTERFACE:${LIBAA_3RD_DIR}/rubberband-2.0.2/src>
+        )

@@ -26,8 +26,9 @@
 
 #include "../system/sysutils.h"
 
-#include <string>
+#include <complex>
 #include <set>
+#include <string>
 
 namespace RubberBand {
 
@@ -45,7 +46,7 @@ class FFTImpl;
  * The "interleaved" functions use the format sometimes called CCS --
  * size/2+1 real+imaginary pairs.  So, the array elements at indices 1
  * and size+1 will always be zero (since the signal is real).
- * 
+ *
  * All pointer arguments must point to valid data. A NullArgument
  * exception is thrown if any argument is NULL.
  *
@@ -54,18 +55,20 @@ class FFTImpl;
  * This class is reentrant but not thread safe: use a separate
  * instance per thread, or use a mutex.
  */
-class FFT
-{
+class FFT {
 public:
     enum Exception {
-        NullArgument, InvalidSize, InvalidImplementation, InternalError
+        NullArgument,
+        InvalidSize,
+        InvalidImplementation,
+        InternalError
     };
 
     FFT(int size, int debugLevel = 0); // may throw InvalidSize
     ~FFT();
 
     int getSize() const;
-    
+
     void forward(const double *R__ realIn, double *R__ realOut, double *R__ imagOut);
     void forwardInterleaved(const double *R__ realIn, double *R__ complexOut);
     void forwardPolar(const double *R__ realIn, double *R__ magOut, double *R__ phaseOut);
@@ -75,6 +78,7 @@ public:
     void forwardInterleaved(const float *R__ realIn, float *R__ complexOut);
     void forwardPolar(const float *R__ realIn, float *R__ magOut, float *R__ phaseOut);
     void forwardMagnitude(const float *R__ realIn, float *R__ magOut);
+    void forwardComplex(const float *R__ realIn, std::complex<float> *R__ complexOut);
 
     void inverse(const double *R__ realIn, const double *R__ imagIn, double *R__ realOut);
     void inverseInterleaved(const double *R__ complexIn, double *R__ realOut);
@@ -123,13 +127,12 @@ protected:
     FFTImpl *d;
     static std::string m_implementation;
     static void pickDefaultImplementation();
-    
+
 private:
-    FFT(const FFT &); // not provided
+    FFT(const FFT &);            // not provided
     FFT &operator=(const FFT &); // not provided
 };
 
-}
+} // namespace RubberBand
 
 #endif
-

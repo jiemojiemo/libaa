@@ -33,3 +33,10 @@ target_include_directories(Ring-Buffer INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/Ri
 
 add_library(farbot INTERFACE)
 target_include_directories(farbot INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/farbot/include")
+
+if (NOT EXISTS eigen)
+    add_library(eigen INTERFACE)
+    target_include_directories(eigen INTERFACE
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Eigen3.3.7>
+            )
+endif ()

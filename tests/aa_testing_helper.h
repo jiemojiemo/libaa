@@ -14,10 +14,11 @@ MATCHER_P(FloatNearPointwise, tol, "Out of range") {
             std::get<0>(arg) < std::get<1>(arg) + tol);
 }
 
-namespace libaa {
 MATCHER_P(NearWithPrecision, ferr, "") {
     return abs(get<0>(arg) - get<1>(arg)) < ferr;
 }
+
+namespace libaa {
 
 MATCHER_P2(ComplexNearEqual, ferr, rhs, "") {
     return abs(arg - rhs) < ferr;
