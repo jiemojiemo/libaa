@@ -16,37 +16,67 @@ TEST_F(AMIRAlgorithmFactory, ThrowsIfNotSuchAlgorithm) {
 }
 
 TEST_F(AMIRAlgorithmFactory, CanCreateFFT) {
-    ASSERT_THAT(MIRAlgorithmFactory::create("FFT"), NotNull());
+    auto name = "FFT";
+    ASSERT_THAT(MIRAlgorithmFactory::create(name)->getName(), Eq(name));
 }
 
 TEST_F(AMIRAlgorithmFactory, CanCreateManitude) {
-    ASSERT_THAT(MIRAlgorithmFactory::create("Magnitude"), NotNull());
+    auto name = "Magnitude";
+    ASSERT_THAT(MIRAlgorithmFactory::create(name)->getName(), Eq(name));
 }
 
 TEST_F(AMIRAlgorithmFactory, CanCreateMaxFilter) {
-    ASSERT_THAT(MIRAlgorithmFactory::create("MaxFilter"), NotNull());
+    auto name = "MaxFilter";
+    ASSERT_THAT(MIRAlgorithmFactory::create(name)->getName(), Eq(name));
 }
 
 TEST_F(AMIRAlgorithmFactory, CanCreateMovingAverage) {
-    ASSERT_THAT(MIRAlgorithmFactory::create("MovingAverage"), NotNull());
+    auto name = "MovingAverage";
+    ASSERT_THAT(MIRAlgorithmFactory::create(name)->getName(), Eq(name));
 }
 
 TEST_F(AMIRAlgorithmFactory, CanCreateSpectrum) {
-    ASSERT_THAT(MIRAlgorithmFactory::create("Spectrum"), NotNull());
+    auto name = "Spectrum";
+    ASSERT_THAT(MIRAlgorithmFactory::create(name)->getName(), Eq(name));
+}
+
+TEST_F(AMIRAlgorithmFactory, CanCreateStreamingMovingAverage) {
+    auto name = "StreamingMaxFilter";
+    ASSERT_THAT(MIRAlgorithmFactory::create(name)->getName(), Eq(name));
+}
+
+TEST_F(AMIRAlgorithmFactory, CanCreateStreamingMaxFilter) {
+    auto name = "StreamingMaxFilter";
+    ASSERT_THAT(MIRAlgorithmFactory::create(name)->getName(), Eq(name));
+    ASSERT_THAT(MIRAlgorithmFactory::create("StreamingMovingAverage"), NotNull());
 }
 
 TEST_F(AMIRAlgorithmFactory, CanCreateWindowing) {
-    ASSERT_THAT(MIRAlgorithmFactory::create("Windowing"), NotNull());
+    auto name = "Windowing";
+    ASSERT_THAT(MIRAlgorithmFactory::create(name)->getName(), Eq(name));
 }
 
 TEST_F(AMIRAlgorithmFactory, CanCreateTriangularBands) {
-    ASSERT_THAT(MIRAlgorithmFactory::create("TriangularBands"), NotNull());
+    auto name = "TriangularBands";
+    ASSERT_THAT(MIRAlgorithmFactory::create(name)->getName(), Eq(name));
 }
 
 TEST_F(AMIRAlgorithmFactory, CanCreateSuperFluxNovelty) {
-    ASSERT_THAT(MIRAlgorithmFactory::create("SuperFluxNovelty"), NotNull());
+    auto name = "SuperFluxNovelty";
+    ASSERT_THAT(MIRAlgorithmFactory::create(name)->getName(), Eq(name));
+}
+
+TEST_F(AMIRAlgorithmFactory, CanCreateStreamingSuperFluxNovelty) {
+    auto name = "StreamingSuperFluxNovelty";
+    ASSERT_THAT(MIRAlgorithmFactory::create(name)->getName(), Eq(name));
 }
 
 TEST_F(AMIRAlgorithmFactory, CanCreateSuperFluxPeaks) {
-    ASSERT_THAT(MIRAlgorithmFactory::create("SuperFluxPeaks"), NotNull());
+    auto name = "SuperFluxPeaks";
+    ASSERT_THAT(MIRAlgorithmFactory::create(name)->getName(), Eq(name));
+}
+
+TEST_F(AMIRAlgorithmFactory, CanCreateStreamingSuperFluxPeaks) {
+    auto name = "StreamingSuperFluxPeaks";
+    ASSERT_THAT(MIRAlgorithmFactory::create(name)->getName(), Eq(name));
 }
