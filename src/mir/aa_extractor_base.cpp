@@ -3,6 +3,7 @@
 //
 
 #include "libaa/mir/aa_extractor_base.h"
+#include <cassert>
 
 namespace libaa::MIR {
 bool ExtractorBase::initializeBuffers(size_t input_channels, size_t step_size, size_t block_size) {
@@ -110,4 +111,4 @@ void ExtractorBase::initialize(float sample_rate, size_t input_channels) {
     context_.sample_rate = sample_rate;
     input_channels_ = input_channels;
 }
-} // namespace AudioEffect::MIR
+} // namespace libaa::MIR
