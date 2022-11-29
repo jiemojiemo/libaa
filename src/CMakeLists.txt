@@ -52,7 +52,7 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
             -Wall -Wextra -pedantic -Werror)
 
     # ignore some error
-    target_compile_options(libaa PRIVATE -Wno-missing-braces -Wno-deprecated-copy -Wno-unknown-warning-option)
+    target_compile_options(libaa PRIVATE -Wno-missing-braces -Wno-deprecated-copy -Wno-unknown-warning-option -Wno-deprecated-declarations)
 endif ()
 
 if (LIBAA_INSTALL)
