@@ -10,4 +10,5 @@ add_libaa_test(aa_core_unit_test
         test_clip.cpp
         test_clip_factory.cpp
         test_clip_utilities.cpp
+        test_simple_fifo.cpp
         )
