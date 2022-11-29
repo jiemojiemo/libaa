@@ -14,6 +14,13 @@ AudioProcessorParameter &AudioProcessorParameters::get(int param_id) {
     return parameters_.at(param_id);
 }
 
+const AudioProcessorParameter &AudioProcessorParameters::get(const std::string &param_name) const {
+    return get(findParameterIndexByName(param_name));
+}
+AudioProcessorParameter &AudioProcessorParameters::get(const std::string &param_name) {
+    return get(findParameterIndexByName(param_name));
+}
+
 int AudioProcessorParameters::pushFloatParameter(std::string param_name,
                                                  float default_val,
                                                  float min_plain_value,

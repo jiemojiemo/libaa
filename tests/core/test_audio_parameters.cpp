@@ -97,3 +97,18 @@ TEST_F(AParameters, CanAddIntParameter) {
 
     ASSERT_THAT(p, Eq(expected));
 }
+
+TEST_F(AParameters, CanGetParameterByName) {
+    params.pushFloatParameter("A", 1.0, 0, 2.0);
+    params.pushBoolParameter("B", true);
+
+    ASSERT_THAT(params.get("A").getParameterName(), Eq("A"));
+    ASSERT_THAT(params.get("B").getParameterName(), Eq("B"));
+}
+
+TEST_F(AParameters, GetByNameThrowsIfCannotFindParameter) {
+    params.pushFloatParameter("A", 1.0, 0, 2.0);
+    params.pushBoolParameter("B", true);
+
+    ASSERT_ANY_THROW(params.get("C"));
+}

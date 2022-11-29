@@ -31,6 +31,10 @@ public:
     const AudioProcessorParameter &get(int param_id) const;
     AudioProcessorParameter &get(int param_id);
 
+    const AudioProcessorParameter &get(const std::string &param_name) const;
+    AudioProcessorParameter &get(const std::string &param_name);
+
+
     int findParameterIndexByName(const std::string &param_name) const;
 
 private:
