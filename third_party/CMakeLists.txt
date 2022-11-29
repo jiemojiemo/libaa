@@ -40,3 +40,7 @@ if (NOT EXISTS eigen)
             $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Eigen3.3.7>
             )
 endif ()
+
+if (NOT EXISTS ebur128)
+    add_subdirectory(libebur128)
+endif ()
