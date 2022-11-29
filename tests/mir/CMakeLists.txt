@@ -3,6 +3,7 @@ add_libaa_test(
         test_ebur128_utilities.cpp
         test_extractor_base.cpp
         test_fft.cpp
+        test_loudness_ebur128_extractor.cpp
         test_magnitude.cpp
         test_max_filter.cpp
         test_mir_algorithm_base.cpp

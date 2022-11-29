@@ -2,6 +2,7 @@ set(MIR_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_ebur128_utilities.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_extractor_base.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_fft.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/aa_loudness_ebur128_extractor.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_magnitude.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_max_filter.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_mir_algorithm_base.cpp
