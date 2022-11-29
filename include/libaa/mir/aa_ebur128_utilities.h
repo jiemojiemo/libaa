@@ -5,9 +5,11 @@
 #ifndef LIBAA_AA_EBUR128_UTILITIES_H
 #define LIBAA_AA_EBUR128_UTILITIES_H
 
-#include "ebur128.h"
 #include "libaa/dsp/aa_deinterleave_utils.h"
 #include <vector>
+
+struct ebur128_state;
+
 namespace libaa::MIR {
 class Ebur128Utilities {
 public:

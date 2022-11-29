@@ -3,6 +3,7 @@
 //
 
 #include "libaa/mir/aa_ebur128_utilities.h"
+#include "ebur128.h"
 
 namespace libaa::MIR {
 Ebur128Utilities::~Ebur128Utilities() {
