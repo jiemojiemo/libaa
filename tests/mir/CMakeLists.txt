@@ -11,6 +11,7 @@ add_libaa_test(
         test_mir_output.cpp
         test_moving_average.cpp
         test_spectrum.cpp
+        test_streaming_max_filter.cpp
         test_superflux_novelty.cpp
         test_superflux_peaks.cpp
         test_triangular_bands.cpp
