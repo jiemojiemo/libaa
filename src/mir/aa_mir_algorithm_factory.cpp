@@ -7,9 +7,12 @@
 #include "libaa/mir/aa_magnitude.h"
 #include "libaa/mir/aa_max_filter.h"
 #include "libaa/mir/aa_mir_algorithm.h"
-#include "libaa/mir/aa_mir_algorithm_factory.h"
 #include "libaa/mir/aa_moving_average.h"
 #include "libaa/mir/aa_spectrum.h"
+#include "libaa/mir/aa_streaming_max_filter.h"
+#include "libaa/mir/aa_streaming_moving_average.h"
+#include "libaa/mir/aa_streaming_superflux_novelty.h"
+#include "libaa/mir/aa_streaming_superflux_peaks.h"
 #include "libaa/mir/aa_superflux_novelty.h"
 #include "libaa/mir/aa_superflux_peaks.h"
 #include "libaa/mir/aa_triangular_bands.h"
@@ -28,6 +31,14 @@ std::unique_ptr<IMIRAlgorithm> create(const std::string &name) {
         return std::unique_ptr<IMIRAlgorithm>(new MovingAverage);
     } else if (name == "Spectrum") {
         return std::unique_ptr<IMIRAlgorithm>(new Spectrum);
+    } else if (name == "StreamingMaxFilter") {
+        return std::unique_ptr<IMIRAlgorithm>(new StreamingMaxFilter);
+    } else if (name == "StreamingMovingAverage") {
+        return std::unique_ptr<IMIRAlgorithm>(new StreamingMovingAverage);
+    } else if (name == "StreamingSuperFluxNovelty") {
+        return std::unique_ptr<IMIRAlgorithm>(new StreamingSuperFluxNovelty);
+    } else if (name == "StreamingSuperFluxPeaks") {
+        return std::unique_ptr<IMIRAlgorithm>(new StreamingSuperFluxPeaks);
     } else if (name == "Windowing") {
         return std::unique_ptr<IMIRAlgorithm>(new Windowing);
     } else if (name == "TriangularBands") {
