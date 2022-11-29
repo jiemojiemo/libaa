@@ -12,7 +12,7 @@ if (NOT EXISTS rubberband)
     add_subdirectory(rubberband-2.0.2)
 endif ()
 
-if (LIBAA_BUILD_TESTING)
+if (LIBAA_BUILD_TESTING AND NOT EXISTS gmock)
     add_subdirectory(googletest EXCLUDE_FROM_ALL)
 endif ()
 
