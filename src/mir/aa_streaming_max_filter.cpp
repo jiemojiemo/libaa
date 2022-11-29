@@ -2,7 +2,7 @@
 // Created by user on 11/29/22.
 //
 #include "libaa/mir/aa_streaming_max_filter.h"
-
+#include <algorithm>
 namespace libaa::MIR {
 StreamingMaxFilter::StreamingMaxFilter() {
     parameters_.pushIntParameter("width", 3, 2, std::numeric_limits<int>::max());
@@ -35,4 +35,4 @@ void StreamingMaxFilter::compute() {
 const MaxFilter::SimpleRingBuffer *StreamingMaxFilter::getSimpleRingBuffer() const {
     return buffer_.get();
 }
-} // namespace AudioEffect::MIR
+} // namespace libaa::MIR
