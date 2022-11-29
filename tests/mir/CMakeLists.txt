@@ -10,6 +10,7 @@ add_libaa_test(
         test_mir_input.cpp
         test_mir_output.cpp
         test_moving_average.cpp
+        test_onset_detection_extractor.cpp
         test_spectrum.cpp
         test_streaming_max_filter.cpp
         test_streaming_moving_average.cpp

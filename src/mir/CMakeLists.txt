@@ -10,6 +10,7 @@ set(MIR_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_spectrum.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_streaming_max_filter.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_streaming_moving_average.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/aa_streaming_super_flux_extractor.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_streaming_superflux_novelty.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_streaming_superflux_peaks.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_superflux_novelty.cpp
