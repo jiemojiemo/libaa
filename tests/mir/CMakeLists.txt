@@ -1,5 +1,6 @@
 add_libaa_test(
         aa_mir_unit_tests
+        test_ebur128_utilities.cpp
         test_fft.cpp
         test_magnitude.cpp
         test_max_filter.cpp

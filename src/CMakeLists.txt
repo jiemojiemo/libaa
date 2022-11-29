@@ -43,6 +43,7 @@ target_include_directories(libaa
 
 target_link_libraries(libaa
         PUBLIC kissfft fdk-aac mp3lame rubberband nlohmann_json
+        ebur128
         )
 
 target_compile_features(libaa PUBLIC cxx_std_14)
@@ -56,6 +57,13 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif ()
 
 if (LIBAA_INSTALL)
+    install(TARGETS ebur128
+            EXPORT ebur128
+            LIBRARY DESTINATION lib  # 动态库安装路径
+            ARCHIVE DESTINATION lib  # 静态库安装路径
+            )
+    install(EXPORT ebur128 DESTINATION lib/cmake)
+
     install(TARGETS kissfft
             EXPORT kissfft
             LIBRARY DESTINATION lib  # 动态库安装路径
