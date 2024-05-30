@@ -8,10 +8,15 @@ LibAA is a audio library.
 + Biquad Filter
 + Chorus
 + Compressor
++ Channel Vocoder
 + Delay
 + Distortion
++ Limiter
++ Pitch Shifter
++ Reverb
 + Flanger
 + Tremolo
++ Vibrato
 
 ## DSP
 + DTW
@@ -22,10 +27,27 @@ LibAA is a audio library.
 
 ## Audio Codec
 + Decoder
-  + Wav
+  + AAC
+  + MP3
+  + WAV
++ Encoder
+  + MP3
+  + WAV
+
+## MIR
++ Ebur128 Loudness
++ SuperFlux (Onset detection)
+
+## Audio Graph
++ Connect Nodes
++ Serialization/Deserialization
++ Realtime Parameter Control
   
 # How to build libaa
 ```bash
+git clone https://github.com/jiemojiemo/libaa
+cd libaa
+git submodule update --init --recursive
 cmake -S . -B build
 cmake --build build
 ```
