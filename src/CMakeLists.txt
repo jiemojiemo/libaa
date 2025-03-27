@@ -27,6 +27,7 @@ add_library(libaa
         ${PROCESSOR_SRC}
         ${GRAPH_SRC}
         ${MIR_SRC}
+        offline/aa_time_stretching.cpp
         )
 target_include_directories(libaa
         PUBLIC

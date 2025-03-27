@@ -25,5 +25,6 @@ add_subdirectory(core)
 add_subdirectory(dsp)
 add_subdirectory(graph)
 add_subdirectory(mir)
+add_subdirectory(offline)
 add_subdirectory(processor)
 

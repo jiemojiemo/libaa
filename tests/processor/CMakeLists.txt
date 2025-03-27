@@ -18,6 +18,7 @@ add_libaa_test(aa_processor_unit_test
         test_limiter_processor.cpp
         test_channel_vocoder_processor.cpp
         test_channel_vocoder_utilities.cpp
+        test_time_stretching_processor.cpp
         #        test_audio_filter_utilities.cpp
         #        test_audio_filter_processor.cpp
         )
