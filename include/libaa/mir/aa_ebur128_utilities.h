@@ -36,10 +36,10 @@ public:
     double relative_threshold{0};
     double range{0};
     std::vector<double> peaks;
+    constexpr static float kSilenceThreshold = -60;
 
 private:
     bool getLoudnessFeatures();
-    constexpr static float kSilenceThreshold = -70;
 };
 } // namespace libaa::MIR
 

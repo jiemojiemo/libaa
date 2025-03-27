@@ -17,6 +17,7 @@ set(PROCESSOR_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_channel_vocoder_processor.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_channel_vocoder_utilities.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/aa_time_stretching_processor.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/aa_loudness_normalization_processor.cpp
         )
 
 set(PROCESSOR_SRC ${PROCESSOR_SRC} PARENT_SCOPE)
