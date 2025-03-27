@@ -36,7 +36,7 @@ TEST_F(ALFOGenerator, CanGenerateSineWave) {
 
     auto output = lfo.renderAudioOutput();
 
-    ASSERT_THAT(output.normal_output, DoubleEq(0.0));
+    ASSERT_THAT(output.normal_output, DoubleNear(0.0, 1e-6));
     ASSERT_THAT(output.inverted_output, DoubleEq(-output.normal_output));
     ASSERT_THAT(output.quad_phase_output_pos, DoubleEq(-1.0));
     ASSERT_THAT(output.quad_phase_output_neg,

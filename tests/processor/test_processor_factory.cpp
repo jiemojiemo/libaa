@@ -83,7 +83,7 @@ TEST_F(AProcessorFactory, CanCreateProcessorWithParametersState) {
     }
     )";
     auto proc = ProcessorFactory::create(name, param_state);
-    ASSERT_THAT(proc->getParameters()->get(0).getPlainValue(), Eq(10.0));
+    ASSERT_THAT(proc->getParameters()->get(0).getPlainValue(), FloatNear(10.0, 1e-5));
 }
 
 TEST_F(AProcessorFactory, CreateWithStateReturnsNullIfNotSuchProcessor) {

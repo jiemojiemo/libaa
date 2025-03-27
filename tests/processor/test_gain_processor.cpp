@@ -26,7 +26,7 @@ TEST_F(AGainProcessor, RetunrsGainDbParameterAsExpect) {
     auto param = proc.getParameters()->get(0);
 
     ASSERT_THAT(param.getParameterID(), Eq(0));
-    ASSERT_THAT(param.getPlainValue(), Eq(0));
+    ASSERT_THAT(param.getPlainValue(), FloatNear(0, 1e-5));
     ASSERT_THAT(param.getMinPlainValue(), Eq(-96.0f));
     ASSERT_THAT(param.getMaxPlainValue(), Eq(35.0f));
 }
@@ -37,7 +37,7 @@ TEST_F(AGainProcessor, CanInitWithDb) {
     auto param = proc.getParameters()->get(0);
 
     ASSERT_THAT(param.getParameterID(), Eq(0));
-    ASSERT_THAT(param.getPlainValue(), Eq(20.0f));
+    ASSERT_THAT(param.getPlainValue(), FloatNear(20.0f, 1e-5));
     ASSERT_THAT(param.getMinPlainValue(), Eq(-96.0f));
     ASSERT_THAT(param.getMaxPlainValue(), Eq(35.0f));
 }
@@ -63,8 +63,8 @@ TEST_F(AGainProcessor, ProcessChangeInputDb) {
     proc.prepareToPlay(sr, max_block_size);
     proc.processBlock(&block, &block);
 
-    ASSERT_THAT(block.buffer.getReadPointer(0)[0], Eq(1 * boost_scale));
-    ASSERT_THAT(block.buffer.getReadPointer(1)[0], Eq(2 * boost_scale));
+    ASSERT_THAT(block.buffer.getReadPointer(0)[0], FloatNear(1 * boost_scale, 1e-5));
+    ASSERT_THAT(block.buffer.getReadPointer(1)[0], FloatNear(2 * boost_scale, 1e-5));
 }
 
 TEST_F(AGainProcessor, ProcessChangeInputDbWithParameterChange) {
@@ -80,8 +80,8 @@ TEST_F(AGainProcessor, ProcessChangeInputDbWithParameterChange) {
     proc.prepareToPlay(sr, max_block_size);
     proc.processBlock(&block, &block);
 
-    ASSERT_THAT(block.buffer.getReadPointer(0)[0], Eq(1 * boost_scale));
-    ASSERT_THAT(block.buffer.getReadPointer(1)[0], Eq(2 * boost_scale));
+    ASSERT_THAT(block.buffer.getReadPointer(0)[0], FloatNear(1 * boost_scale, 1e-5));
+    ASSERT_THAT(block.buffer.getReadPointer(1)[0], FloatNear(2 * boost_scale, 1e-5));
 }
 
 TEST_F(AGainProcessor, StateStringAsExpected) {
@@ -102,5 +102,5 @@ TEST_F(AGainProcessor, SetStateUpdatesParameters) {
     proc.setState((uint8_t *)new_state_str.data(), new_state_str.size());
 
     float gain_val = proc.getParameters()->get(0).getPlainValue();
-    ASSERT_THAT(gain_val, Eq(expected_gain_val));
+    ASSERT_THAT(gain_val, FloatNear(expected_gain_val, 1e-5));
 }

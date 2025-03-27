@@ -5,6 +5,7 @@
 #ifndef LIBAA_AA_LEVEL_DETECTOR_H
 #define LIBAA_AA_LEVEL_DETECTOR_H
 #include <cmath>
+#include <algorithm>
 namespace libaa {
 enum class LevelDetectorMode {
     kLevelDetectorMode_Peak = 0,

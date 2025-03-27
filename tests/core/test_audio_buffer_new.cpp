@@ -155,3 +155,63 @@ TEST_F(AAudioBufferNew, ResizeFramesReallocateInternalBuffer) {
 
     ASSERT_THAT(audio_buffer.getNumberFrames(), Eq(new_frames));
 }
+
+TEST_F(AAudioBufferNew, CanApplyGainWithSpecifyChannel) {
+    AudioBufferX<float> audio_buffer{{{1, 2, 3}, {4, 5, 6}}};
+    float gain = 0.5;
+
+    audio_buffer.applyGain(0, 0, audio_buffer.getNumberFrames(), gain);
+
+    ASSERT_THAT(audio_buffer.getReadPointer(0)[0], Eq(0.5f));
+    ASSERT_THAT(audio_buffer.getReadPointer(1)[0], Eq(4.0f));
+}
+
+TEST_F(AAudioBufferNew, CanApplyGainToAllChannels) {
+    AudioBufferX<float> audio_buffer{{{1, 2, 3}, {4, 5, 6}}};
+    float gain = 0.5;
+
+    audio_buffer.applyGain(0, audio_buffer.getNumberFrames(), gain);
+
+    ASSERT_THAT(audio_buffer.getReadPointer(0)[0], Eq(0.5f));
+    ASSERT_THAT(audio_buffer.getReadPointer(1)[0], Eq(2.0f));
+}
+
+TEST_F(AAudioBufferNew, ApplyGainRampWithChannel) {
+    AudioBufferX<float> audio_buffer{{{1, 2, 3}, {4, 5, 6}}};
+    float start_gain = 0;
+    float end_gain = 0.5;
+
+    audio_buffer.applyGainRamp(0, 0, audio_buffer.getNumberFrames(), start_gain, end_gain);
+
+    ASSERT_THAT(audio_buffer.getReadPointer(0)[0], FloatEq(0.0f));
+    ASSERT_THAT(audio_buffer.getReadPointer(0)[1], FloatNear(0.333333f, 1e-6));
+    ASSERT_THAT(audio_buffer.getReadPointer(0)[2], FloatEq(1.0f));
+}
+
+TEST_F(AAudioBufferNew, ApplyGainRampToAllChannel) {
+    AudioBufferX<float> audio_buffer{{{1, 2, 3}, {1, 2, 3}}};
+    float start_gain = 0;
+    float end_gain = 0.5;
+
+    audio_buffer.applyGainRamp(0, audio_buffer.getNumberFrames(), start_gain, end_gain);
+
+    ASSERT_THAT(audio_buffer.getReadPointer(0)[0], FloatEq(0.0f));
+    ASSERT_THAT(audio_buffer.getReadPointer(0)[1], FloatNear(0.333333f, 1e-6));
+    ASSERT_THAT(audio_buffer.getReadPointer(0)[2], FloatEq(1.0f));
+
+    ASSERT_THAT(audio_buffer.getReadPointer(1)[0], FloatEq(0.0f));
+    ASSERT_THAT(audio_buffer.getReadPointer(1)[1], FloatNear(0.333333f, 1e-6));
+    ASSERT_THAT(audio_buffer.getReadPointer(1)[2], FloatEq(1.0f));
+}
+
+TEST_F(AAudioBufferNew, ApplyGainRampWhenStartGainSameWithEndGainUseStaticGain) {
+    AudioBufferX<float> audio_buffer{{{1, 2, 3}, {1, 2, 3}}};
+    float start_gain = 0.5;
+    float end_gain = 0.5;
+
+    audio_buffer.applyGainRamp(0, audio_buffer.getNumberFrames(), start_gain, end_gain);
+
+    ASSERT_THAT(audio_buffer.getReadPointer(0)[0], FloatEq(0.5f));
+    ASSERT_THAT(audio_buffer.getReadPointer(1)[0], FloatEq(0.5f));
+}
+

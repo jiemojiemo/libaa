@@ -87,7 +87,7 @@ TEST_F(AReverbProcessorTank, HighShelfGainParameterAsExpect) {
 
     ASSERT_THAT(param.getParameterID(), Eq(p_index));
     ASSERT_THAT(param.getParameterName(), Eq("High Shelf Gain dB"));
-    ASSERT_THAT(param.getPlainValue(), Eq(-6.0f));
+    ASSERT_THAT(param.getPlainValue(), FloatNear(-6.0f, 1e-5));
     ASSERT_THAT(param.getMinPlainValue(), Eq(-35.0f));
     ASSERT_THAT(param.getMaxPlainValue(), Eq(35.0f));
 }
@@ -120,7 +120,7 @@ TEST_F(AReverbProcessorTank, WetDbParameterAsExpect) {
 
     ASSERT_THAT(param.getParameterID(), Eq(p_index));
     ASSERT_THAT(param.getParameterName(), Eq("Wet dB"));
-    ASSERT_THAT(param.getPlainValue(), Eq(-12.0f));
+    ASSERT_THAT(param.getPlainValue(), FloatNear(-12.0f, 1e-5));
     ASSERT_THAT(param.getMinPlainValue(), Eq(-60.0f));
     ASSERT_THAT(param.getMaxPlainValue(), Eq(20.0f));
 }

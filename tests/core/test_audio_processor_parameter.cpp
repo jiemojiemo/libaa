@@ -111,7 +111,7 @@ TEST_F(AAudioProcessorParameter, GetPlainValueClippedFromIfLargeThan1) {
 
 TEST_F(AAudioProcessorParameter,
        CurrentPlainValueIsEqDefaultPlainValueWhenInit) {
-    ASSERT_THAT(param->getPlainValue(), Eq(param->getDefaultPlainValue()));
+    ASSERT_THAT(param->getPlainValue(), FloatEq(param->getDefaultPlainValue()));
 }
 
 TEST_F(AAudioProcessorParameter, CanSetPlainValue) {

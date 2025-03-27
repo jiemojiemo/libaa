@@ -15,6 +15,7 @@ class AudioBufferX {
 public:
     explicit AudioBufferX()
         : AudioBufferX(0, 0) {}
+
     explicit AudioBufferX(size_t num_channels, size_t num_frames)
         : num_channels_(num_channels), num_frames_(num_frames) {
         allocateData();
@@ -48,7 +49,7 @@ public:
     }
 
     void copyFrom(AudioBufferX<T> *other) {
-        copyFrom(other, getNumberChannels(), getNumberFrames(), 0, 0);
+        copyFrom(other, other->getNumberChannels(), other->getNumberFrames(), 0, 0);
     }
 
     void copyFrom(AudioBufferX<T> *other, int num_channels, int num_frames,
@@ -63,7 +64,7 @@ public:
     void copyFrom(T **source, int num_channels, int num_frames,
                   int src_frame_offset, int dest_frame_offset) {
         for (auto c = 0; c < num_channels; ++c) {
-            const T *s = source[c] + src_frame_offset;
+            T *s = source[c] + src_frame_offset;
             T *d = getWriterPointer(c) + dest_frame_offset;
             std::copy_n(s, num_frames, d);
         }
@@ -87,6 +88,41 @@ public:
 
     void resizeFrames(size_t num_frames) {
         resize(getNumberChannels(), num_frames);
+    }
+
+    void applyGain(size_t channel, size_t start_sample, size_t num_samples, float gain) {
+        auto *channel_data = getWriterPointer(channel) + start_sample;
+
+        if (gain != 1) {
+            for (auto i = 0u; i < num_samples; ++i) {
+                channel_data[i] *= gain;
+            }
+        }
+    }
+
+    void applyGain(size_t start_sample, size_t num_samples, float gain) {
+        for (auto c = 0u; c < num_channels_; ++c) {
+            applyGain(c, start_sample, num_samples, gain);
+        }
+    }
+
+    void applyGainRamp(size_t channel, size_t start_sample, size_t num_samples, float start_gain, float end_gain) {
+        if (start_gain == end_gain) {
+            applyGain(channel, start_sample, num_samples, start_gain);
+        } else {
+            const auto inc = (end_gain - start_gain) / (float)(num_samples);
+            auto *channel_data = getWriterPointer(channel) + start_sample;
+            for (auto i = 0u; i < num_samples; ++i) {
+                channel_data[i] *= start_gain;
+                start_gain += inc;
+            }
+        }
+    }
+
+    void applyGainRamp(size_t start_sample, size_t num_samples, float start_gain, float end_gain) {
+        for (auto c = 0u; c < num_channels_; ++c) {
+            applyGainRamp(c, start_sample, num_samples, start_gain, end_gain);
+        }
     }
 
 private:
