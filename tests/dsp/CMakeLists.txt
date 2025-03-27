@@ -20,6 +20,7 @@ add_libaa_test(aa_dsp_unit_test
         test_iir_filter.cpp
         test_biquad_impl.cpp
         test_resampler.cpp
+        test_deinterleave_utils.cpp
         )
 
 target_include_directories(aa_dsp_unit_test PRIVATE "${LIBAA_3RD_DIR}/Eigen3.3.7")
